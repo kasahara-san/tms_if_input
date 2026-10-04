@@ -1,11 +1,10 @@
-"""Derive transport sections and passing-lane connections from GeoJSON topology."""
+"""Extract transport sections using the node roles and order declared in XML."""
 from __future__ import annotations
 
-from collections import defaultdict, deque
+from collections import defaultdict
 from dataclasses import dataclass
-from typing import Iterable
 
-from .model import GeoGraph, Plan, Section, Task
+from .model import GeoGraph, Plan, Section, Task, identifier
 
 
 @dataclass(frozen=True)
@@ -16,252 +15,184 @@ class _DirectedSection:
     label: str
 
 
-def _ids(value) -> set[str]:
-    if isinstance(value, (list, tuple)):
-        result: set[str] = set()
-        for item in value:
-            result.update(_ids(item))
-        return result
-    return {str(value)}
+def _nodes(task: Task, name: str, *, allow_empty=False) -> list[str]:
+    values = task.parameters.get(name)
+    if not isinstance(values, list) or (not values and not allow_empty):
+        raise ValueError(f"Task {task.id}: {name} must be an {'array' if allow_empty else 'nonempty array'}")
+    result = [identifier(value) for value in values]
+    if len(result) != len(set(result)):
+        raise ValueError(f"Task {task.id}: {name} contains duplicate node IDs")
+    return result
 
 
-def _adjacency(sections: Iterable[Section]) -> dict[str, list[Section]]:
-    adjacency: dict[str, list[Section]] = defaultdict(list)
-    for section in sections:
-        adjacency[section.start].append(section)
-        adjacency[section.end].append(section)
-    return adjacency
+def _related_task(plan: Plan, task: Task, name: str, expected: str) -> Task:
+    related = plan.tasks.get(identifier(task.parameters.get(name)))
+    if related is None or related.name != expected:
+        raise ValueError(f"Task {task.id}: {name} must reference a {expected} task")
+    return related
 
 
-def _other(section: Section, point: str) -> str:
-    return section.end if section.start == point else section.start
+def _task_sections(plan: Plan, graph: GeoGraph, task: Task) -> tuple[list[_DirectedSection], set[str]]:
+    main_nodes = _nodes(task, "main_node")
+    sub_nodes = _nodes(task, "sub_node", allow_empty=True)
+    main, sub = set(main_nodes), set(sub_nodes)
+    if main & sub:
+        raise ValueError(f"Task {task.id}: main_node and sub_node must be disjoint")
+    excavation = _related_task(plan, task, "excavation_loading_task", "excavation_loading")
+    leveling = _related_task(plan, task, "leveling_task", "leveling")
+    loading = set(_nodes(excavation, "dump_node"))
+    connections = set(_nodes(leveling, "connection_node"))
+    allowed = main | sub | loading | connections
+    for node in allowed:
+        graph.point(node)
+    main_order = {node: index for index, node in enumerate(main_nodes)}
+    for node in loading:
+        main_order.setdefault(node, -1)
+    for node in connections:
+        main_order.setdefault(node, len(main_nodes))
+    sub_order = {node: index for index, node in enumerate(sub_nodes)}
 
-
-def _selected_sections(plan: Plan, graph: GeoGraph) -> list[Section]:
-    used: set[str] = set()
-    for task in plan.tasks.values():
-        if task.name in {"start", "end", "initialize", "transport"}:
-            continue
-        for name, value in task.parameters.items():
-            if name == "target_node" or name.endswith("_node"):
-                used.update(_ids(value))
-    transport_points = set(graph.points) - used
-    sections: list[Section] = []
-    first_direction: dict[frozenset[str], tuple[str, str]] = {}
+    # Work-area roads between two boundary nodes are not transport sections.
+    # Retain the first GeoJSON ID when opposite directions describe one road.
+    roads = {}
     for section in graph.sections:
-        if section.start not in transport_points and section.end not in transport_points:
+        endpoints = {section.start, section.end}
+        if not endpoints <= allowed or not endpoints & (main | sub):
             continue
-        endpoints = frozenset((section.start, section.end))
-        if section.start == section.end:
-            raise ValueError(f"Transport section {section.id} is a self loop")
-        first = first_direction.get(endpoints)
-        if first == (section.end, section.start):
-            # Opposite endpoint order explicitly represents the same road.
+        key = frozenset(endpoints)
+        if key in roads:
+            previous = roads[key]
+            if (previous.start, previous.end) != (section.end, section.start):
+                raise ValueError(f"Task {task.id}: parallel sections share endpoints {sorted(endpoints)}")
             continue
-        first_direction.setdefault(endpoints, (section.start, section.end))
-        sections.append(section)
-    return sections
+        roads[key] = section
 
+    directed = []
+    internal = []
+    attachments = defaultdict(list)
+    for section in roads.values():
+        start, end = section.start, section.end
+        if start in sub and end in sub:
+            if sub_order[start] > sub_order[end]:
+                start, end = end, start
+            internal.append(_DirectedSection(section, start, end, "sub"))
+        elif start in sub or end in sub:
+            node, anchor = (start, end) if start in sub else (end, start)
+            attachments[node].append((anchor, section))
+        else:
+            if main_order[start] == main_order[end]:
+                raise ValueError(f"Task {task.id}: main section {section.id} has no XML direction")
+            if main_order[start] > main_order[end]:
+                start, end = end, start
+            directed.append(_DirectedSection(section, start, end, "main"))
+    directed.sort(key=lambda section: (main_order[section.start], main_order[section.end]))
 
-def _anchors(plan: Plan) -> tuple[set[str], set[str]]:
-    loading: set[str] = set()
-    connections: set[str] = set()
-    for task in plan.tasks.values():
-        if task.name != "transport":
-            continue
-        for key, name, destination in (("excavation_loading_task", "excavation_loading", loading),
-                                        ("leveling_task", "leveling", connections)):
-            identifier = str(task.parameters.get(key, ""))
-            related = plan.tasks.get(identifier)
-            if related is None or related.name != name:
-                raise ValueError(f"Task {task.id}: {key} must reference a {name} task")
-            parameter = "dump_node" if name == "excavation_loading" else "connection_node"
-            values = related.parameters.get(parameter)
-            if not isinstance(values, list) or not values:
-                raise ValueError(f"Task {related.id}: {parameter} must be a nonempty array")
-            destination.update(_ids(values))
-    return loading, connections
-
-
-def _orient_main(sections: list[Section], loading: set[str], connections: set[str]) -> tuple[list[_DirectedSection], dict[str, int], dict[str, str]]:
-    adjacency = _adjacency(sections)
-    missing = connections - set(adjacency)
+    # Validate the declared main order directly, without discovering a root or
+    # calculating graph depths to infer the loading-to-leveling direction.
+    reached = set(loading)
+    for section in directed:
+        if section.start not in reached:
+            raise ValueError(f"Task {task.id}: main section {section.section.id} is disconnected from its loading area")
+        reached.add(section.end)
+    missing = (main | connections) - reached
     if missing:
-        raise ValueError(f"Leveling connection nodes are missing from transport main roads: {', '.join(sorted(missing))}")
-    depths: dict[str, int] = {}
-    roots_by_point: dict[str, str] = {}
-    directed: list[_DirectedSection] = []
-    remaining = set(adjacency)
-    while remaining:
-        seed = next(iter(remaining))
-        component: set[str] = set()
-        pending = [seed]
-        while pending:
-            point = pending.pop()
-            if point in component:
-                continue
-            component.add(point)
-            pending.extend(_other(section, point) for section in adjacency[point])
-        remaining -= component
-        roots = component & loading
-        if len(roots) != 1:
-            raise ValueError("Each transport main-road component must have exactly one connected loading node")
-        if not component & connections:
-            raise ValueError("Transport main-road component does not reach a leveling connection node")
-        root = next(iter(roots))
-        roots_by_point.update({point: root for point in component})
-        if len(adjacency[root]) != 1:
-            raise ValueError(f"Loading node {root} must be a terminal of the transport main road")
-        depths[root] = 0
-        visited_sections: set[str] = set()
-        queue = deque([root])
-        while queue:
-            point = queue.popleft()
-            for section in adjacency[point]:
-                if section.id in visited_sections:
-                    continue
-                visited_sections.add(section.id)
-                other = _other(section, point)
-                if other in depths:
-                    raise ValueError("Transport main roads contain an ambiguous cycle or parallel section")
-                depths[other] = depths[point] + 1
-                directed.append(_DirectedSection(section, point, other, "main"))
-                queue.append(other)
-        for point in component:
-            if len(adjacency[point]) == 1 and point != root and point not in connections:
-                raise ValueError(f"Transport main road terminates at unrelated node {point}")
-    return directed, depths, roots_by_point
+        raise ValueError(f"Task {task.id}: main roads do not reach declared nodes {sorted(missing)}")
+
+    incoming, outgoing = defaultdict(list), defaultdict(list)
+    for section in internal:
+        outgoing[section.start].append(section)
+        incoming[section.end].append(section)
+    origins = {}
+    for node in sub_nodes:
+        before, after, anchors = incoming[node], outgoing[node], attachments[node]
+        if len(before) > 1 or len(after) > 1 or len(before) + len(after) + len(anchors) != 2:
+            raise ValueError(f"Task {task.id}: passing node {node} must form an unbranched path between main-road nodes")
+        if before:
+            origins[node] = origins[before[0].start]
+        else:
+            anchor, section = min(anchors, key=lambda item: main_order[item[0]])
+            origins[node] = main_order[anchor]
+            directed.append(_DirectedSection(section, anchor, node, "sub"))
+            anchors = [(point, road) for point, road in anchors if road.id != section.id]
+        if after:
+            if anchors:
+                raise ValueError(f"Task {task.id}: passing node {node} has an intermediate main-road attachment")
+            directed.append(after[0])
+        else:
+            if len(anchors) != 1:
+                raise ValueError(f"Task {task.id}: passing node {node} has no ending main-road attachment")
+            anchor, section = anchors[0]
+            if main_order[anchor] <= origins[node]:
+                raise ValueError(f"Task {task.id}: sub_node order conflicts with main_node order")
+            directed.append(_DirectedSection(section, node, anchor, "sub"))
+    return directed, connections
 
 
-def _orient_sub(sections: list[Section], depths: dict[str, int],
-                roots_by_point: dict[str, str]) -> list[_DirectedSection]:
-    adjacency = _adjacency(sections)
-    remaining = {section.id: section for section in sections}
-    directed: list[_DirectedSection] = []
-    while remaining:
-        seed = next(iter(remaining.values()))
-        component_sections: dict[str, Section] = {}
-        component_points: set[str] = set()
-        pending = [seed.start]
-        while pending:
-            point = pending.pop()
-            if point in component_points:
-                continue
-            component_points.add(point)
-            for section in adjacency[point]:
-                component_sections[section.id] = section
-                pending.append(_other(section, point))
-        for identifier in component_sections:
-            remaining.pop(identifier)
-        attachments = component_points & set(depths)
-        if len(attachments) != 2:
-            raise ValueError("Each passing road must connect exactly two main-road nodes")
-        if any(len(adjacency[point]) != (1 if point in attachments else 2)
-               for point in component_points):
-            raise ValueError("Passing road must be an unbranched path between main-road nodes")
-        start, end = sorted(attachments, key=depths.__getitem__)
-        if roots_by_point[start] != roots_by_point[end]:
-            raise ValueError("Passing road must bypass sections within one connected main road")
-        if depths[start] == depths[end]:
-            raise ValueError("Passing-road direction is ambiguous between equally distant main-road nodes")
-        point = start
-        used: set[str] = set()
-        while point != end:
-            candidates = [section for section in adjacency[point] if section.id not in used]
-            if len(candidates) != 1:
-                raise ValueError("Passing road contains a cycle or an ambiguous connection")
-            section = candidates[0]
-            used.add(section.id)
-            other = _other(section, point)
-            directed.append(_DirectedSection(section, point, other, "sub"))
-            point = other
-        if len(used) != len(component_sections):
-            raise ValueError("Passing road contains sections outside its connected path")
-    return directed
+def transport_section_ids(plan: Plan, graph: GeoGraph, task: Task) -> list[str]:
+    """Return only the sections explicitly selected for this transport task."""
+    directed, _ = _task_sections(plan, graph, task)
+    return [section.section.id for section in directed]
+
+
+def leveling_entry_node(plan: Plan, graph: GeoGraph, task: Task) -> str:
+    """Select an XML connection node ending a road of this leveling area's haul."""
+    transports = [candidate for candidate in plan.tasks.values()
+                  if candidate.name == "transport" and
+                  identifier(candidate.parameters["leveling_task"]) == task.id]
+    if not transports:
+        raise ValueError(f"Task {task.id}: leveling entry requires a transport road")
+    endpoints = {section.end for transport in transports
+                 for section in _task_sections(plan, graph, transport)[0]}
+    for node in _nodes(task, "connection_node"):
+        if node in endpoints:
+            return node
+    raise ValueError(f"Task {task.id}: no connection_node is an up-direction transport or passing section endpoint")
 
 
 def _neighbor(identifier: str, point: str, label: str, direction: str,
-              adjacency: dict[str, list[_DirectedSection]],
-              connections: set[str]) -> str:
+              adjacency: dict[str, list[_DirectedSection]], connections: set[str]) -> str:
     others = [section for section in adjacency[point]
               if section.section.id != identifier and section.label == label]
     if label == "main":
         others = [section for section in others
                   if (section.start == point if direction == "up" else section.end == point)]
+    elif len(others) > 1:
+        # Consecutive passing lanes can share one main-road anchor. Preserve
+        # a single lane's endpoint link; distinguish incoming/outgoing lanes
+        # when both exist at that anchor.
+        directional = [section for section in others
+                       if (section.start == point if direction == "up" else section.end == point)]
+        if len(directional) == 1:
+            others = directional
     if len(others) > 1:
-        # The final road may fan out directly into several leveling columns.
-        # That junction has no single continuation; each terminal branch points
-        # back to the preceding section, matching the collection schema.
+        # Scalar link fields cannot list all terminal leveling-column branches;
+        # each branch retains its link back to the shared preceding section.
         if direction == "up" and label == "main" and all(section.end in connections for section in others):
             return ""
         raise ValueError(f"Section {identifier}: multiple {direction} {label} links cannot fit the MongoDB schema")
     return others[0].section.id if others else ""
 
 
-def _validate_transport_pairs(plan: Plan, sections: list[_DirectedSection]) -> None:
-    adjacency = _adjacency(section.section for section in sections)
+def build_route_documents(plan: Plan, graph: GeoGraph) -> list[dict]:
+    """Extract every declared main/passing section, oriented loading -> leveling."""
+    sections, connections = {}, set()
     for task in plan.tasks.values():
         if task.name != "transport":
             continue
-        excavation = plan.tasks[str(task.parameters["excavation_loading_task"])]
-        leveling = plan.tasks[str(task.parameters["leveling_task"])]
-        pending = list(_ids(excavation.parameters["dump_node"]) & set(adjacency))
-        if not pending:
-            raise ValueError(f"Task {task.id}: its loading area has no connected transport road")
-        reached: set[str] = set()
-        while pending:
-            point = pending.pop()
-            if point in reached:
-                continue
-            reached.add(point)
-            pending.extend(_other(section, point) for section in adjacency[point])
-        missing = _ids(leveling.parameters["connection_node"]) - reached
-        if missing:
-            raise ValueError(f"Task {task.id}: no transport path from its loading area to leveling connection nodes: {', '.join(sorted(missing))}")
-
-
-def _directed_transport_sections(plan: Plan, graph: GeoGraph) -> tuple[list[_DirectedSection], set[str]]:
-    """Share the same validated road selection and orientation across consumers."""
-    sections = _selected_sections(plan, graph)
-    if not sections:
-        raise ValueError("Transport tasks require connected GeoJSON road sections")
-    loading, connections = _anchors(plan)
-    main = [section for section in sections
-            if graph.point(section.start).route_rank != 1 and graph.point(section.end).route_rank != 1]
-    sub = [section for section in sections if section not in main]
-    directed, depths, roots_by_point = _orient_main(main, loading, connections)
-    directed.extend(_orient_sub(sub, depths, roots_by_point))
-    _validate_transport_pairs(plan, directed)
-    return directed, connections
-
-
-def leveling_entry_node(plan: Plan, graph: GeoGraph, task: Task) -> str:
-    """Select the first XML connection node that ends an up-direction road section."""
-    if not any(candidate.name == "transport" for candidate in plan.tasks.values()):
-        raise ValueError(f"Task {task.id}: leveling entry requires a transport road")
-    directed, _ = _directed_transport_sections(plan, graph)
-    endpoints = {section.end for section in directed}
-    for node in task.parameters["connection_node"]:
-        identifier = str(node)
-        if identifier in endpoints:
-            return identifier
-    raise ValueError(
-        f"Task {task.id}: no connection_node is an up-direction transport or passing section endpoint")
-
-
-def build_route_documents(plan: Plan, graph: GeoGraph) -> list[dict]:
-    """Return every main and passing section, oriented loading -> leveling."""
-    if not any(task.name == "transport" for task in plan.tasks.values()):
-        return []
-    directed, connections = _directed_transport_sections(plan, graph)
-    adjacency: dict[str, list[_DirectedSection]] = defaultdict(list)
-    for section in directed:
+        directed, ends = _task_sections(plan, graph, task)
+        connections.update(ends)
+        for section in directed:
+            previous = sections.setdefault(section.section.id, section)
+            if previous != section:
+                raise ValueError(f"Transport tasks disagree on section {section.section.id} direction or label")
+    adjacency = defaultdict(list)
+    for section in sections.values():
         adjacency[section.start].append(section)
         adjacency[section.end].append(section)
     models = list(dict.fromkeys(model for alias, model in plan.machines.items()
                                 if plan.machine_kind(alias) == "crawler_dump"))
-    documents: list[dict] = []
-    for section in directed:
+    documents = []
+    for section in sections.values():
         coordinates = section.section.coordinates
         if section.start != section.section.start:
             coordinates = tuple(reversed(coordinates))
@@ -275,7 +206,7 @@ def build_route_documents(plan: Plan, graph: GeoGraph) -> list[dict]:
                     "label": section.label, "preferred_direction": "up"}
         for direction, point in (("up", section.end), ("down", section.start)):
             for label in ("main", "sub"):
-                document[f"related_point_{direction}_{label}"] = _neighbor(section.section.id,
-                    point, label, direction, adjacency, connections)
+                document[f"related_point_{direction}_{label}"] = _neighbor(
+                    section.section.id, point, label, direction, adjacency, connections)
         documents.append(document)
     return documents

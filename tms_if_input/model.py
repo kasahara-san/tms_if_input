@@ -144,7 +144,6 @@ class Point:
     id: str
     x: float
     y: float
-    route_rank: int
 
     def xy(self) -> dict:
         return {'x': self.x, 'y': self.y}
@@ -175,6 +174,16 @@ def _array(value, context: str) -> list:
     if not isinstance(value, list) or not value:
         raise ValueError(f'{context}: expected a nonempty array')
     return value
+
+
+def _node_ids(value, context: str, *, allow_empty: bool = False) -> list[str]:
+    if not isinstance(value, list) or (not value and not allow_empty):
+        requirement = 'an array' if allow_empty else 'a nonempty array'
+        raise ValueError(f'{context}: expected {requirement}')
+    values = [identifier(node) for node in value]
+    if len(values) != len(set(values)):
+        raise ValueError(f'{context}: duplicate node IDs')
+    return values
 
 
 def validate_plan(plan: Plan) -> None:
@@ -208,10 +217,10 @@ def validate_plan(plan: Plan) -> None:
         required = {
             'initialize': {'target_node', 'rotation'},
             'excavation_loading': {'block_size', 'block_angle', 'block_center',
-                                   'block_vector', 'backhoe_node', 'dump_node'},
+                                   'block_vector', 'backhoe_node', 'dump_node', 'rotation'},
             'leveling': {'leveling_height', 'block_size', 'block_center', 'block_vector',
                          'soil_volume', 'dump_node', 'bulldozer_node', 'connection_node'},
-            'transport': {'excavation_loading_task', 'leveling_task'},
+            'transport': {'excavation_loading_task', 'leveling_task', 'main_node', 'sub_node'},
         }[task.name]
         missing = required - params.keys()
         if missing:
@@ -249,6 +258,16 @@ def validate_plan(plan: Plan) -> None:
                     raise ValueError(f'{context}: {field} and block_center lengths differ')
             if task.name == 'excavation_loading':
                 number(params['block_angle'], f'{context}.block_angle')
+                rotations = _array(params['rotation'], f'{context}.rotation')
+                if len(rotations) != len(params['dump_node']):
+                    raise ValueError(f'{context}: rotation and dump_node lengths differ')
+                for index, value in enumerate(rotations):
+                    rotation_context = f'{context}.rotation[{index}]'
+                    rotation = vector(value, 'xyzw', rotation_context)
+                    if set(rotation) != set('xyzw'):
+                        raise ValueError(f'{rotation_context}: quaternion requires exactly x, y, z and w')
+                    if not any(rotation[axis] for axis in 'xyzw'):
+                        raise ValueError(f'{rotation_context}: rotation quaternion must not be zero')
             else:
                 number(params['leveling_height'], f'{context}.leveling_height')
                 volumes = _array(params['soil_volume'], f'{context}.soil_volume')
@@ -260,6 +279,10 @@ def validate_plan(plan: Plan) -> None:
                 for node in _array(params['connection_node'], f'{context}.connection_node'):
                     identifier(node)
         else:
+            main = _node_ids(params['main_node'], f'{context}.main_node')
+            sub = _node_ids(params['sub_node'], f'{context}.sub_node', allow_empty=True)
+            if set(main) & set(sub):
+                raise ValueError(f'{context}: main_node and sub_node must not overlap')
             for field, expected in [('excavation_loading_task', 'excavation_loading'),
                                     ('leveling_task', 'leveling')]:
                 target = identifier(params[field])
@@ -351,13 +374,7 @@ def parse_geojson(data: dict) -> GeoGraph:
             ids.add(key)
         if kind == 'Point':
             x, y = coordinates(geometry.get('coordinates'), f'Point {key}')
-            metadata = props.get('metadata', {})
-            if not isinstance(metadata, dict):
-                raise ValueError(f'Point {key}: metadata must be an object')
-            rank = metadata.get('route_rank', 0)
-            if type(rank) is not int or rank not in (0, 1):
-                raise ValueError(f'Point {key}: route_rank must be 0 or 1')
-            points[key] = Point(key, x, y, rank)
+            points[key] = Point(key, x, y)
         elif kind == 'LineString':
             raw = _array(geometry.get('coordinates'), f'LineString {key}')
             if len(raw) < 2:
@@ -399,7 +416,8 @@ def load_inputs(geojson_path, xml_path) -> tuple[Plan, GeoGraph]:
         for name, value in task.parameters.items():
             if name == 'target_node':
                 graph.point(value)
-            elif name in {'backhoe_node', 'dump_node', 'bulldozer_node', 'connection_node'}:
+            elif name in {'backhoe_node', 'dump_node', 'bulldozer_node', 'connection_node',
+                          'main_node', 'sub_node'}:
                 for node_id in value:
                     graph.point(node_id)
     return plan, graph

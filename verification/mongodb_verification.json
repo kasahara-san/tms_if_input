@@ -1,7 +1,7 @@
 {
   "status": "passed",
-  "summary_ja": "rostmsdb.parameterの65文書とrostmsdb.taskの4文書は、資料本文・入力値および最新の侵入口変更指示に一致。侵入口はXML指定connection_nodeの中から運搬/離合区間のup方向端点を選択し、今回919561426=(58.9042,-92.4637)。対象入口文書のx/yのみ反映し、他の文書・フラグは保持。通常launchは自動終了。",
-  "timestamp_utc": "2026-10-04T12:15:45.213219+00:00",
+  "summary_ja": "最新261004 GeoJSON/XMLのmain_node/sub_nodeの明示集合とindex順から幹線12・離合6区間を抽出。放土9地点、積載位置4件のrotation、全65パラメータと4タスクが実rostmsdbに一致。積載位置4件の四元数とd37pxi初期位置1件のみ最新入力へ反映し、他文書・フラグ・タスク・IDを保持。通常launchは同じキーの文書をスキップし自動終了。_tms_if_inputは削除済みで新規登録にも付与しない。 MongoDB初回task登録に13.2秒かかったため5秒の既定応答タイムアウトを30秒へ延長。登録済み65パラメータ・1タスクを保持して不足3タスクを追加し、再実行は全65/4をスキップして自動終了。",
+  "timestamp_utc": "2026-10-04T13:14:58.467194+00:00",
   "mongo_uri": "mongodb://localhost:27017",
   "mongo_version": "6.0.24",
   "database": "rostmsdb",
@@ -17,7 +17,7 @@
     "parameter": 65,
     "task": 4
   },
-  "existing_documents_modified": 1,
+  "existing_documents_modified": 0,
   "existing_documents_removed": 0,
   "registration": {
     "status": "passed",
@@ -80,28 +80,38 @@
       "launch",
       "tms_if_input",
       "tms_if_input.launch.py",
-      "geojson_path:=261001-kyoto.geojson",
-      "xml_path:=261001-kyoto.xml",
-      "output_dir:=/tmp/tms_if_input-entry-change/artifacts"
+      "geojson_path:=261004-kyoto.geojson",
+      "xml_path:=261004-kyoto.xml",
+      "output_dir:=/tmp/tms_if_input-mongo-timeout/artifacts"
     ],
     "exit_code": 0,
     "automatic_exit": true,
-    "entry_point_id": "919561426",
-    "entry_document": {
-      "type": "static",
-      "model_name": [
-        "mst110cr",
-        "mst2200vdr"
-      ],
-      "record_name": "dumps_entry_point_leveling_area",
-      "x": 58.9042,
-      "y": -92.4637,
-      "z": 0.0,
-      "qx": 0.0,
-      "qy": 0.0,
-      "qz": -0.5284411892483951,
-      "qw": 0.8489699108365042
-    },
+    "registration_runs": [
+      {
+        "phase": "resume",
+        "exit_code": 0,
+        "automatic_exit": true,
+        "inserted_documents": {
+          "parameter": 0,
+          "task": 3
+        },
+        "existing_documents_removed": 0,
+        "existing_documents_modified": 0,
+        "log": "/tmp/tms_if_input-mongo-timeout/resume_launch.log"
+      },
+      {
+        "phase": "repeat",
+        "exit_code": 0,
+        "automatic_exit": true,
+        "inserted_documents": {
+          "parameter": 0,
+          "task": 0
+        },
+        "existing_documents_removed": 0,
+        "existing_documents_modified": 0,
+        "log": "/tmp/tms_if_input-mongo-timeout/repeat_launch.log"
+      }
+    ],
     "artifact_and_actual_database_match": true
   },
   "workspace_rebuild": {
@@ -118,8 +128,8 @@
       "tms_if_input/importer.py",
       "tms_if_input/model.py",
       "launch/tms_if_input.launch.py",
-      "json_samples/261001-kyoto.geojson",
-      "json_samples/261001-kyoto.xml"
+      "json_samples/261004-kyoto.geojson",
+      "json_samples/261004-kyoto.xml"
     ]
   },
   "launch_behavior": {
@@ -128,9 +138,9 @@
     "service_mode": "keep_alive:=true or import_on_start:=false"
   },
   "test_suite": {
-    "passed": 131,
+    "passed": 179,
     "failed": 0,
-    "command": "PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python3 -m pytest -q"
+    "command": "python3 -m pytest -q"
   },
   "independent_specification_checks": {
     "parameters": {
@@ -144,19 +154,18 @@
       "errors": [],
       "additional_nonroute_records_preserved": [],
       "inputs": {
-        "geojson": "/home/kasahara/SIP_PROJECTS/ros2_tms_ws/src/tms_if_input/json_samples/261001-kyoto.geojson",
-        "xml": "/home/kasahara/SIP_PROJECTS/ros2_tms_ws/src/tms_if_input/json_samples/261001-kyoto.xml"
+        "geojson": "/home/kasahara/SIP_PROJECTS/ros2_tms_ws/src/tms_if_input/json_samples/261004-kyoto.geojson",
+        "xml": "/home/kasahara/SIP_PROJECTS/ros2_tms_ws/src/tms_if_input/json_samples/261004-kyoto.xml"
       },
       "ignored_database_metadata_fields": [
-        "_id",
-        "_tms_if_input"
+        "_id"
       ],
       "numeric_comparison": "Numeric BSON int/double allowed; absolute/relative tolerance 1e-12; bool distinct",
-      "specification_notes": "/tmp/tms_if_input-entry-change/parameter_spec_notes.json"
+      "specification_notes": "/tmp/tms_if_input-explicit-transport/parameter_spec_notes.json"
     },
     "routes": {
       "status": "pass",
-      "actual_export": "/tmp/tms_if_input-rostmsdb-verify/actual_parameter.json",
+      "actual_export": "/tmp/tms_if_input-explicit-transport/actual_parameter.json",
       "source_line_count": 90,
       "selected_direction_count": 36,
       "actual_route_count": 18,
@@ -3513,24 +3522,24 @@
           "spec_line": 2629
         }
       ],
-      "spec_notes_file": "/tmp/tms_if_input-actual-verify/route_spec_notes.json"
+      "spec_notes_file": "/tmp/tms_if_input-explicit-transport/route_spec_notes.json"
     },
     "tasks": {
       "status": "passed",
       "checks": 280,
       "failures": [],
       "inputs": {
-        "xml": "/home/kasahara/SIP_PROJECTS/ros2_tms_ws/src/tms_if_input/json_samples/261001-kyoto.xml",
-        "actual_task": "/tmp/tms_if_input-rostmsdb-verify/actual_task.json",
-        "actual_parameter": "/tmp/tms_if_input-rostmsdb-verify/actual_parameter.json"
+        "xml": "/home/kasahara/SIP_PROJECTS/ros2_tms_ws/src/tms_if_input/json_samples/261004-kyoto.xml",
+        "actual_task": "/tmp/tms_if_input-explicit-transport/actual_task.json",
+        "actual_parameter": "/tmp/tms_if_input-explicit-transport/actual_parameter.json"
       },
       "independence": "Standard-library XML/JSON parsing only; compiler not called; no MongoDB access.",
       "models": [
         {
           "model_name": "zx200",
           "source_task_ids": [
-            "2291039772",
-            "2830494948"
+            "3513181375",
+            "2318567684"
           ],
           "primitive_names": [
             "subtask_excavator_change_pose",
@@ -3540,12 +3549,12 @@
           ],
           "wait_dependencies": [
             {
-              "task_id": "2830494948",
+              "task_id": "2318567684",
               "predecessor_ids": [
-                "2291039772",
-                "2547316300",
-                "4199082663",
-                "4223803073"
+                "2368046638",
+                "3049685658",
+                "3513181375",
+                "3829337701"
               ]
             }
           ]
@@ -3553,8 +3562,8 @@
         {
           "model_name": "mst110cr",
           "source_task_ids": [
-            "4223803073",
-            "2847776408"
+            "3049685658",
+            "3343055156"
           ],
           "primitive_names": [
             "subtask_crawlerdump_swing",
@@ -3565,12 +3574,12 @@
           ],
           "wait_dependencies": [
             {
-              "task_id": "2847776408",
+              "task_id": "3343055156",
               "predecessor_ids": [
-                "2291039772",
-                "2547316300",
-                "4199082663",
-                "4223803073"
+                "2368046638",
+                "3049685658",
+                "3513181375",
+                "3829337701"
               ]
             }
           ]
@@ -3578,8 +3587,8 @@
         {
           "model_name": "mst2200vdr",
           "source_task_ids": [
-            "2547316300",
-            "2983743032"
+            "3829337701",
+            "3142704754"
           ],
           "primitive_names": [
             "subtask_crawlerdump_swing",
@@ -3590,12 +3599,12 @@
           ],
           "wait_dependencies": [
             {
-              "task_id": "2983743032",
+              "task_id": "3142704754",
               "predecessor_ids": [
-                "2291039772",
-                "2547316300",
-                "4199082663",
-                "4223803073"
+                "2368046638",
+                "3049685658",
+                "3513181375",
+                "3829337701"
               ]
             }
           ]
@@ -3603,8 +3612,8 @@
         {
           "model_name": "d37pxi",
           "source_task_ids": [
-            "4199082663",
-            "3516795761"
+            "2368046638",
+            "2600159710"
           ],
           "primitive_names": [
             "subtask_bulldozer_follow_waypoints",
@@ -3612,12 +3621,12 @@
           ],
           "wait_dependencies": [
             {
-              "task_id": "3516795761",
+              "task_id": "2600159710",
               "predecessor_ids": [
-                "2291039772",
-                "2547316300",
-                "4199082663",
-                "4223803073"
+                "2368046638",
+                "3049685658",
+                "3513181375",
+                "3829337701"
               ]
             }
           ]
@@ -3728,8 +3737,8 @@
     "parameters": {
       "specification": "/home/kasahara/Downloads/仕様",
       "source_of_truth": [
-        "json_samples/261001-kyoto.geojson",
-        "json_samples/261001-kyoto.xml"
+        "json_samples/261004-kyoto.geojson",
+        "json_samples/261004-kyoto.xml"
       ],
       "principle": "仕様自身が例は固定でなく実際の GeoJSON/XML の値を使用することを求めるため、説明文と入力に矛盾する理想例は入力値を優先して検証する。",
       "mistakes": [
@@ -3909,6 +3918,11 @@
           "previous_rule": "Middle element of XML connection_node array",
           "new_rule": "First XML connection_node matching the up-direction end of a transport/passing section",
           "basis_ja": "最新のユーザー指示により元資料の中央要素ルールを変更。入口はXMLで指定されたconnection_node IDのいずれかとする。"
+        },
+        {
+          "record_name": "loading_position_<index>",
+          "new_rule": "Copy excavation_loading.rotation[index] into qx/qy/qz/qw without normalization",
+          "basis_ja": "最新XMLの添字対応のrotationを使用する。資料のdummy例を置き換える。"
         }
       ]
     },
@@ -4061,20 +4075,22 @@
     }
   },
   "source_inputs_sha256": {
-    "json_samples/261001-kyoto.geojson": "eac4b495f7238fd9dc90a19fced5ff88a9d2023ea02c0860861b23f1da67ac55",
-    "json_samples/261001-kyoto.xml": "8d4725b83be294c6178338764f3c51387a7b34782a32d8a04d7fbad156b34cd8"
+    "json_samples/261004-kyoto.geojson": "a85b8abef83a9101f00d58d8a99a239a83db8142bcf12561bc6acf37d2bc1aed",
+    "json_samples/261004-kyoto.xml": "9e69200773f2cbafd1e27d2a7fd6b2cb96c76376cbfeee4e51221ff4a67f4571"
   },
   "evidence": {
-    "directory": "/tmp/tms_if_input-entry-change",
+    "directory": "/tmp/tms_if_input-explicit-transport",
     "export_sha256": {
-      "before_parameter.json": "8f0c260c497f266d382fc48beabf96dea3ce5424fea541accc470fbaa9523012",
-      "before_task.json": "d01156674b784d8faa0a98ac159bf0dd219f811c6983431be8d05fdf12600b2c",
-      "after_parameter.json": "cb80da295e6cf6cfc0c68695033feea943d58c5b7139a62dab084a44518b63e7",
-      "after_task.json": "d01156674b784d8faa0a98ac159bf0dd219f811c6983431be8d05fdf12600b2c",
-      "actual_parameter.json": "cb80da295e6cf6cfc0c68695033feea943d58c5b7139a62dab084a44518b63e7",
-      "actual_task.json": "d01156674b784d8faa0a98ac159bf0dd219f811c6983431be8d05fdf12600b2c"
+      "before_parameter.json": "7e0edd5ff7141708afe5939eea956832123032f0b25aadf63d17177b6031846c",
+      "before_task.json": "4f9a9c27f34fb7414a7a9a92d9f079868e6c332c719dd732ad2edc8333a500a0",
+      "after_parameter.json": "858bc93e9ba628c1a0fbfe5a84752cacf9b47b333da3cb7517c4b35f00016983",
+      "after_task.json": "4f9a9c27f34fb7414a7a9a92d9f079868e6c332c719dd732ad2edc8333a500a0",
+      "actual_parameter.json": "858bc93e9ba628c1a0fbfe5a84752cacf9b47b333da3cb7517c4b35f00016983",
+      "actual_task.json": "4f9a9c27f34fb7414a7a9a92d9f079868e6c332c719dd732ad2edc8333a500a0",
+      "repeat_parameter.json": "858bc93e9ba628c1a0fbfe5a84752cacf9b47b333da3cb7517c4b35f00016983",
+      "repeat_task.json": "4f9a9c27f34fb7414a7a9a92d9f079868e6c332c719dd732ad2edc8333a500a0"
     },
-    "workspace_launch_log": "/tmp/tms_if_input-entry-change/workspace_launch.log",
+    "workspace_launch_log": "/tmp/tms_if_input-mongo-timeout/repeat_launch.log",
     "latest_entry_change_directory": "/tmp/tms_if_input-entry-change",
     "previous_verification_directory": "/tmp/tms_if_input-rostmsdb-verify",
     "historical_export_sha256_before_entry_change": {
@@ -4084,11 +4100,30 @@
       "after_task.json": "d01156674b784d8faa0a98ac159bf0dd219f811c6983431be8d05fdf12600b2c",
       "actual_parameter.json": "8f0c260c497f266d382fc48beabf96dea3ce5424fea541accc470fbaa9523012",
       "actual_task.json": "d01156674b784d8faa0a98ac159bf0dd219f811c6983431be8d05fdf12600b2c"
+    },
+    "historical_export_sha256_before_explicit_transport": {
+      "before_parameter.json": "8f0c260c497f266d382fc48beabf96dea3ce5424fea541accc470fbaa9523012",
+      "before_task.json": "d01156674b784d8faa0a98ac159bf0dd219f811c6983431be8d05fdf12600b2c",
+      "after_parameter.json": "cb80da295e6cf6cfc0c68695033feea943d58c5b7139a62dab084a44518b63e7",
+      "after_task.json": "d01156674b784d8faa0a98ac159bf0dd219f811c6983431be8d05fdf12600b2c",
+      "actual_parameter.json": "cb80da295e6cf6cfc0c68695033feea943d58c5b7139a62dab084a44518b63e7",
+      "actual_task.json": "d01156674b784d8faa0a98ac159bf0dd219f811c6983431be8d05fdf12600b2c"
+    },
+    "latest_explicit_transport_directory": "/tmp/tms_if_input-explicit-transport",
+    "metadata_removal_directory": "/tmp/tms_if_input-metadata-removal",
+    "latest_timeout_fix_directory": "/tmp/tms_if_input-mongo-timeout",
+    "timeout_fix_export_sha256": {
+      "before_parameter.json": "76e4610f2e69aca9558c4bdac3142bd2da888670997b6d60d62f8b06b211dbc8",
+      "before_task.json": "f141b8338e783475938833d9e15d3f5adab9be35c33cc731afed2dec25d7baad",
+      "resume_parameter.json": "76e4610f2e69aca9558c4bdac3142bd2da888670997b6d60d62f8b06b211dbc8",
+      "resume_task.json": "fb1886cc23f65bef25dd6440845c5bfd795046dcef442a93b6b6c833cf1f7305",
+      "repeat_parameter.json": "76e4610f2e69aca9558c4bdac3142bd2da888670997b6d60d62f8b06b211dbc8",
+      "repeat_task.json": "fb1886cc23f65bef25dd6440845c5bfd795046dcef442a93b6b6c833cf1f7305"
     }
   },
   "limitations_ja": [
-    "今回の検証対象は送付された261001-kyoto.geojson/XML。既存DB内の同じキーの文書は上書きせず保持する。",
-    "MongoDBの_id/出典メタデータは資料の文書内容との比較から除外し、task_idの正整数・一意性は別検証。",
+    "今回の実DB比較対象は最新261004-kyoto.geojson/XML。通常登録は同じキーの文書を上書きせず保持し、今回の5文書の変更はユーザー指定の最新入力を反映するための一回限りの更新。",
+    "MongoDBの_idだけを文書内容比較から除外する。task_idの正整数・一意性は別検証。_tms_if_inputがないことは全実文書で確認済み。",
     "BTの保存構造と参照は検証したが、BT実行側や実機・シミュレータの施工動作は実行していない。"
   ],
   "dump_and_route_recheck": {
@@ -4284,5 +4319,304 @@
     "unrelated_documents_modified": 0,
     "compiled_payload_mismatches": 0
   },
-  "unrelated_existing_documents_modified": 0
+  "unrelated_existing_documents_modified": 0,
+  "metadata_removal": {
+    "status": "passed",
+    "timestamp_utc": "2026-10-04T12:30:07.167751+00:00",
+    "database": "rostmsdb",
+    "field_removed": "_tms_if_input",
+    "before_counts": {
+      "parameter": 66,
+      "task": 4
+    },
+    "after_counts": {
+      "parameter": 66,
+      "task": 4
+    },
+    "documents_with_field_removed": {
+      "parameter": 65,
+      "task": 4
+    },
+    "existing_documents_removed": 0,
+    "other_fields_modified": 0,
+    "document_ids_unchanged": true,
+    "unmarked_existing_documents_unchanged": true,
+    "remaining_documents_with_metadata": 0
+  },
+  "latest_input_update": {
+    "status": "passed",
+    "timestamp_utc": "2026-10-04T12:56:03.544627+00:00",
+    "database": "rostmsdb",
+    "source_inputs_sha256": {
+      "json_samples/261004-kyoto.geojson": "a85b8abef83a9101f00d58d8a99a239a83db8142bcf12561bc6acf37d2bc1aed",
+      "json_samples/261004-kyoto.xml": "9e69200773f2cbafd1e27d2a7fd6b2cb96c76376cbfeee4e51221ff4a67f4571"
+    },
+    "changed_documents": [
+      {
+        "record_name": "initial_position",
+        "model_name": "d37pxi",
+        "fields": [
+          "qw",
+          "qz",
+          "x",
+          "y"
+        ]
+      },
+      {
+        "record_name": "loading_position_1",
+        "model_name": [
+          "mst110cr",
+          "mst2200vdr"
+        ],
+        "fields": [
+          "qw",
+          "qx",
+          "qy",
+          "qz"
+        ]
+      },
+      {
+        "record_name": "loading_position_2",
+        "model_name": [
+          "mst110cr",
+          "mst2200vdr"
+        ],
+        "fields": [
+          "qw",
+          "qx",
+          "qy",
+          "qz"
+        ]
+      },
+      {
+        "record_name": "loading_position_3",
+        "model_name": [
+          "mst110cr",
+          "mst2200vdr"
+        ],
+        "fields": [
+          "qw",
+          "qx",
+          "qy",
+          "qz"
+        ]
+      },
+      {
+        "record_name": "loading_position_4",
+        "model_name": [
+          "mst110cr",
+          "mst2200vdr"
+        ],
+        "fields": [
+          "qw",
+          "qx",
+          "qy",
+          "qz"
+        ]
+      }
+    ],
+    "collection_counts": {
+      "parameter": 65,
+      "task": 4
+    },
+    "matched_parameters": 65,
+    "matched_tasks": 4,
+    "existing_documents_removed": 0,
+    "unrelated_documents_modified": 0,
+    "task_documents_modified": 0,
+    "runtime_flags_modified": 0,
+    "compiled_payload_mismatches": 0,
+    "metadata_present": false
+  },
+  "previous_workspace_launch": {
+    "status": "passed",
+    "command": [
+      "ros2",
+      "launch",
+      "tms_if_input",
+      "tms_if_input.launch.py",
+      "geojson_path:=261001-kyoto.geojson",
+      "xml_path:=261001-kyoto.xml",
+      "output_dir:=/tmp/tms_if_input-entry-change/artifacts"
+    ],
+    "exit_code": 0,
+    "automatic_exit": true,
+    "entry_point_id": "919561426",
+    "entry_document": {
+      "type": "static",
+      "model_name": [
+        "mst110cr",
+        "mst2200vdr"
+      ],
+      "record_name": "dumps_entry_point_leveling_area",
+      "x": 58.9042,
+      "y": -92.4637,
+      "z": 0.0,
+      "qx": 0.0,
+      "qy": 0.0,
+      "qz": -0.5284411892483951,
+      "qw": 0.8489699108365042
+    },
+    "artifact_and_actual_database_match": true
+  },
+  "transport_rules": {
+    "source": "transport.main_node/sub_node in the XML, in loading-to-leveling index order",
+    "boundary_nodes": "Referenced excavation_loading.dump_node and leveling.connection_node",
+    "selection": "Both section endpoints are declared transport/boundary nodes and at least one is a main_node/sub_node",
+    "removed": [
+      "work-node exclusion search",
+      "route_rank classification",
+      "graph-depth direction inference",
+      "global graph search for per-task route IDs"
+    ],
+    "reversed_sections": "First GeoJSON road ID retained; all vertices reordered to XML up direction",
+    "passing_lanes": "Empty, single-node, multiple and interleaved XML-ordered lanes supported",
+    "loading_rotation": "rotation[i].xyzw copied without normalization to loading_position_<i+1>.qx/qy/qz/qw",
+    "variable_input_tests": {
+      "main_node_counts": [
+        2,
+        7,
+        13
+      ],
+      "sub_node_counts": [
+        1,
+        5,
+        9
+      ],
+      "multiple_work_areas": true,
+      "arbitrary_ids_coordinates_rotations": true,
+      "consecutive_passing_lanes": true
+    }
+  },
+  "mongo_timeout_fix": {
+    "status": "passed",
+    "server_evidence": {
+      "source": "MongoDB admin getLog global (read-only)",
+      "failed_launch_log": "/home/kasahara/.ros/log/2026-10-04-22-03-24-245313-kasahara-PC-792330/launch.log",
+      "task_creation": {
+        "timestamp": "2026-10-04T22:03:29.311+09:00",
+        "message": "createCollection"
+      },
+      "task_insert": {
+        "timestamp": "2026-10-04T22:03:42.522+09:00",
+        "message": "Slow query",
+        "namespace": "rostmsdb.task",
+        "command_type": "insert",
+        "duration_ms": 13210
+      },
+      "preceding_parameter_insert": {
+        "timestamp": "2026-10-04T22:03:22.740+09:00",
+        "namespace": "rostmsdb.parameter",
+        "duration_ms": 8817
+      },
+      "original_socket_timeout_ms": 5000,
+      "diagnosis": "The initial collection creation/insert exceeded the 5-second socket response timeout. The first task was committed after the client timed out.",
+      "server_state": "active/running",
+      "listener": "127.0.0.1:27017",
+      "diagnostic_ping_ms": 1.27,
+      "stored_before_recovery": {
+        "parameter": 65,
+        "task": 1,
+        "task_model": "zx200",
+        "task_id": 1
+      }
+    },
+    "default_timeout_ms": 30000,
+    "explicit_timeout_override_preserved": true,
+    "error_diagnostics": [
+      "database",
+      "operation",
+      "record/model when applicable",
+      "exception class",
+      "configured timeout",
+      "original exception cause"
+    ],
+    "regression_checks": [
+      "timeout after parameter commit resumes without duplicates",
+      "timeout after task commit preserves task IDs/flags and resumes missing tasks",
+      "server selection timeout identifies ping phase"
+    ],
+    "real_launch_verification": {
+      "status": "passed",
+      "timestamp_utc": "2026-10-04T13:14:58.467194+00:00",
+      "command": [
+        "ros2",
+        "launch",
+        "tms_if_input",
+        "tms_if_input.launch.py",
+        "geojson_path:=261004-kyoto.geojson",
+        "xml_path:=261004-kyoto.xml",
+        "output_dir:=/tmp/tms_if_input-mongo-timeout/artifacts"
+      ],
+      "database": "rostmsdb",
+      "default_timeout_ms": 30000,
+      "before_counts": {
+        "parameter": 65,
+        "task": 1
+      },
+      "after_counts": {
+        "parameter": 65,
+        "task": 4
+      },
+      "launches": [
+        {
+          "phase": "resume",
+          "exit_code": 0,
+          "automatic_exit": true,
+          "inserted_documents": {
+            "parameter": 0,
+            "task": 3
+          },
+          "existing_documents_removed": 0,
+          "existing_documents_modified": 0,
+          "log": "/tmp/tms_if_input-mongo-timeout/resume_launch.log"
+        },
+        {
+          "phase": "repeat",
+          "exit_code": 0,
+          "automatic_exit": true,
+          "inserted_documents": {
+            "parameter": 0,
+            "task": 0
+          },
+          "existing_documents_removed": 0,
+          "existing_documents_modified": 0,
+          "log": "/tmp/tms_if_input-mongo-timeout/repeat_launch.log"
+        }
+      ],
+      "compiled_payload_mismatches": 0,
+      "metadata_present": false,
+      "existing_documents_removed": 0,
+      "existing_documents_modified": 0
+    }
+  },
+  "previous_workspace_launch_before_timeout_fix": {
+    "status": "passed",
+    "timestamp_utc": "2026-10-04T12:56:29.933660+00:00",
+    "command": [
+      "ros2",
+      "launch",
+      "tms_if_input",
+      "tms_if_input.launch.py",
+      "geojson_path:=261004-kyoto.geojson",
+      "xml_path:=261004-kyoto.xml",
+      "output_dir:=/tmp/tms_if_input-explicit-transport/artifacts"
+    ],
+    "exit_code": 0,
+    "automatic_exit": true,
+    "database": "rostmsdb",
+    "collection_counts": {
+      "parameter": 65,
+      "task": 4
+    },
+    "skipped_parameters": 65,
+    "skipped_tasks": 4,
+    "inserted_documents": 0,
+    "existing_documents_modified": 0,
+    "existing_documents_removed": 0,
+    "metadata_reintroduced": false,
+    "compiled_payload_mismatches": 0,
+    "unrelated_existing_documents_unchanged": true,
+    "log": "/tmp/tms_if_input-explicit-transport/workspace_launch.log"
+  }
 }

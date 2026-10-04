@@ -94,7 +94,8 @@ def assert_parameter_schema(compilation, plan, graph, entry_nodes):
                 assert position["model_name"] == dump_models
                 assert (position["x"], position["y"]) == (graph.point(node).x, graph.point(node).y)
                 assert position["z"] == 0
-                assert all(position["q" + axis] == "[dummy]" for axis in "xyzw")
+                for axis in "xyzw":
+                    assert position["q" + axis] == params["rotation"][index - 1][axis]
         elif task.name == "leveling":
             connections = [graph.point(node) for node in params["connection_node"]]
             vector = params["block_vector"]
@@ -132,21 +133,20 @@ def assert_parameter_schema(compilation, plan, graph, entry_nodes):
 
 
 def synthetic_inputs(connection_count=1, excavation_count=1):
-    points = {"loading-0": (0, 0, 0), "backhoe-0": (-2, 0, 0),
-              "road-A": (10, 0, 0), "road-B": (20, 0, 0), "road-C": (30, 0, 0),
-              "pass-A": (10, 3, 1), "pass-B": (20, 3, 1)}
+    points = {"loading-0": (0, 0), "backhoe-0": (-2, 0),
+              "road-A": (10, 0), "road-B": (20, 0), "road-C": (30, 0),
+              "pass-A": (10, 3), "pass-B": (20, 3)}
     for index in range(1, excavation_count):
-        points[f"loading-{index}"] = (0, -index * 3, 0)
-        points[f"backhoe-{index}"] = (-2, -index * 3, 0)
+        points[f"loading-{index}"] = (0, -index * 3)
+        points[f"backhoe-{index}"] = (-2, -index * 3)
     for index in range(connection_count):
         x = 40 + index * 4
-        points[f"connection-{index}"] = (x, 0, 0)
-        points[f"dump-{index}"] = (x + 0.1, -10, 0)
-        points[f"grader-{index}"] = (x + 0.1, -20, 0)
-    features = [{"type": "Feature", "properties": {
-        "id": name, "metadata": {"route_rank": rank}},
+        points[f"connection-{index}"] = (x, 0)
+        points[f"dump-{index}"] = (x + 0.1, -10)
+        points[f"grader-{index}"] = (x + 0.1, -20)
+    features = [{"type": "Feature", "properties": {"id": name},
         "geometry": {"type": "Point", "coordinates": [x, y, 99]}}
-        for name, (x, y, rank) in points.items()]
+        for name, (x, y) in points.items()]
     routes = [("main-0", "loading-0", "road-A", [[5, 1]]),
               ("main-1", "road-A", "road-B", [[13, 0], [17, 0]]),
               ("main-2", "road-B", "road-C", []),
@@ -196,6 +196,9 @@ def synthetic_inputs(connection_count=1, excavation_count=1):
         "block_vector": {"x": 0, "y": 1, "z": 0},
         "backhoe_node": [f"backhoe-{index}" for index in range(excavation_count)],
         "dump_node": [f"loading-{index}" for index in range(excavation_count)],
+        "rotation": [{"x": index + 0.25, "y": -index - 0.5,
+                      "z": index + 0.75, "w": index + 1}
+                     for index in range(excavation_count)],
     })
     task("leveling", "grade-work", {
         "machine": "grade", "leveling_height": 7.25, "block_size": {"x": 2, "y": 4},
@@ -207,7 +210,9 @@ def synthetic_inputs(connection_count=1, excavation_count=1):
         "connection_node": [f"connection-{index}" for index in range(connection_count)],
     })
     task("transport", "haul-work", {"machine": "haul", "excavation_loading_task": "dig-work",
-                                      "leveling_task": "grade-work"})
+                                      "leveling_task": "grade-work",
+                                      "main_node": ["road-A", "road-B", "road-C"],
+                                      "sub_node": ["pass-A", "pass-B"]})
     task("end", "finish")
     flow = ET.SubElement(procedure, "flow")
     for alias in ("dig", "haul", "grade"):
@@ -220,18 +225,24 @@ def synthetic_inputs(connection_count=1, excavation_count=1):
 
 
 def test_sample_compiles_from_input_values_and_contains_every_route():
-    paths = SAMPLES / "261001-kyoto.geojson", SAMPLES / "261001-kyoto.xml"
+    paths = SAMPLES / "261004-kyoto.geojson", SAMPLES / "261004-kyoto.xml"
     result = compile_scenario(*paths)
     plan, graph = load_inputs(*paths)
-    assert_parameter_schema(result, plan, graph, {"3516795761": "919561426"})
+    assert_parameter_schema(result, plan, graph, {"2600159710": "919561426"})
     assert len(result.tasks) == len(plan.machines)
     routes = [document for document in result.parameters if "section_id" in document]
-    used = {str(node) for task in plan.tasks.values()
-            if task.name in {"excavation_loading", "leveling"}
-            for key, value in task.parameters.items() if key.endswith("_node") for node in value}
-    transport_points = set(graph.points) - used
-    endpoint_pairs = {frozenset((section.start, section.end)) for section in graph.sections
-                      if section.start in transport_points or section.end in transport_points}
+    endpoint_pairs = set()
+    for task in plan.tasks.values():
+        if task.name != "transport":
+            continue
+        explicit = {str(node) for field in ("main_node", "sub_node") for node in task.parameters[field]}
+        excavation = plan.tasks[task.parameters["excavation_loading_task"]]
+        leveling = plan.tasks[task.parameters["leveling_task"]]
+        allowed = explicit | {str(node) for node in excavation.parameters["dump_node"]}
+        allowed.update(str(node) for node in leveling.parameters["connection_node"])
+        endpoint_pairs.update(frozenset((section.start, section.end)) for section in graph.sections
+                              if section.start in allowed and section.end in allowed
+                              and (section.start in explicit or section.end in explicit))
     assert len(routes) == len(endpoint_pairs)
     assert {document["label"] for document in routes} == {"main", "sub"}
     assert all(document["preferred_direction"] == "up" for document in routes)
@@ -254,6 +265,28 @@ def test_variable_rings_blocks_connections_and_machine_count(tmp_path, connectio
                 f"dump_node_{index}" for index in range(1, connections + 1)}
     assert len(record(result, "geo_fence")["coordinates"]) == 2
     assert len([document for document in result.parameters if "section_id" in document]) == 6 + connections
+
+
+def test_explicit_transport_lists_ignore_point_metadata_and_unlisted_roads(tmp_path):
+    geojson, root = synthetic_inputs(connection_count=2)
+    baseline = compile_scenario(*write_pair(tmp_path, geojson, root))
+    for feature in geojson["features"]:
+        if feature["geometry"]["type"] == "Point":
+            feature["properties"]["metadata"] = {
+                "route_rank": 0 if feature["properties"]["id"].startswith("pass-") else 1}
+    geojson["features"].extend([
+        {"type": "Feature", "properties": {"id": "unlisted", "metadata": ["unrelated"]},
+         "geometry": {"type": "Point", "coordinates": [10, 6]}},
+        {"type": "Feature", "properties": {
+            "id": "unlisted-road", "startid": "road-A", "endid": "unlisted"},
+         "geometry": {"type": "LineString", "coordinates": [[10, 0], [10, 6]]}},
+        {"type": "Feature", "properties": {
+            "id": "boundary-only", "startid": "loading-0", "endid": "connection-0"},
+         "geometry": {"type": "LineString", "coordinates": [[0, 0], [40, 0]]}},
+    ])
+    result = compile_scenario(*write_pair(tmp_path, geojson, root))
+    assert result.parameters == baseline.parameters
+    assert result.tasks == baseline.tasks
 
 
 @pytest.mark.parametrize("connection_order", [(2, 0, 1), (1, 2, 0)])
@@ -319,8 +352,8 @@ def test_routes_reverse_all_vertices_and_link_multiple_passing_nodes(tmp_path):
 
 
 def transformed_sample():
-    geojson = json.loads((SAMPLES / "261001-kyoto.geojson").read_text())
-    root = ET.parse(SAMPLES / "261001-kyoto.xml").getroot()
+    geojson = json.loads((SAMPLES / "261004-kyoto.geojson").read_text())
+    root = ET.parse(SAMPLES / "261004-kyoto.xml").getroot()
     id_map = {str(feature["properties"]["id"]): f"site-point-or-road-{index}"
               for index, feature in enumerate(geojson["features"])
               if "id" in feature["properties"]}
@@ -370,12 +403,17 @@ def transformed_sample():
                 vector["x"], vector["y"] = -vector["y"], vector["x"]
                 parameter.set("value", json.dumps(vector))
             elif key == "rotation":
-                quaternion = parse_parameter(raw)
+                rotations = parse_parameter(raw)
+                rotations = rotations if isinstance(rotations, list) else [rotations]
                 sine = math.sqrt(0.5)
-                quaternion["z"], quaternion["w"] = (
-                    sine * (quaternion["w"] + quaternion["z"]),
-                    sine * (quaternion["w"] - quaternion["z"]))
-                parameter.set("value", json.dumps(quaternion))
+                for quaternion in rotations:
+                    quaternion["x"], quaternion["y"], quaternion["z"], quaternion["w"] = (
+                        sine * (quaternion["x"] - quaternion["y"]),
+                        sine * (quaternion["x"] + quaternion["y"]),
+                        sine * (quaternion["w"] + quaternion["z"]),
+                        sine * (quaternion["w"] - quaternion["z"]))
+                parameter.set("value", json.dumps(rotations if task.get("name") == "excavation_loading"
+                                                  else rotations[0]))
     for edge in root.findall("./procedure/flow/edge"):
         for key in ("from", "to"):
             edge.set(key, task_map[edge.get(key)])
@@ -390,7 +428,7 @@ def test_replacing_all_ids_models_coordinates_and_vectors_changes_output(tmp_pat
     leveling = next(task for task in plan.tasks.values() if task.name == "leveling")
     assert_parameter_schema(result, plan, graph, {leveling.id: id_map["919561426"]})
     assert {task["model_name"] for task in result.tasks} == set(model_map.values())
-    baseline = compile_scenario(SAMPLES / "261001-kyoto.geojson", SAMPLES / "261001-kyoto.xml")
+    baseline = compile_scenario(SAMPLES / "261004-kyoto.geojson", SAMPLES / "261004-kyoto.xml")
     routes = {document["section_id"]: document for document in result.parameters if "section_id" in document}
     for previous in (document for document in baseline.parameters if "section_id" in document):
         changed = routes[id_map[previous["section_id"]]]
@@ -423,11 +461,13 @@ def test_invalid_geometry_does_not_silently_drop_routes(tmp_path, case):
             "geometry": {"type": "LineString", "coordinates": [[10, 0], [30, 0]]}})
     elif case == "branched-passing":
         features.extend([
-            {"type": "Feature", "properties": {"id": "dead-end", "metadata": {"route_rank": 1}},
+            {"type": "Feature", "properties": {"id": "dead-end"},
              "geometry": {"type": "Point", "coordinates": [12, 6]}},
             {"type": "Feature", "properties": {"id": "branch", "startid": "pass-A", "endid": "dead-end"},
              "geometry": {"type": "LineString", "coordinates": [[10, 3], [12, 6]]}},
         ])
+        root.find("./procedure/tasks/task[@id='haul-work']/parameter[@name='sub_node']").set(
+            "value", '["pass-A", "pass-B", "dead-end"]')
     else:
         next(feature for feature in features if feature["properties"].get("id") == "dump-0")["geometry"]["coordinates"] = [42, -10]
     with pytest.raises(ValueError):

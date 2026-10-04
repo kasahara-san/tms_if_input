@@ -14,12 +14,12 @@ from launch_ros.parameter_descriptions import ParameterValue
 def generate_launch_description():
     samples = os.path.join(get_package_share_directory('tms_if_input'), 'json_samples')
     defaults = {
-        'geojson_path': '261001-kyoto.geojson',
-        'xml_path': '261001-kyoto.xml',
+        'geojson_path': '261004-kyoto.geojson',
+        'xml_path': '261004-kyoto.xml',
         'output_dir': '/tmp/tms_if_input',
         'mongo_uri': 'mongodb://localhost:27017',
         'mongo_db': 'rostmsdb',
-        'mongo_timeout_ms': '5000',
+        'mongo_timeout_ms': '30000',
         'dry_run': 'false',
         'import_on_start': 'true',
         'keep_alive': 'false',
@@ -31,6 +31,7 @@ def generate_launch_description():
         'geojson_path': 'GeoJSON filename in json_samples (or an absolute path)',
         'xml_path': 'XML filename in json_samples (or an absolute path)',
         'keep_alive': 'Keep the import service running after the initial import',
+        'mongo_timeout_ms': 'MongoDB connection and operation timeout in milliseconds',
     }
     arguments = [DeclareLaunchArgument(name, default_value=value,
                                        description=descriptions.get(name, ''))

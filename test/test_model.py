@@ -33,6 +33,7 @@ def plan_xml():
           <parameter name="block_vector" value="{x:1,y:0,z:0}" />
           <parameter name="backhoe_node" value="[4294967300]" />
           <parameter name="dump_node" value='["dump-A"]' />
+          <parameter name="rotation" value="[{x:0,y:0,z:0,w:1}]" />
         </task>
         <task id="end" name="end" />
       </tasks><flow>
@@ -67,6 +68,44 @@ def graph_data():
 def replace_parameter(root, task, key, value):
     root.find(f"./procedure/tasks/task[@id='{task}']/parameter[@name='{key}']").set(
         "value", value)
+
+
+def transport_plan_xml():
+    root = ET.fromstring(plan_xml())
+    machines = root.find("./machines")
+    tasks = root.find("./procedure/tasks")
+    flow = root.find("./procedure/flow")
+
+    def task(identifier, name, values):
+        element = ET.SubElement(tasks, "task", {"id": identifier, "name": name})
+        for key, value in values.items():
+            ET.SubElement(element, "parameter", {
+                "name": key, "value": json.dumps(value) if isinstance(value, (list, dict)) else str(value)})
+
+    for alias, model in (("haul", "mst110cr"), ("grade", "d37pxi")):
+        ET.SubElement(machines, "machine", {"id": alias, "type": model})
+        params = {"machine": alias, "target_node": "dump-A",
+                  "rotation": {"x": 0, "y": 0, "z": 0, "w": 1}}
+        if alias == "haul":
+            params.update({"swing": 0, "vessel": 0})
+        task("ready-" + alias, "initialize", params)
+        ET.SubElement(flow, "edge", {"from": "start", "to": "ready-" + alias})
+    task("level-work", "leveling", {
+        "machine": "grade", "leveling_height": 3, "block_size": {"x": 2, "y": 3},
+        "block_center": [{"x": 1, "y": 2, "z": 3}],
+        "block_vector": {"x": 1, "y": 0, "z": 0}, "soil_volume": [1],
+        "dump_node": ["dump-A"], "bulldozer_node": [4294967300], "connection_node": ["dump-A"]})
+    task("haul-work", "transport", {
+        "machine": "haul", "excavation_loading_task": "work", "leveling_task": "level-work",
+        "main_node": [4294967300], "sub_node": []})
+    for ready in ("ready", "ready-haul", "ready-grade"):
+        for work in ("work", "level-work", "haul-work"):
+            if ready == "ready" and work == "work":
+                continue
+            ET.SubElement(flow, "edge", {"from": ready, "to": work})
+    for work in ("level-work", "haul-work"):
+        ET.SubElement(flow, "edge", {"from": work, "to": "end"})
+    return ET.tostring(root, encoding="unicode")
 
 
 def test_vectors_and_exponents_parse_without_evaluation(tmp_path):
@@ -156,6 +195,8 @@ def test_invalid_xml_is_rejected_with_context(case):
         ET.SubElement(work, "parameter", {"name": "machine", "value": "dig"})
         for name in ("excavation_loading_task", "leveling_task"):
             ET.SubElement(work, "parameter", {"name": name, "value": "absent"})
+        ET.SubElement(work, "parameter", {"name": "main_node", "value": "[4294967300]"})
+        ET.SubElement(work, "parameter", {"name": "sub_node", "value": "[]"})
         root.find("./machines/machine").set("type", "mst110cr")
         ET.SubElement(ready, "parameter", {"name": "vessel", "value": "0"})
     elif case == "unequal-array-length":
@@ -187,6 +228,85 @@ def test_extra_quaternion_fields_cannot_hide_a_zero_rotation():
         parse_plan(ET.tostring(root, encoding="unicode"))
 
 
+@pytest.mark.parametrize("rotation", [
+    [], {"x": 0, "y": 0, "z": 0, "w": 1},
+    [{"x": 0, "y": 0, "z": 0}], [{"x": 0, "y": 0, "z": 0, "w": 0}],
+    [{"x": 0, "y": 0, "z": 0, "w": True}],
+    [{"x": "0", "y": 0, "z": 0, "w": 1}],
+    [{"x": 0, "y": 0, "z": float("nan"), "w": 1}],
+    [{"x": 0, "y": 0, "z": 0, "w": float("inf")}],
+    [{"x": 0, "y": 0, "z": 0, "w": 1, "extra": 2}],
+    [{"x": 0, "y": 0, "z": 0, "w": 1}] * 2,
+])
+def test_excavation_loading_rejects_invalid_loading_rotation_arrays(rotation):
+    root = ET.fromstring(plan_xml())
+    replace_parameter(root, "work", "rotation", json.dumps(rotation))
+    with pytest.raises(ValueError, match="rotation"):
+        parse_plan(ET.tostring(root, encoding="unicode"))
+
+
+def test_excavation_loading_requires_rotation_and_preserves_its_input_values():
+    root = ET.fromstring(plan_xml())
+    work = root.find("./procedure/tasks/task[@id='work']")
+    work.remove(work.find("parameter[@name='rotation']"))
+    with pytest.raises(ValueError, match="rotation"):
+        parse_plan(ET.tostring(root, encoding="unicode"))
+    rotation = [{"x": 1, "y": -2, "z": 3.5, "w": -4}]
+    ET.SubElement(work, "parameter", {"name": "rotation", "value": json.dumps(rotation)})
+    assert parse_plan(ET.tostring(root, encoding="unicode")).tasks["work"].parameters["rotation"] == rotation
+
+
+@pytest.mark.parametrize("field", ["main_node", "sub_node"])
+def test_transport_requires_both_explicit_route_node_lists(field):
+    root = ET.fromstring(transport_plan_xml())
+    transport = root.find("./procedure/tasks/task[@id='haul-work']")
+    transport.remove(transport.find(f"parameter[@name='{field}']"))
+    with pytest.raises(ValueError, match=field):
+        parse_plan(ET.tostring(root, encoding="unicode"))
+
+
+@pytest.mark.parametrize("field,value", [
+    ("main_node", []), ("main_node", "4294967300"), ("sub_node", {"node": "dump-A"}),
+    ("main_node", [4294967300, "4294967300"]), ("sub_node", ["dump-A", "dump-A"]),
+    ("main_node", [True]), ("main_node", [1.5]), ("sub_node", [""]),
+    ("sub_node", [4294967300]),
+])
+def test_transport_rejects_invalid_duplicate_or_overlapping_route_node_lists(field, value):
+    root = ET.fromstring(transport_plan_xml())
+    replace_parameter(root, "haul-work", field, json.dumps(value))
+    with pytest.raises(ValueError):
+        parse_plan(ET.tostring(root, encoding="unicode"))
+
+
+def test_transport_allows_an_empty_passing_list_and_preserves_opaque_ids():
+    plan = parse_plan(transport_plan_xml())
+    assert plan.tasks["haul-work"].parameters["sub_node"] == []
+    assert plan.tasks["haul-work"].parameters["main_node"] == [4294967300]
+
+
+@pytest.mark.parametrize("field", ["main_node", "sub_node"])
+def test_loading_files_checks_explicit_transport_node_references(tmp_path, field):
+    geojson = tmp_path / "site.geojson"
+    xml = tmp_path / "plan.xml"
+    geojson.write_text(json.dumps(graph_data()), encoding="utf-8")
+    root = ET.fromstring(transport_plan_xml())
+    xml.write_text(ET.tostring(root, encoding="unicode"), encoding="utf-8")
+    load_inputs(geojson, xml)
+    replace_parameter(root, "haul-work", field, '["unknown-transport-node"]')
+    xml.write_text(ET.tostring(root, encoding="unicode"), encoding="utf-8")
+    with pytest.raises(ValueError, match="unknown-transport-node"):
+        load_inputs(geojson, xml)
+
+
+@pytest.mark.parametrize("metadata", [{"route_rank": 2}, {"route_rank": "sub"}, [], None, "legacy"])
+def test_unrelated_point_metadata_does_not_classify_or_reject_route_nodes(metadata):
+    data = graph_data()
+    data["features"][0]["properties"]["metadata"] = metadata
+    graph = parse_geojson(data)
+    assert graph.point(4294967300).xy() == {"x": 0, "y": 0}
+    assert not hasattr(graph.point(4294967300), "route_rank")
+
+
 @pytest.mark.parametrize("geometry_type", ["Point", "LineString", "MultiPolygon"])
 def test_a_named_geofence_with_wrong_geometry_cannot_be_silently_ignored(geometry_type):
     data = graph_data()
@@ -203,7 +323,7 @@ def test_a_named_geofence_with_wrong_geometry_cannot_be_silently_ignored(geometr
 @pytest.mark.parametrize("case", [
     "wrong-root", "nonarray-features", "duplicate-point", "unknown-endpoint",
     "incorrect-endpoint-coordinate", "nonfinite-point", "nonnumeric-point",
-    "missing-point-coordinate", "invalid-rank", "invalid-metadata", "short-line",
+    "missing-point-coordinate", "short-line",
     "unclosed-ring", "short-ring", "invalid-geofence-geometry",
 ])
 def test_invalid_geojson_is_rejected_with_context(case):
@@ -225,10 +345,6 @@ def test_invalid_geojson_is_rejected_with_context(case):
         features[0]["geometry"]["coordinates"][0] = "0"
     elif case == "missing-point-coordinate":
         features[0]["geometry"]["coordinates"] = [0]
-    elif case == "invalid-rank":
-        features[0]["properties"]["metadata"] = {"route_rank": 2}
-    elif case == "invalid-metadata":
-        features[0]["properties"]["metadata"] = []
     elif case == "short-line":
         features[2]["geometry"]["coordinates"] = [[0, 0]]
     elif case == "unclosed-ring":

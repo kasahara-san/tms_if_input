@@ -5,8 +5,8 @@ MongoDBの `rostmsdb.parameter` と `rostmsdb.task` に未登録データだけ�
 
 ```bash
 ros2 launch tms_if_input tms_if_input.launch.py \
-  geojson_path:=261001-kyoto.geojson \
-  xml_path:=261001-kyoto.xml
+  geojson_path:=261004-kyoto.geojson \
+  xml_path:=261004-kyoto.xml
 ```
 
 `geojson_path` と `xml_path` には、`json_samples` 直下のファイル名を指定します。省略すると上記のサンプルを使用します。

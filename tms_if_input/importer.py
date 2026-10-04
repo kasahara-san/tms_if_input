@@ -21,7 +21,7 @@ def main(args=None) -> int:
                 for name, default in {
                     'geojson_path': '', 'xml_path': '', 'output_dir': '/tmp/tms_if_input',
                     'mongo_uri': 'mongodb://localhost:27017', 'mongo_db': 'rostmsdb',
-                    'mongo_timeout_ms': 5000,
+                    'mongo_timeout_ms': 30000,
                     'dry_run': False, 'import_on_start': True, 'keep_alive': False,
                 }.items():
                     self.declare_parameter(name, default)

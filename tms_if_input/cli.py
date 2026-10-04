@@ -15,7 +15,7 @@ def main(argv=None) -> int:
     parser.add_argument('--dry-run', action='store_true', help='Export without writing MongoDB')
     parser.add_argument('--mongo-uri', default='mongodb://localhost:27017')
     parser.add_argument('--mongo-db', default='rostmsdb')
-    parser.add_argument('--mongo-timeout-ms', type=int, default=5000)
+    parser.add_argument('--mongo-timeout-ms', type=int, default=30000)
     args = parser.parse_args(argv)
     try:
         compilation = compile_scenario(args.geojson, args.xml)

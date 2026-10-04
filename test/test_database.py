@@ -4,6 +4,8 @@ from copy import deepcopy
 from types import SimpleNamespace
 import unittest
 
+from pymongo.errors import NetworkTimeout, ServerSelectionTimeoutError
+
 from tms_if_input.compiler import Compilation
 from tms_if_input.database import parameter_filter, write_database
 
@@ -118,6 +120,21 @@ class FakeDatabase:
         raise AssertionError("Imports must never drop existing collections")
 
 
+class CommittedInsertTimeoutCollection(FakeCollection):
+    """The server saved the write, but its response never reached the client."""
+
+    def __init__(self, documents=(), timeout_at=1):
+        super().__init__(documents)
+        self.timeout_at = timeout_at
+        self.error = NetworkTimeout("Timed out waiting for an insert response after the server committed it")
+
+    def insert_one(self, document):
+        result = super().insert_one(document)
+        if len(self.insert_calls) == self.timeout_at:
+            raise self.error
+        return result
+
+
 class FakeClient:
     def __init__(self, database, ping_failure=False):
         self.database = database
@@ -129,6 +146,8 @@ class FakeClient:
     def command(self, name):
         if name != "ping":
             raise AssertionError(name)
+        if isinstance(self.ping_failure, Exception):
+            raise self.ping_failure
         if self.ping_failure:
             raise RuntimeError("Injected connection failure")
 
@@ -171,6 +190,14 @@ class DatabaseTests(unittest.TestCase):
     def assert_no_inserts(self, database):
         self.assertEqual(database["parameter"].insert_calls, [])
         self.assertEqual(database["task"].insert_calls, [])
+
+    def assert_mongo_diagnostic(self, error, cause, database, stage, record=None, timeout=5678):
+        message = str(error)
+        for fragment in (database, stage, type(cause).__name__, str(timeout)):
+            self.assertIn(fragment, message)
+        if record is not None:
+            self.assertIn(record, message)
+        self.assertIs(error.__cause__, cause)
 
     def test_existing_scalar_array_global_and_other_model_records_are_preserved(self):
         documents = [
@@ -421,6 +448,95 @@ class DatabaseTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "connection failure"):
             write_database(Compilation([{"record_name": "new"}], [task("new")]), client_factory=factory)
         self.assertEqual(database["parameter"].documents, [old])
+        self.assert_no_inserts(database)
+        self.assertTrue(factory.clients[0].closed)
+
+    def test_task_saved_before_response_timeout_keeps_id_and_retry_adds_only_missing_task(self):
+        old_flags = owned({"record_name": "initialize_flgs", "initialize_flg_zx200": True,
+                           "extra_runtime_flag": True})
+        old_task = {**task("manual", 7), "runtime": {"enabled": True}}
+        database = FakeDatabase(parameters=[old_flags], tasks=[old_task])
+        uncertain_tasks = CommittedInsertTimeoutCollection([old_task])
+        database.collections["task"] = uncertain_tasks
+        factory = ClientFactory(database)
+        compilation = Compilation([
+            {"record_name": "initialize_flgs", "initialize_flg_zx200": False},
+            {"record_name": "new_parameter", "model_name": ["zx200", "mst110cr"], "value": 3},
+        ], [task("zx200", 99), task("mst110cr", 100)])
+        original = deepcopy(compilation)
+        with self.assertRaises(RuntimeError) as error:
+            write_database(compilation, mongo_db="construction", timeout_ms=5678, client_factory=factory)
+        self.assert_mongo_diagnostic(error.exception, uncertain_tasks.error,
+                                     "construction", "insert task", "zx200")
+        saved_parameters = deepcopy(database["parameter"].documents)
+        committed_task = deepcopy(uncertain_tasks.documents[1])
+        self.assertEqual(uncertain_tasks.documents, [old_task, committed_task])
+        self.assertEqual(committed_task["model_name"], "zx200")
+        self.assertEqual(committed_task["task_id"], 1)
+        self.assertEqual(saved_parameters[0], old_flags)
+        self.assertEqual(database["parameter"].insert_calls, [compilation.parameters[1]])
+        self.assertTrue(factory.clients[0].closed)
+
+        result = write_database(compilation, mongo_db="construction", timeout_ms=5678, client_factory=factory)
+        self.assertEqual(result["task_ids"], {"zx200": 1, "mst110cr": 2})
+        self.assertEqual((result["inserted_parameters"], result["skipped_parameters"]), (0, 2))
+        self.assertEqual((result["inserted_tasks"], result["skipped_tasks"]), (1, 1))
+        self.assertEqual(database["parameter"].documents, saved_parameters)
+        self.assertEqual(uncertain_tasks.documents[:2], [old_task, committed_task])
+        self.assertEqual(uncertain_tasks.documents[2], {**compilation.tasks[1], "task_id": 2})
+        self.assertEqual([document["model_name"] for document in uncertain_tasks.insert_calls],
+                         ["zx200", "mst110cr"])
+        self.assertEqual(compilation, original)
+        self.assertTrue(all(client.closed for client in factory.clients))
+
+    def test_parameter_saved_before_response_timeout_is_not_duplicated_on_retry(self):
+        old_flags = {"record_name": "initialize_flgs", "initialize_flg_zx200": True,
+                     "custom_runtime_state": {"keep": 42}}
+        old_task = owned(task("manual", 7))
+        database = FakeDatabase(parameters=[old_flags], tasks=[old_task])
+        uncertain_parameters = CommittedInsertTimeoutCollection([old_flags])
+        database.collections["parameter"] = uncertain_parameters
+        factory = ClientFactory(database)
+        compilation = Compilation([
+            {"record_name": "initialize_flgs", "initialize_flg_zx200": False},
+            {"record_name": "saved_parameter", "model_name": ["zx200", "mst110cr"], "value": 3},
+            {"record_name": "remaining_parameter", "model_name": "zx200", "value": 4},
+        ], [task("zx200", 99), task("mst110cr", 100)])
+        original = deepcopy(compilation)
+        with self.assertRaises(RuntimeError) as error:
+            write_database(compilation, mongo_db="construction", timeout_ms=5678, client_factory=factory)
+        self.assert_mongo_diagnostic(error.exception, uncertain_parameters.error,
+                                     "construction", "insert parameter", "saved_parameter")
+        committed_parameter = deepcopy(uncertain_parameters.documents[1])
+        self.assertEqual(uncertain_parameters.documents, [old_flags, committed_parameter])
+        self.assertEqual(database["task"].documents, [old_task])
+        self.assertEqual(database["task"].insert_calls, [])
+        self.assertTrue(factory.clients[0].closed)
+
+        result = write_database(compilation, mongo_db="construction", timeout_ms=5678, client_factory=factory)
+        self.assertEqual((result["inserted_parameters"], result["skipped_parameters"]), (1, 2))
+        self.assertEqual((result["inserted_tasks"], result["skipped_tasks"]), (2, 0))
+        self.assertEqual(result["task_ids"], {"zx200": 1, "mst110cr": 2})
+        self.assertEqual(uncertain_parameters.documents,
+                         [old_flags, committed_parameter, compilation.parameters[2]])
+        self.assertEqual(database["task"].documents[0], old_task)
+        self.assertEqual([document["record_name"] for document in uncertain_parameters.insert_calls],
+                         ["saved_parameter", "remaining_parameter"])
+        self.assertEqual(compilation, original)
+        self.assertTrue(all(client.closed for client in factory.clients))
+
+    def test_server_selection_timeout_reports_ping_context_without_any_write(self):
+        old_parameter = {"record_name": "manual", "runtime": {"keep": True}}
+        old_task = task("manual", 7)
+        database = FakeDatabase(parameters=[old_parameter], tasks=[old_task])
+        cause = ServerSelectionTimeoutError("No MongoDB server became available")
+        factory = ClientFactory(database, ping_failure=cause)
+        with self.assertRaises(RuntimeError) as error:
+            write_database(Compilation([{"record_name": "new"}], [task("new")]),
+                           mongo_db="construction", timeout_ms=5678, client_factory=factory)
+        self.assert_mongo_diagnostic(error.exception, cause, "construction", "ping")
+        self.assertEqual(database["parameter"].documents, [old_parameter])
+        self.assertEqual(database["task"].documents, [old_task])
         self.assert_no_inserts(database)
         self.assertTrue(factory.clients[0].closed)
 

@@ -25,7 +25,7 @@ def _next_id(used: set[int]) -> int:
 
 
 def write_database(compilation, *, mongo_uri='mongodb://localhost:27017',
-                   mongo_db='rostmsdb', timeout_ms=5000,
+                   mongo_db='rostmsdb', timeout_ms=30000,
                    client_factory=None) -> dict:
     """Insert missing parameters/tasks and preserve every existing document.
 
@@ -38,15 +38,18 @@ def write_database(compilation, *, mongo_uri='mongodb://localhost:27017',
     validate_documents(compilation)
     if timeout_ms <= 0:
         raise ValueError('MongoDB timeout must be positive')
+    from pymongo.errors import PyMongoError
     if client_factory is None:
         from pymongo import MongoClient
         client_factory = MongoClient
     client = client_factory(mongo_uri, serverSelectionTimeoutMS=timeout_ms,
                             connectTimeoutMS=timeout_ms, socketTimeoutMS=timeout_ms)
+    operation = 'ping'
     try:
         client.admin.command('ping')
         database = client[mongo_db]
         parameters, tasks = database['parameter'], database['task']
+        operation = 'read task collection'
         current_tasks = list(tasks.find({}, {'task_id': 1, 'model_name': 1, 'type': 1}))
         used_ids = {doc['task_id'] for doc in current_tasks
                     if type(doc.get('task_id')) is int and doc['task_id'] > 0}
@@ -78,18 +81,25 @@ def write_database(compilation, *, mongo_uri='mongodb://localhost:27017',
         inserted_parameters = 0
         skipped_parameters = 0
         for source in compilation.parameters:
+            operation = f"find parameter {source['record_name']}"
             if parameters.find_one(parameter_filter(source), {'_id': 1}) is not None:
                 skipped_parameters += 1
                 continue
             document = deepcopy(source)
+            operation = f"insert parameter {source['record_name']}"
             parameters.insert_one(document)
             inserted_parameters += 1
         for document in planned_tasks:
+            operation = f"insert task {document['model_name']}"
             tasks.insert_one(document)
         return {'parameter_count': len(compilation.parameters),
                 'task_count': len(compilation.tasks), 'task_ids': assigned,
                 'inserted_parameters': inserted_parameters,
                 'skipped_parameters': skipped_parameters,
                 'inserted_tasks': len(planned_tasks), 'skipped_tasks': skipped_tasks}
+    except PyMongoError as exc:
+        raise RuntimeError(
+            f'MongoDB {mongo_db}: {operation} failed '
+            f'({type(exc).__name__}, timeout={timeout_ms} ms): {exc}') from exc
     finally:
         client.close()

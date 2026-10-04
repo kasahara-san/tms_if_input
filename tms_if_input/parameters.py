@@ -6,7 +6,7 @@ import math
 from typing import Any
 
 from .model import GeoGraph, Plan, Task, record_name
-from .routes import build_route_documents, leveling_entry_node
+from .routes import build_route_documents, leveling_entry_node, transport_section_ids
 
 
 def _number(value: Any, context: str) -> float:
@@ -97,8 +97,10 @@ def _excavation_documents(plan: Plan, graph: GeoGraph, task: Task,
     centers = [_vector(v, "xyz", f"Task {task.id} block_center") for v in _values(task, "block_center")]
     backhoe = [graph.point(node).xy() for node in _values(task, "backhoe_node")]
     dump = [graph.point(node).xy() for node in _values(task, "dump_node")]
-    if not len(centers) == len(backhoe) == len(dump):
-        raise ValueError(f"Task {task.id}: block_center, backhoe_node and dump_node lengths must match")
+    rotations = [_vector(value, "xyzw", f"Task {task.id} rotation")
+                 for value in _values(task, "rotation")]
+    if not len(centers) == len(backhoe) == len(dump) == len(rotations):
+        raise ValueError(f"Task {task.id}: block_center, backhoe_node, dump_node and rotation lengths must match")
     documents = [{"model_name": plan.model(task), "type": "dynamic",
                   "task_type": "excavation_loading",
                   "record_name": record_name(plan, task, "excavation_loading_params"),
@@ -106,9 +108,9 @@ def _excavation_documents(plan: Plan, graph: GeoGraph, task: Task,
                   "block_angle": _number(_required(task, "block_angle"), f"Task {task.id} block_angle"),
                   "block_vector": vector, "block_center": centers,
                   "backhoe_node": backhoe, "dump_node": dump}]
-    for index, point in enumerate(dump, 1):
+    for index, (point, rotation) in enumerate(zip(dump, rotations), 1):
         documents.append(_position(dump_models, record_name(plan, task, f"loading_position_{index}"),
-                                   point, {"q" + axis: "[dummy]" for axis in "xyzw"}))
+                                   point, {"q" + axis: rotation[axis] for axis in "xyzw"}))
     return documents
 
 
@@ -163,33 +165,7 @@ def _leveling_documents(plan: Plan, graph: GeoGraph, task: Task,
     return documents
 
 
-def _route_ids_for_task(task: Task, excavation: Task, graph: GeoGraph,
-                        route_documents: list[dict]) -> list[str]:
-    available = {document["section_id"] for document in route_documents}
-    adjacency: dict[str, list] = {}
-    for section in graph.sections:
-        if section.id not in available:
-            continue
-        adjacency.setdefault(section.start, []).append(section)
-        adjacency.setdefault(section.end, []).append(section)
-    pending = [str(node) for node in _values(excavation, "dump_node") if str(node) in adjacency]
-    visited: set[str] = set()
-    identifiers: set[str] = set()
-    while pending:
-        point = pending.pop()
-        if point in visited:
-            continue
-        visited.add(point)
-        for section in adjacency[point]:
-            identifiers.add(section.id)
-            pending.append(section.end if section.start == point else section.start)
-    if not identifiers:
-        raise ValueError(f"Task {task.id}: no route sections connect to its loading area")
-    return [document["section_id"] for document in route_documents
-            if document["section_id"] in identifiers]
-
-
-def _context_documents(plan: Plan, graph: GeoGraph, route_documents: list[dict]) -> list[dict]:
+def _context_documents(plan: Plan, graph: GeoGraph) -> list[dict]:
     from .behavior_tree import context_record_name
 
     documents = []
@@ -224,7 +200,7 @@ def _context_documents(plan: Plan, graph: GeoGraph, route_documents: list[dict])
                              "dump_records": [record_name(plan, leveling, f"dump_node_{index}")
                                               for index in range(1, len(_values(leveling, "dump_node")) + 1)],
                              "entry_record": record_name(plan, leveling, "dumps_entry_point_leveling_area"),
-                             "route_section_ids": _route_ids_for_task(task, excavation, graph, route_documents)})
+                             "route_section_ids": transport_section_ids(plan, graph, task)})
         documents.append(document)
     return documents
 
@@ -248,6 +224,6 @@ def build_parameter_documents(plan: Plan, graph: GeoGraph) -> list[dict]:
             documents.extend(_leveling_documents(plan, graph, task, dump_models))
     route_documents = build_route_documents(plan, graph)
     documents.extend(route_documents)
-    documents.extend(_context_documents(plan, graph, route_documents))
+    documents.extend(_context_documents(plan, graph))
     documents.extend(synchronization_documents(plan))
     return documents

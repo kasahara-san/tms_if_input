@@ -1,6 +1,6 @@
 {
   "type": "FeatureCollection",
-  "name": "261001-kyoto",
+  "name": "261004-kyoto",
   "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::3857" } },
   "features": [
     {
@@ -127,20 +127,6 @@
       "geometry": {
         "type": "Point",
         "coordinates": [64.1088, -51.7322]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": 2692147818,
-        "metadata": {
-          "radius": 2.0,
-          "route_rank": 0
-        }
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [61.3595, -99.4295]
       }
     },
     {
