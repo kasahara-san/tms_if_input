@@ -1,7 +1,0 @@
-machine_type_by_model:
-  IC120: crawler_dump
-  MST110CR: crawler_dump
-  MST2200VDR: crawler_dump
-  ZX120: excavator
-  ZX200: excavator
-  d37pxi: bulldozer
