@@ -5,10 +5,11 @@ from types import SimpleNamespace
 import unittest
 
 from tms_if_input.compiler import Compilation
-from tms_if_input.database import OWNER_FIELD, parameter_filter, write_database
+from tms_if_input.database import parameter_filter, write_database
 
 
 MISSING = object()
+LEGACY_METADATA_FIELD = "_tms_if_input"
 
 
 def field(document, path):
@@ -162,7 +163,8 @@ def task(model, task_id=1):
 
 
 def owned(document, key="scenario", generation="old"):
-    return {**document, OWNER_FIELD: {"import_key": key, "generation": generation}}
+    """Represent old stored metadata without depending on writer internals."""
+    return {**document, LEGACY_METADATA_FIELD: {"import_key": key, "generation": generation}}
 
 
 class DatabaseTests(unittest.TestCase):
@@ -188,7 +190,7 @@ class DatabaseTests(unittest.TestCase):
             {"record_name": "same", "value": "new global"},
         ], [])
         original = deepcopy(compilation)
-        result = write_database(compilation, import_key="another", client_factory=factory)
+        result = write_database(compilation, client_factory=factory)
         self.assertEqual(database["parameter"].documents, documents)
         self.assert_no_inserts(database)
         self.assertEqual(result["parameter_count"], 3)
@@ -233,7 +235,7 @@ class DatabaseTests(unittest.TestCase):
                 self.assertEqual(len(database["parameter"].documents), 2)
                 self.assertEqual(result["inserted_parameters"], 1)
 
-    def test_new_records_are_inserted_once_with_import_provenance(self):
+    def test_new_records_are_inserted_once_without_metadata(self):
         database = FakeDatabase()
         factory = ClientFactory(database)
         compilation = Compilation([
@@ -242,15 +244,19 @@ class DatabaseTests(unittest.TestCase):
             {"record_name": "global"},
         ], [task("zx200", 99), task("mst110cr", 100)])
         original = deepcopy(compilation)
-        first = write_database(compilation, import_key="scenario", client_factory=factory)
+        first = write_database(compilation, client_factory=factory)
         self.assertEqual(first, {
             "parameter_count": 3, "task_count": 2, "task_ids": {"zx200": 1, "mst110cr": 2},
             "inserted_parameters": 3, "skipped_parameters": 0, "inserted_tasks": 2, "skipped_tasks": 0,
         })
         written = deepcopy(database["parameter"].documents + database["task"].documents)
         for document in written:
-            self.assertEqual(document[OWNER_FIELD], {"import_key": "scenario"})
-        second = write_database(compilation, import_key="another", client_factory=factory)
+            self.assertNotIn(LEGACY_METADATA_FIELD, document)
+        self.assertEqual(database["parameter"].documents, compilation.parameters)
+        self.assertEqual(database["task"].documents, [
+            {**document, "task_id": index}
+            for index, document in enumerate(compilation.tasks, 1)])
+        second = write_database(compilation, client_factory=factory)
         self.assertEqual(second["task_ids"], first["task_ids"])
         self.assertEqual(second["inserted_parameters"], 0)
         self.assertEqual(second["skipped_parameters"], 3)
@@ -270,7 +276,7 @@ class DatabaseTests(unittest.TestCase):
         result = write_database(Compilation([
             {"record_name": "route", "model_name": "truck", "points": [[9, 8, 7]]},
         ], [{**task("truck", 99), "task_sequence": "<new />"}]),
-            import_key="replacement-input", client_factory=ClientFactory(database))
+            client_factory=ClientFactory(database))
         self.assertEqual(database["parameter"].documents, [old_parameter])
         self.assertEqual(database["task"].documents, [old_task])
         self.assert_no_inserts(database)
@@ -289,7 +295,7 @@ class DatabaseTests(unittest.TestCase):
         database = FakeDatabase(parameters=old_parameters, tasks=old_tasks)
         factory = ClientFactory(database)
         result = write_database(Compilation([{"record_name": "current_area"}], [task("zx200")]),
-                                import_key="scenario", client_factory=factory,
+                                client_factory=factory,
                                 mongo_uri="mongodb://test:27018", mongo_db="existing_db", timeout_ms=1234)
         self.assertEqual(database["parameter"].documents[:len(old_parameters)], old_parameters)
         self.assertEqual(database["task"].documents, old_tasks)
@@ -352,7 +358,7 @@ class DatabaseTests(unittest.TestCase):
         parameters = [owned({"record_name": "old"}), {"record_name": "manual"}]
         tasks = [owned(task("old", 8)), task("manual", 9)]
         database = FakeDatabase(parameters=parameters, tasks=tasks)
-        result = write_database(Compilation([], []), import_key="scenario", client_factory=ClientFactory(database))
+        result = write_database(Compilation([], []), client_factory=ClientFactory(database))
         self.assertEqual(database["parameter"].documents, parameters)
         self.assertEqual(database["task"].documents, tasks)
         self.assert_no_inserts(database)
@@ -368,7 +374,7 @@ class DatabaseTests(unittest.TestCase):
         factory = ClientFactory(database)
         compilation = Compilation([{"record_name": "first"}, {"record_name": "second"}], [task("new")])
         with self.assertRaisesRegex(RuntimeError, "insertion failure"):
-            write_database(compilation, import_key="scenario", client_factory=factory)
+            write_database(compilation, client_factory=factory)
         self.assertEqual(database["parameter"].documents[0], old_parameters[0])
         self.assertEqual(database["task"].documents, old_tasks)
         self.assertEqual([document["record_name"] for document in database["parameter"].documents],
@@ -376,7 +382,7 @@ class DatabaseTests(unittest.TestCase):
         first_inserted = deepcopy(database["parameter"].documents[1])
         self.assertTrue(factory.clients[0].closed)
         database["parameter"].fail_insert_at = None
-        result = write_database(compilation, import_key="retry", client_factory=factory)
+        result = write_database(compilation, client_factory=factory)
         self.assertEqual(result["inserted_parameters"], 1)
         self.assertEqual(result["skipped_parameters"], 1)
         self.assertEqual(database["parameter"].documents[:2], [old_parameters[0], first_inserted])
@@ -391,14 +397,14 @@ class DatabaseTests(unittest.TestCase):
         factory = ClientFactory(database)
         compilation = Compilation([{"record_name": "new_parameter"}], [task("zx200"), task("mst110cr")])
         with self.assertRaisesRegex(RuntimeError, "insertion failure"):
-            write_database(compilation, import_key="scenario", client_factory=factory)
+            write_database(compilation, client_factory=factory)
         self.assertEqual(database["parameter"].documents[0], old_parameter)
         self.assertEqual(database["task"].documents[0], old_task)
         inserted_task = deepcopy(database["task"].documents[1])
         inserted_parameter = deepcopy(database["parameter"].documents[1])
         self.assertTrue(factory.clients[0].closed)
         database["task"].fail_insert_at = None
-        result = write_database(compilation, import_key="retry", client_factory=factory)
+        result = write_database(compilation, client_factory=factory)
         self.assertEqual(result["task_ids"], {"zx200": inserted_task["task_id"], "mst110cr": 2})
         self.assertEqual(result["inserted_tasks"], 1)
         self.assertEqual(result["skipped_tasks"], 1)

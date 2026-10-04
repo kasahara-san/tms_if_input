@@ -41,7 +41,7 @@ def assert_quaternion(document, vector, direction=1, array=False):
         assert document[key] == pytest.approx([value, value] if array else value)
 
 
-def assert_parameter_schema(compilation, plan, graph):
+def assert_parameter_schema(compilation, plan, graph, entry_nodes):
     """Derive all expected parameter values directly from each supplied input."""
     expected_fence = [[{"x": x, "y": y} for x, y in ring]
                       for polygon in graph.geofences for ring in polygon]
@@ -99,7 +99,10 @@ def assert_parameter_schema(compilation, plan, graph):
             connections = [graph.point(node) for node in params["connection_node"]]
             vector = params["block_vector"]
             entry = record(compilation, record_name(plan, task, "dumps_entry_point_leveling_area"))
-            expected = connections[(len(connections) - 1) // 2]
+            # Fixture-known directed route endpoints keep this expectation
+            # independent of the production entry-selection implementation.
+            expected = graph.point(entry_nodes[task.id])
+            assert expected.id in {str(node) for node in params["connection_node"]}
             assert (entry["x"], entry["y"], entry["z"]) == (expected.x, expected.y, 0)
             assert entry["model_name"] == dump_models
             assert_quaternion(entry, vector, -1)
@@ -220,7 +223,7 @@ def test_sample_compiles_from_input_values_and_contains_every_route():
     paths = SAMPLES / "261001-kyoto.geojson", SAMPLES / "261001-kyoto.xml"
     result = compile_scenario(*paths)
     plan, graph = load_inputs(*paths)
-    assert_parameter_schema(result, plan, graph)
+    assert_parameter_schema(result, plan, graph, {"3516795761": "919561426"})
     assert len(result.tasks) == len(plan.machines)
     routes = [document for document in result.parameters if "section_id" in document]
     used = {str(node) for task in plan.tasks.values()
@@ -234,20 +237,56 @@ def test_sample_compiles_from_input_values_and_contains_every_route():
     assert all(document["preferred_direction"] == "up" for document in routes)
 
 
-@pytest.mark.parametrize("connections,blocks", [(1, 1), (2, 3), (4, 2)])
+@pytest.mark.parametrize("connections,blocks", [(1, 1), (2, 3), (4, 2), (12, 5), (15, 12)])
 def test_variable_rings_blocks_connections_and_machine_count(tmp_path, connections, blocks):
     geojson, root = synthetic_inputs(connections, blocks)
     paths = write_pair(tmp_path, geojson, root)
     result = compile_scenario(*paths)
     plan, graph = load_inputs(*paths)
-    assert_parameter_schema(result, plan, graph)
+    assert_parameter_schema(result, plan, graph, {"grade-work": "connection-0"})
     assert len(result.tasks) == 3
     assert sum(document["record_name"].startswith("loading_position_")
                for document in result.parameters) == blocks
     assert sum(document["record_name"].startswith("block_")
                for document in result.parameters) == connections
+    assert {document["record_name"] for document in result.parameters
+            if document["record_name"].startswith("dump_node_")} == {
+                f"dump_node_{index}" for index in range(1, connections + 1)}
     assert len(record(result, "geo_fence")["coordinates"]) == 2
     assert len([document for document in result.parameters if "section_id" in document]) == 6 + connections
+
+
+@pytest.mark.parametrize("connection_order", [(2, 0, 1), (1, 2, 0)])
+@pytest.mark.parametrize("reverse_roads", [False, True])
+def test_entry_follows_first_matching_connection_without_changing_dump_paths(
+        tmp_path, connection_order, reverse_roads):
+    geojson, root = synthetic_inputs(connection_count=3)
+    baseline = compile_scenario(*write_pair(tmp_path, geojson, root))
+    connection_parameter = root.find(
+        "./procedure/tasks/task[@id='grade-work']/parameter[@name='connection_node']")
+    connection_parameter.set("value", json.dumps([
+        f"connection-{index}" for index in connection_order]))
+    if reverse_roads:
+        # Remove opposite duplicates so raw end-point matching cannot use
+        # the duplicate road to conceal a failure to orient the real road.
+        geojson["features"] = [feature for feature in geojson["features"]
+                               if not str(feature["properties"].get("id", "")).startswith("reverse-")]
+        for feature in geojson["features"]:
+            if feature["geometry"]["type"] != "LineString":
+                continue
+            properties = feature["properties"]
+            properties["startid"], properties["endid"] = (
+                properties["endid"], properties["startid"])
+            feature["geometry"]["coordinates"].reverse()
+    paths = write_pair(tmp_path, geojson, root)
+    result = compile_scenario(*paths)
+    plan, graph = load_inputs(*paths)
+    assert_parameter_schema(result, plan, graph, {
+        "grade-work": f"connection-{connection_order[0]}"})
+    entry_name = "dumps_entry_point_leveling_area"
+    assert [document for document in result.parameters if document["record_name"] != entry_name] == [
+        document for document in baseline.parameters if document["record_name"] != entry_name]
+    assert result.tasks == baseline.tasks
 
 
 def test_routes_reverse_all_vertices_and_link_multiple_passing_nodes(tmp_path):
@@ -348,7 +387,8 @@ def test_replacing_all_ids_models_coordinates_and_vectors_changes_output(tmp_pat
     paths = write_pair(tmp_path, geojson, root)
     result = compile_scenario(*paths)
     plan, graph = load_inputs(*paths)
-    assert_parameter_schema(result, plan, graph)
+    leveling = next(task for task in plan.tasks.values() if task.name == "leveling")
+    assert_parameter_schema(result, plan, graph, {leveling.id: id_map["919561426"]})
     assert {task["model_name"] for task in result.tasks} == set(model_map.values())
     baseline = compile_scenario(SAMPLES / "261001-kyoto.geojson", SAMPLES / "261001-kyoto.xml")
     routes = {document["section_id"]: document for document in result.parameters if "section_id" in document}
@@ -457,7 +497,8 @@ def test_two_sequential_work_areas_keep_parameter_and_route_references_separate(
     paths = write_pair(tmp_path, geojson, root)
     result = compile_scenario(*paths)
     plan, graph = load_inputs(*paths)
-    assert_parameter_schema(result, plan, graph)
+    assert_parameter_schema(result, plan, graph, {
+        "grade-work": "connection-0", prefix + "grade-work": prefix + "connection-0"})
     assert len(result.tasks) == 3
     assert len(plan.tasks) == 14
     for identifier in ("haul-work", prefix + "haul-work"):

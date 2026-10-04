@@ -6,7 +6,7 @@ import math
 from typing import Any
 
 from .model import GeoGraph, Plan, Task, record_name
-from .routes import build_route_documents
+from .routes import build_route_documents, leveling_entry_node
 
 
 def _number(value: Any, context: str) -> float:
@@ -142,7 +142,7 @@ def _leveling_documents(plan: Plan, graph: GeoGraph, task: Task,
         raise ValueError(f"Task {task.id}: leveling block and node array lengths must match")
     block_size = _vector(_required(task, "block_size"), "xy", f"Task {task.id} block_size")
     _number(_required(task, "leveling_height"), f"Task {task.id} leveling_height")
-    entry = connections[(len(connections) - 1) // 2]
+    entry = graph.point(leveling_entry_node(plan, graph, task)).xy()
     documents = [_position(dump_models, record_name(plan, task, "dumps_entry_point_leveling_area"),
                            entry, dump_rotation)]
     for index, point in enumerate(dump, 1):

@@ -3,7 +3,7 @@ from pathlib import Path
 import unittest
 
 from tms_if_input.model import GeoGraph, Plan, Point, Section, Task, load_inputs
-from tms_if_input.routes import build_route_documents
+from tms_if_input.routes import build_route_documents, leveling_entry_node
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -60,6 +60,76 @@ def disconnected_scenarios():
 
 
 class TransportRouteTests(unittest.TestCase):
+    def test_sample_leveling_entry_is_the_first_matching_xml_connection_node(self):
+        plan, graph = load_inputs(ROOT / "json_samples/261001-kyoto.geojson",
+                                  ROOT / "json_samples/261001-kyoto.xml")
+        leveling = next(task for task in plan.tasks.values() if task.name == "leveling")
+        self.assertEqual(leveling_entry_node(plan, graph, leveling), "919561426")
+
+    def test_leveling_entry_uses_xml_order_when_multiple_endpoints_match(self):
+        plan, graph = branch_scenario(3)
+        level = Task("level", "leveling", {"machine": "bulldozer",
+                                            "connection_node": ["entry-2", "entry-0", "entry-1"]})
+        tasks = {**plan.tasks, "level": level}
+        plan = Plan(plan.machines, tasks, ())
+        self.assertEqual(leveling_entry_node(plan, graph, level), "entry-2")
+
+    def test_leveling_entry_uses_only_the_candidate_matching_an_up_endpoint(self):
+        plan, graph = branch_scenario(1)
+        level = Task("level", "leveling", {"machine": "bulldozer",
+                                            "connection_node": ["load", "entry-0"]})
+        plan = Plan(plan.machines, {**plan.tasks, "level": level}, ())
+        # The loading root is an input connection candidate but starts every
+        # outgoing section, so the only valid up-direction endpoint is entry-0.
+        self.assertEqual(leveling_entry_node(plan, graph, level), "entry-0")
+
+    def test_leveling_entry_does_not_require_a_terminal_of_the_entire_network(self):
+        plan, graph = branch_scenario(1)
+        level = Task("level", "leveling", {"machine": "bulldozer",
+                                            "connection_node": ["hub", "entry-0"]})
+        plan = Plan(plan.machines, {**plan.tasks, "level": level}, ())
+        points = {**graph.points, "bridge": Point("bridge", .5, 3, 0)}
+        sections = (*graph.sections[:-1],
+                    Section("connector-in", "hub", "bridge", ((0, 2), (.5, 3))),
+                    Section("connector-out", "bridge", "entry-0", ((.5, 3), (1, 4))))
+        graph = GeoGraph(points, sections, ())
+        self.assertEqual(leveling_entry_node(plan, graph, level), "hub")
+
+    def test_leveling_entry_is_independent_of_input_section_direction_and_inner_vertices(self):
+        plan, graph = branch_scenario(1)
+        sections = tuple(Section(section.id, section.end, section.start,
+                                 tuple(reversed(section.coordinates)))
+                         for section in graph.sections)
+        # This interior coordinate coincides with another Point and must never
+        # become an endpoint candidate merely because its coordinates match.
+        sections = (*sections[:-1],
+                    Section("connector-0", "entry-0", "hub", ((1, 4), (0, 0), (0, 2))))
+        graph = GeoGraph(graph.points, sections, ())
+        level = Task("level", "leveling", {"machine": "bulldozer",
+                                            "connection_node": ["load", "entry-0"]})
+        plan = Plan(plan.machines, {**plan.tasks, "level": level}, ())
+        self.assertEqual(leveling_entry_node(plan, graph, level), "entry-0")
+
+    def test_leveling_entries_stay_in_their_own_work_areas(self):
+        plan, graph = disconnected_scenarios()
+        self.assertEqual(leveling_entry_node(plan, graph, plan.tasks["level"]), "entry-0")
+        self.assertEqual(leveling_entry_node(plan, graph, plan.tasks["second-level"]), "second-entry-0")
+
+    def test_leveling_entry_has_no_fallback_when_candidates_do_not_end_a_road(self):
+        plan, graph = branch_scenario(1)
+        level = Task("unconnected-level", "leveling", {"machine": "bulldozer",
+                                                        "connection_node": ["load"]})
+        plan = Plan(plan.machines, {**plan.tasks, level.id: level}, ())
+        with self.assertRaisesRegex(ValueError, "Task unconnected-level: no connection_node.*endpoint"):
+            leveling_entry_node(plan, graph, level)
+
+    def test_leveling_entry_without_transport_is_an_explicit_input_error(self):
+        plan, graph = branch_scenario(1)
+        tasks = {identifier: task for identifier, task in plan.tasks.items() if task.name != "transport"}
+        plan = Plan(plan.machines, tasks, ())
+        with self.assertRaisesRegex(ValueError, "Task level: leveling entry requires a transport road"):
+            leveling_entry_node(plan, graph, tasks["level"])
+
     def test_all_sample_main_and_passing_sections_are_saved(self):
         plan, graph = load_inputs(ROOT / "json_samples/261001-kyoto.geojson",
                                   ROOT / "json_samples/261001-kyoto.xml")

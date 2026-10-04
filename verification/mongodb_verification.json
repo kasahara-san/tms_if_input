@@ -1,0 +1,4288 @@
+{
+  "status": "passed",
+  "summary_ja": "rostmsdb.parameterの65文書とrostmsdb.taskの4文書は、資料本文・入力値および最新の侵入口変更指示に一致。侵入口はXML指定connection_nodeの中から運搬/離合区間のup方向端点を選択し、今回919561426=(58.9042,-92.4637)。対象入口文書のx/yのみ反映し、他の文書・フラグは保持。通常launchは自動終了。",
+  "timestamp_utc": "2026-10-04T12:15:45.213219+00:00",
+  "mongo_uri": "mongodb://localhost:27017",
+  "mongo_version": "6.0.24",
+  "database": "rostmsdb",
+  "collections": [
+    "parameter",
+    "task"
+  ],
+  "collection_counts": {
+    "parameter": 65,
+    "task": 4
+  },
+  "matching_document_counts": {
+    "parameter": 65,
+    "task": 4
+  },
+  "existing_documents_modified": 1,
+  "existing_documents_removed": 0,
+  "registration": {
+    "status": "passed",
+    "timestamp_utc": "2026-10-04T11:51:23.295349+00:00",
+    "mongo_uri": "mongodb://localhost:27017",
+    "database": "rostmsdb",
+    "collections": [
+      "parameter",
+      "task"
+    ],
+    "before_counts": {
+      "parameter": 65,
+      "task": 4
+    },
+    "after_counts": {
+      "parameter": 65,
+      "task": 4
+    },
+    "matching_document_counts": {
+      "parameter": 65,
+      "task": 4
+    },
+    "existing_documents_modified": [],
+    "existing_documents_removed": [],
+    "registration_runs": [
+      {
+        "command": [
+          "ros2",
+          "launch",
+          "tms_if_input",
+          "tms_if_input.launch.py",
+          "geojson_path:=261001-kyoto.geojson",
+          "xml_path:=261001-kyoto.xml",
+          "output_dir:=/tmp/tms_if_input-rostmsdb-verify/artifacts"
+        ],
+        "exit_code": 0,
+        "automatic_exit": true,
+        "log": "/tmp/tms_if_input-rostmsdb-verify/first_launch.log"
+      },
+      {
+        "command": [
+          "ros2",
+          "launch",
+          "tms_if_input",
+          "tms_if_input.launch.py",
+          "geojson_path:=261001-kyoto.geojson",
+          "xml_path:=261001-kyoto.xml",
+          "output_dir:=/tmp/tms_if_input-rostmsdb-verify/artifacts"
+        ],
+        "exit_code": 0,
+        "automatic_exit": true,
+        "log": "/tmp/tms_if_input-rostmsdb-verify/repeat_launch.log"
+      }
+    ]
+  },
+  "workspace_launch": {
+    "status": "passed",
+    "command": [
+      "ros2",
+      "launch",
+      "tms_if_input",
+      "tms_if_input.launch.py",
+      "geojson_path:=261001-kyoto.geojson",
+      "xml_path:=261001-kyoto.xml",
+      "output_dir:=/tmp/tms_if_input-entry-change/artifacts"
+    ],
+    "exit_code": 0,
+    "automatic_exit": true,
+    "entry_point_id": "919561426",
+    "entry_document": {
+      "type": "static",
+      "model_name": [
+        "mst110cr",
+        "mst2200vdr"
+      ],
+      "record_name": "dumps_entry_point_leveling_area",
+      "x": 58.9042,
+      "y": -92.4637,
+      "z": 0.0,
+      "qx": 0.0,
+      "qy": 0.0,
+      "qz": -0.5284411892483951,
+      "qw": 0.8489699108365042
+    },
+    "artifact_and_actual_database_match": true
+  },
+  "workspace_rebuild": {
+    "package": "tms_if_input",
+    "completed": true,
+    "matching_source_files": [
+      "tms_if_input/behavior_tree.py",
+      "tms_if_input/parameters.py",
+      "tms_if_input/database.py",
+      "tms_if_input/__init__.py",
+      "tms_if_input/compiler.py",
+      "tms_if_input/routes.py",
+      "tms_if_input/cli.py",
+      "tms_if_input/importer.py",
+      "tms_if_input/model.py",
+      "launch/tms_if_input.launch.py",
+      "json_samples/261001-kyoto.geojson",
+      "json_samples/261001-kyoto.xml"
+    ]
+  },
+  "launch_behavior": {
+    "keep_alive_default": false,
+    "automatic_exit_after_import": true,
+    "service_mode": "keep_alive:=true or import_on_start:=false"
+  },
+  "test_suite": {
+    "passed": 131,
+    "failed": 0,
+    "command": "PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python3 -m pytest -q"
+  },
+  "independent_specification_checks": {
+    "parameters": {
+      "status": "passed",
+      "independent_of_compiler": true,
+      "database_operations": 0,
+      "expected_nonroute_documents": 47,
+      "matched_nonroute_documents": 47,
+      "actual_parameter_documents": 65,
+      "values_checked": 743,
+      "errors": [],
+      "additional_nonroute_records_preserved": [],
+      "inputs": {
+        "geojson": "/home/kasahara/SIP_PROJECTS/ros2_tms_ws/src/tms_if_input/json_samples/261001-kyoto.geojson",
+        "xml": "/home/kasahara/SIP_PROJECTS/ros2_tms_ws/src/tms_if_input/json_samples/261001-kyoto.xml"
+      },
+      "ignored_database_metadata_fields": [
+        "_id",
+        "_tms_if_input"
+      ],
+      "numeric_comparison": "Numeric BSON int/double allowed; absolute/relative tolerance 1e-12; bool distinct",
+      "specification_notes": "/tmp/tms_if_input-entry-change/parameter_spec_notes.json"
+    },
+    "routes": {
+      "status": "pass",
+      "actual_export": "/tmp/tms_if_input-rostmsdb-verify/actual_parameter.json",
+      "source_line_count": 90,
+      "selected_direction_count": 36,
+      "actual_route_count": 18,
+      "main_count": 12,
+      "sub_count": 6,
+      "explicit_spec_example_count": 11,
+      "passed_check_count": 604,
+      "failed_check_count": 0,
+      "failures": [],
+      "checks": [
+        {
+          "check": "selected endpoint pairs match the complete intended transport graph",
+          "actual_count": 18,
+          "expected_count": 18
+        },
+        {
+          "check": "both directions of all 18 source roads are selected",
+          "actual_count": 36
+        },
+        {
+          "check": "initialize node also used in excavation stays excluded by its work role"
+        },
+        {
+          "check": "source roads form exactly one opposite-direction pair",
+          "ids": [
+            "3260195895",
+            "4224337785"
+          ]
+        },
+        {
+          "check": "both source directions contain all the same vertices",
+          "ids": [
+            "3260195895",
+            "4224337785"
+          ]
+        },
+        {
+          "check": "source roads form exactly one opposite-direction pair",
+          "ids": [
+            "768363352",
+            "4224337786"
+          ]
+        },
+        {
+          "check": "both source directions contain all the same vertices",
+          "ids": [
+            "768363352",
+            "4224337786"
+          ]
+        },
+        {
+          "check": "source roads form exactly one opposite-direction pair",
+          "ids": [
+            "3851915284",
+            "4224337787"
+          ]
+        },
+        {
+          "check": "both source directions contain all the same vertices",
+          "ids": [
+            "3851915284",
+            "4224337787"
+          ]
+        },
+        {
+          "check": "source roads form exactly one opposite-direction pair",
+          "ids": [
+            "1769298385",
+            "4224337788"
+          ]
+        },
+        {
+          "check": "both source directions contain all the same vertices",
+          "ids": [
+            "1769298385",
+            "4224337788"
+          ]
+        },
+        {
+          "check": "source roads form exactly one opposite-direction pair",
+          "ids": [
+            "3453947199",
+            "4224337789"
+          ]
+        },
+        {
+          "check": "both source directions contain all the same vertices",
+          "ids": [
+            "3453947199",
+            "4224337789"
+          ]
+        },
+        {
+          "check": "source roads form exactly one opposite-direction pair",
+          "ids": [
+            "3775605330",
+            "4224337790"
+          ]
+        },
+        {
+          "check": "both source directions contain all the same vertices",
+          "ids": [
+            "3775605330",
+            "4224337790"
+          ]
+        },
+        {
+          "check": "source roads form exactly one opposite-direction pair",
+          "ids": [
+            "2109419383",
+            "4224337791"
+          ]
+        },
+        {
+          "check": "both source directions contain all the same vertices",
+          "ids": [
+            "2109419383",
+            "4224337791"
+          ]
+        },
+        {
+          "check": "source roads form exactly one opposite-direction pair",
+          "ids": [
+            "944236149",
+            "4224337792"
+          ]
+        },
+        {
+          "check": "both source directions contain all the same vertices",
+          "ids": [
+            "944236149",
+            "4224337792"
+          ]
+        },
+        {
+          "check": "source roads form exactly one opposite-direction pair",
+          "ids": [
+            "1285700315",
+            "4224337793"
+          ]
+        },
+        {
+          "check": "both source directions contain all the same vertices",
+          "ids": [
+            "1285700315",
+            "4224337793"
+          ]
+        },
+        {
+          "check": "source roads form exactly one opposite-direction pair",
+          "ids": [
+            "3483617579",
+            "4224337794"
+          ]
+        },
+        {
+          "check": "both source directions contain all the same vertices",
+          "ids": [
+            "3483617579",
+            "4224337794"
+          ]
+        },
+        {
+          "check": "source roads form exactly one opposite-direction pair",
+          "ids": [
+            "2758184951",
+            "4224337795"
+          ]
+        },
+        {
+          "check": "both source directions contain all the same vertices",
+          "ids": [
+            "2758184951",
+            "4224337795"
+          ]
+        },
+        {
+          "check": "source roads form exactly one opposite-direction pair",
+          "ids": [
+            "1547089919",
+            "4224337796"
+          ]
+        },
+        {
+          "check": "both source directions contain all the same vertices",
+          "ids": [
+            "1547089919",
+            "4224337796"
+          ]
+        },
+        {
+          "check": "source roads form exactly one opposite-direction pair",
+          "ids": [
+            "2192002421",
+            "4224337797"
+          ]
+        },
+        {
+          "check": "both source directions contain all the same vertices",
+          "ids": [
+            "2192002421",
+            "4224337797"
+          ]
+        },
+        {
+          "check": "source roads form exactly one opposite-direction pair",
+          "ids": [
+            "1901058875",
+            "4224337798"
+          ]
+        },
+        {
+          "check": "both source directions contain all the same vertices",
+          "ids": [
+            "1901058875",
+            "4224337798"
+          ]
+        },
+        {
+          "check": "source roads form exactly one opposite-direction pair",
+          "ids": [
+            "2206133296",
+            "4224337805"
+          ]
+        },
+        {
+          "check": "both source directions contain all the same vertices",
+          "ids": [
+            "2206133296",
+            "4224337805"
+          ]
+        },
+        {
+          "check": "source roads form exactly one opposite-direction pair",
+          "ids": [
+            "840315598",
+            "4224337827"
+          ]
+        },
+        {
+          "check": "both source directions contain all the same vertices",
+          "ids": [
+            "840315598",
+            "4224337827"
+          ]
+        },
+        {
+          "check": "source roads form exactly one opposite-direction pair",
+          "ids": [
+            "3159144693",
+            "4224337828"
+          ]
+        },
+        {
+          "check": "both source directions contain all the same vertices",
+          "ids": [
+            "3159144693",
+            "4224337828"
+          ]
+        },
+        {
+          "check": "source roads form exactly one opposite-direction pair",
+          "ids": [
+            "936963196",
+            "4224337829"
+          ]
+        },
+        {
+          "check": "both source directions contain all the same vertices",
+          "ids": [
+            "936963196",
+            "4224337829"
+          ]
+        },
+        {
+          "check": "MongoDB contains every main and sub road exactly once",
+          "actual_count": 18
+        },
+        {
+          "check": "MongoDB section IDs are unique"
+        },
+        {
+          "check": "MongoDB section ID exists in source",
+          "section_id": "2206133296"
+        },
+        {
+          "check": "reverse-direction duplicate is absent from MongoDB",
+          "section_id": "2206133296"
+        },
+        {
+          "check": "only transport road pairs are registered",
+          "section_id": "2206133296"
+        },
+        {
+          "check": "every vertex preserves source coordinates in loading-to-leveling orientation",
+          "section_id": "2206133296",
+          "vertices": 2
+        },
+        {
+          "check": "road coordinate endpoints coincide with the designated Point features",
+          "section_id": "2206133296"
+        },
+        {
+          "check": "label derives from both endpoint route ranks",
+          "section_id": "2206133296"
+        },
+        {
+          "check": "road identity, type, preferred direction and machine scope match specification",
+          "section_id": "2206133296"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "2206133296",
+          "field": "z"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "2206133296",
+          "field": "qx"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "2206133296",
+          "field": "qy"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "2206133296",
+          "field": "qz"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "2206133296",
+          "field": "qw"
+        },
+        {
+          "check": "actual road preserves all coordinates of each selected source direction",
+          "section_id": "2206133296",
+          "source_id": "2206133296"
+        },
+        {
+          "check": "actual road preserves all coordinates of each selected source direction",
+          "section_id": "2206133296",
+          "source_id": "4224337805"
+        },
+        {
+          "check": "MongoDB section ID exists in source",
+          "section_id": "3260195895"
+        },
+        {
+          "check": "reverse-direction duplicate is absent from MongoDB",
+          "section_id": "3260195895"
+        },
+        {
+          "check": "only transport road pairs are registered",
+          "section_id": "3260195895"
+        },
+        {
+          "check": "every vertex preserves source coordinates in loading-to-leveling orientation",
+          "section_id": "3260195895",
+          "vertices": 2
+        },
+        {
+          "check": "road coordinate endpoints coincide with the designated Point features",
+          "section_id": "3260195895"
+        },
+        {
+          "check": "label derives from both endpoint route ranks",
+          "section_id": "3260195895"
+        },
+        {
+          "check": "road identity, type, preferred direction and machine scope match specification",
+          "section_id": "3260195895"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "3260195895",
+          "field": "z"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "3260195895",
+          "field": "qx"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "3260195895",
+          "field": "qy"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "3260195895",
+          "field": "qz"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "3260195895",
+          "field": "qw"
+        },
+        {
+          "check": "actual road preserves all coordinates of each selected source direction",
+          "section_id": "3260195895",
+          "source_id": "3260195895"
+        },
+        {
+          "check": "actual road preserves all coordinates of each selected source direction",
+          "section_id": "3260195895",
+          "source_id": "4224337785"
+        },
+        {
+          "check": "MongoDB section ID exists in source",
+          "section_id": "3453947199"
+        },
+        {
+          "check": "reverse-direction duplicate is absent from MongoDB",
+          "section_id": "3453947199"
+        },
+        {
+          "check": "only transport road pairs are registered",
+          "section_id": "3453947199"
+        },
+        {
+          "check": "every vertex preserves source coordinates in loading-to-leveling orientation",
+          "section_id": "3453947199",
+          "vertices": 2
+        },
+        {
+          "check": "road coordinate endpoints coincide with the designated Point features",
+          "section_id": "3453947199"
+        },
+        {
+          "check": "label derives from both endpoint route ranks",
+          "section_id": "3453947199"
+        },
+        {
+          "check": "road identity, type, preferred direction and machine scope match specification",
+          "section_id": "3453947199"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "3453947199",
+          "field": "z"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "3453947199",
+          "field": "qx"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "3453947199",
+          "field": "qy"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "3453947199",
+          "field": "qz"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "3453947199",
+          "field": "qw"
+        },
+        {
+          "check": "actual road preserves all coordinates of each selected source direction",
+          "section_id": "3453947199",
+          "source_id": "3453947199"
+        },
+        {
+          "check": "actual road preserves all coordinates of each selected source direction",
+          "section_id": "3453947199",
+          "source_id": "4224337789"
+        },
+        {
+          "check": "MongoDB section ID exists in source",
+          "section_id": "3775605330"
+        },
+        {
+          "check": "reverse-direction duplicate is absent from MongoDB",
+          "section_id": "3775605330"
+        },
+        {
+          "check": "only transport road pairs are registered",
+          "section_id": "3775605330"
+        },
+        {
+          "check": "every vertex preserves source coordinates in loading-to-leveling orientation",
+          "section_id": "3775605330",
+          "vertices": 2
+        },
+        {
+          "check": "road coordinate endpoints coincide with the designated Point features",
+          "section_id": "3775605330"
+        },
+        {
+          "check": "label derives from both endpoint route ranks",
+          "section_id": "3775605330"
+        },
+        {
+          "check": "road identity, type, preferred direction and machine scope match specification",
+          "section_id": "3775605330"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "3775605330",
+          "field": "z"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "3775605330",
+          "field": "qx"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "3775605330",
+          "field": "qy"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "3775605330",
+          "field": "qz"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "3775605330",
+          "field": "qw"
+        },
+        {
+          "check": "actual road preserves all coordinates of each selected source direction",
+          "section_id": "3775605330",
+          "source_id": "3775605330"
+        },
+        {
+          "check": "actual road preserves all coordinates of each selected source direction",
+          "section_id": "3775605330",
+          "source_id": "4224337790"
+        },
+        {
+          "check": "MongoDB section ID exists in source",
+          "section_id": "2109419383"
+        },
+        {
+          "check": "reverse-direction duplicate is absent from MongoDB",
+          "section_id": "2109419383"
+        },
+        {
+          "check": "only transport road pairs are registered",
+          "section_id": "2109419383"
+        },
+        {
+          "check": "every vertex preserves source coordinates in loading-to-leveling orientation",
+          "section_id": "2109419383",
+          "vertices": 2
+        },
+        {
+          "check": "road coordinate endpoints coincide with the designated Point features",
+          "section_id": "2109419383"
+        },
+        {
+          "check": "label derives from both endpoint route ranks",
+          "section_id": "2109419383"
+        },
+        {
+          "check": "road identity, type, preferred direction and machine scope match specification",
+          "section_id": "2109419383"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "2109419383",
+          "field": "z"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "2109419383",
+          "field": "qx"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "2109419383",
+          "field": "qy"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "2109419383",
+          "field": "qz"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "2109419383",
+          "field": "qw"
+        },
+        {
+          "check": "actual road preserves all coordinates of each selected source direction",
+          "section_id": "2109419383",
+          "source_id": "2109419383"
+        },
+        {
+          "check": "actual road preserves all coordinates of each selected source direction",
+          "section_id": "2109419383",
+          "source_id": "4224337791"
+        },
+        {
+          "check": "MongoDB section ID exists in source",
+          "section_id": "944236149"
+        },
+        {
+          "check": "reverse-direction duplicate is absent from MongoDB",
+          "section_id": "944236149"
+        },
+        {
+          "check": "only transport road pairs are registered",
+          "section_id": "944236149"
+        },
+        {
+          "check": "every vertex preserves source coordinates in loading-to-leveling orientation",
+          "section_id": "944236149",
+          "vertices": 2
+        },
+        {
+          "check": "road coordinate endpoints coincide with the designated Point features",
+          "section_id": "944236149"
+        },
+        {
+          "check": "label derives from both endpoint route ranks",
+          "section_id": "944236149"
+        },
+        {
+          "check": "road identity, type, preferred direction and machine scope match specification",
+          "section_id": "944236149"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "944236149",
+          "field": "z"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "944236149",
+          "field": "qx"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "944236149",
+          "field": "qy"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "944236149",
+          "field": "qz"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "944236149",
+          "field": "qw"
+        },
+        {
+          "check": "actual road preserves all coordinates of each selected source direction",
+          "section_id": "944236149",
+          "source_id": "944236149"
+        },
+        {
+          "check": "actual road preserves all coordinates of each selected source direction",
+          "section_id": "944236149",
+          "source_id": "4224337792"
+        },
+        {
+          "check": "MongoDB section ID exists in source",
+          "section_id": "1285700315"
+        },
+        {
+          "check": "reverse-direction duplicate is absent from MongoDB",
+          "section_id": "1285700315"
+        },
+        {
+          "check": "only transport road pairs are registered",
+          "section_id": "1285700315"
+        },
+        {
+          "check": "every vertex preserves source coordinates in loading-to-leveling orientation",
+          "section_id": "1285700315",
+          "vertices": 2
+        },
+        {
+          "check": "road coordinate endpoints coincide with the designated Point features",
+          "section_id": "1285700315"
+        },
+        {
+          "check": "label derives from both endpoint route ranks",
+          "section_id": "1285700315"
+        },
+        {
+          "check": "road identity, type, preferred direction and machine scope match specification",
+          "section_id": "1285700315"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "1285700315",
+          "field": "z"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "1285700315",
+          "field": "qx"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "1285700315",
+          "field": "qy"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "1285700315",
+          "field": "qz"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "1285700315",
+          "field": "qw"
+        },
+        {
+          "check": "actual road preserves all coordinates of each selected source direction",
+          "section_id": "1285700315",
+          "source_id": "1285700315"
+        },
+        {
+          "check": "actual road preserves all coordinates of each selected source direction",
+          "section_id": "1285700315",
+          "source_id": "4224337793"
+        },
+        {
+          "check": "MongoDB section ID exists in source",
+          "section_id": "3483617579"
+        },
+        {
+          "check": "reverse-direction duplicate is absent from MongoDB",
+          "section_id": "3483617579"
+        },
+        {
+          "check": "only transport road pairs are registered",
+          "section_id": "3483617579"
+        },
+        {
+          "check": "every vertex preserves source coordinates in loading-to-leveling orientation",
+          "section_id": "3483617579",
+          "vertices": 2
+        },
+        {
+          "check": "road coordinate endpoints coincide with the designated Point features",
+          "section_id": "3483617579"
+        },
+        {
+          "check": "label derives from both endpoint route ranks",
+          "section_id": "3483617579"
+        },
+        {
+          "check": "road identity, type, preferred direction and machine scope match specification",
+          "section_id": "3483617579"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "3483617579",
+          "field": "z"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "3483617579",
+          "field": "qx"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "3483617579",
+          "field": "qy"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "3483617579",
+          "field": "qz"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "3483617579",
+          "field": "qw"
+        },
+        {
+          "check": "actual road preserves all coordinates of each selected source direction",
+          "section_id": "3483617579",
+          "source_id": "3483617579"
+        },
+        {
+          "check": "actual road preserves all coordinates of each selected source direction",
+          "section_id": "3483617579",
+          "source_id": "4224337794"
+        },
+        {
+          "check": "MongoDB section ID exists in source",
+          "section_id": "1901058875"
+        },
+        {
+          "check": "reverse-direction duplicate is absent from MongoDB",
+          "section_id": "1901058875"
+        },
+        {
+          "check": "only transport road pairs are registered",
+          "section_id": "1901058875"
+        },
+        {
+          "check": "every vertex preserves source coordinates in loading-to-leveling orientation",
+          "section_id": "1901058875",
+          "vertices": 2
+        },
+        {
+          "check": "road coordinate endpoints coincide with the designated Point features",
+          "section_id": "1901058875"
+        },
+        {
+          "check": "label derives from both endpoint route ranks",
+          "section_id": "1901058875"
+        },
+        {
+          "check": "road identity, type, preferred direction and machine scope match specification",
+          "section_id": "1901058875"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "1901058875",
+          "field": "z"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "1901058875",
+          "field": "qx"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "1901058875",
+          "field": "qy"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "1901058875",
+          "field": "qz"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "1901058875",
+          "field": "qw"
+        },
+        {
+          "check": "actual road preserves all coordinates of each selected source direction",
+          "section_id": "1901058875",
+          "source_id": "1901058875"
+        },
+        {
+          "check": "actual road preserves all coordinates of each selected source direction",
+          "section_id": "1901058875",
+          "source_id": "4224337798"
+        },
+        {
+          "check": "MongoDB section ID exists in source",
+          "section_id": "840315598"
+        },
+        {
+          "check": "reverse-direction duplicate is absent from MongoDB",
+          "section_id": "840315598"
+        },
+        {
+          "check": "only transport road pairs are registered",
+          "section_id": "840315598"
+        },
+        {
+          "check": "every vertex preserves source coordinates in loading-to-leveling orientation",
+          "section_id": "840315598",
+          "vertices": 2
+        },
+        {
+          "check": "road coordinate endpoints coincide with the designated Point features",
+          "section_id": "840315598"
+        },
+        {
+          "check": "label derives from both endpoint route ranks",
+          "section_id": "840315598"
+        },
+        {
+          "check": "road identity, type, preferred direction and machine scope match specification",
+          "section_id": "840315598"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "840315598",
+          "field": "z"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "840315598",
+          "field": "qx"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "840315598",
+          "field": "qy"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "840315598",
+          "field": "qz"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "840315598",
+          "field": "qw"
+        },
+        {
+          "check": "actual road preserves all coordinates of each selected source direction",
+          "section_id": "840315598",
+          "source_id": "840315598"
+        },
+        {
+          "check": "actual road preserves all coordinates of each selected source direction",
+          "section_id": "840315598",
+          "source_id": "4224337827"
+        },
+        {
+          "check": "MongoDB section ID exists in source",
+          "section_id": "3159144693"
+        },
+        {
+          "check": "reverse-direction duplicate is absent from MongoDB",
+          "section_id": "3159144693"
+        },
+        {
+          "check": "only transport road pairs are registered",
+          "section_id": "3159144693"
+        },
+        {
+          "check": "every vertex preserves source coordinates in loading-to-leveling orientation",
+          "section_id": "3159144693",
+          "vertices": 2
+        },
+        {
+          "check": "road coordinate endpoints coincide with the designated Point features",
+          "section_id": "3159144693"
+        },
+        {
+          "check": "label derives from both endpoint route ranks",
+          "section_id": "3159144693"
+        },
+        {
+          "check": "road identity, type, preferred direction and machine scope match specification",
+          "section_id": "3159144693"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "3159144693",
+          "field": "z"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "3159144693",
+          "field": "qx"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "3159144693",
+          "field": "qy"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "3159144693",
+          "field": "qz"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "3159144693",
+          "field": "qw"
+        },
+        {
+          "check": "actual road preserves all coordinates of each selected source direction",
+          "section_id": "3159144693",
+          "source_id": "3159144693"
+        },
+        {
+          "check": "actual road preserves all coordinates of each selected source direction",
+          "section_id": "3159144693",
+          "source_id": "4224337828"
+        },
+        {
+          "check": "MongoDB section ID exists in source",
+          "section_id": "936963196"
+        },
+        {
+          "check": "reverse-direction duplicate is absent from MongoDB",
+          "section_id": "936963196"
+        },
+        {
+          "check": "only transport road pairs are registered",
+          "section_id": "936963196"
+        },
+        {
+          "check": "every vertex preserves source coordinates in loading-to-leveling orientation",
+          "section_id": "936963196",
+          "vertices": 2
+        },
+        {
+          "check": "road coordinate endpoints coincide with the designated Point features",
+          "section_id": "936963196"
+        },
+        {
+          "check": "label derives from both endpoint route ranks",
+          "section_id": "936963196"
+        },
+        {
+          "check": "road identity, type, preferred direction and machine scope match specification",
+          "section_id": "936963196"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "936963196",
+          "field": "z"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "936963196",
+          "field": "qx"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "936963196",
+          "field": "qy"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "936963196",
+          "field": "qz"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "936963196",
+          "field": "qw"
+        },
+        {
+          "check": "actual road preserves all coordinates of each selected source direction",
+          "section_id": "936963196",
+          "source_id": "936963196"
+        },
+        {
+          "check": "actual road preserves all coordinates of each selected source direction",
+          "section_id": "936963196",
+          "source_id": "4224337829"
+        },
+        {
+          "check": "MongoDB section ID exists in source",
+          "section_id": "768363352"
+        },
+        {
+          "check": "reverse-direction duplicate is absent from MongoDB",
+          "section_id": "768363352"
+        },
+        {
+          "check": "only transport road pairs are registered",
+          "section_id": "768363352"
+        },
+        {
+          "check": "every vertex preserves source coordinates in loading-to-leveling orientation",
+          "section_id": "768363352",
+          "vertices": 2
+        },
+        {
+          "check": "road coordinate endpoints coincide with the designated Point features",
+          "section_id": "768363352"
+        },
+        {
+          "check": "label derives from both endpoint route ranks",
+          "section_id": "768363352"
+        },
+        {
+          "check": "road identity, type, preferred direction and machine scope match specification",
+          "section_id": "768363352"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "768363352",
+          "field": "z"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "768363352",
+          "field": "qx"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "768363352",
+          "field": "qy"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "768363352",
+          "field": "qz"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "768363352",
+          "field": "qw"
+        },
+        {
+          "check": "actual road preserves all coordinates of each selected source direction",
+          "section_id": "768363352",
+          "source_id": "768363352"
+        },
+        {
+          "check": "actual road preserves all coordinates of each selected source direction",
+          "section_id": "768363352",
+          "source_id": "4224337786"
+        },
+        {
+          "check": "MongoDB section ID exists in source",
+          "section_id": "3851915284"
+        },
+        {
+          "check": "reverse-direction duplicate is absent from MongoDB",
+          "section_id": "3851915284"
+        },
+        {
+          "check": "only transport road pairs are registered",
+          "section_id": "3851915284"
+        },
+        {
+          "check": "every vertex preserves source coordinates in loading-to-leveling orientation",
+          "section_id": "3851915284",
+          "vertices": 2
+        },
+        {
+          "check": "road coordinate endpoints coincide with the designated Point features",
+          "section_id": "3851915284"
+        },
+        {
+          "check": "label derives from both endpoint route ranks",
+          "section_id": "3851915284"
+        },
+        {
+          "check": "road identity, type, preferred direction and machine scope match specification",
+          "section_id": "3851915284"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "3851915284",
+          "field": "z"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "3851915284",
+          "field": "qx"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "3851915284",
+          "field": "qy"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "3851915284",
+          "field": "qz"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "3851915284",
+          "field": "qw"
+        },
+        {
+          "check": "actual road preserves all coordinates of each selected source direction",
+          "section_id": "3851915284",
+          "source_id": "3851915284"
+        },
+        {
+          "check": "actual road preserves all coordinates of each selected source direction",
+          "section_id": "3851915284",
+          "source_id": "4224337787"
+        },
+        {
+          "check": "MongoDB section ID exists in source",
+          "section_id": "1769298385"
+        },
+        {
+          "check": "reverse-direction duplicate is absent from MongoDB",
+          "section_id": "1769298385"
+        },
+        {
+          "check": "only transport road pairs are registered",
+          "section_id": "1769298385"
+        },
+        {
+          "check": "every vertex preserves source coordinates in loading-to-leveling orientation",
+          "section_id": "1769298385",
+          "vertices": 2
+        },
+        {
+          "check": "road coordinate endpoints coincide with the designated Point features",
+          "section_id": "1769298385"
+        },
+        {
+          "check": "label derives from both endpoint route ranks",
+          "section_id": "1769298385"
+        },
+        {
+          "check": "road identity, type, preferred direction and machine scope match specification",
+          "section_id": "1769298385"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "1769298385",
+          "field": "z"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "1769298385",
+          "field": "qx"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "1769298385",
+          "field": "qy"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "1769298385",
+          "field": "qz"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "1769298385",
+          "field": "qw"
+        },
+        {
+          "check": "actual road preserves all coordinates of each selected source direction",
+          "section_id": "1769298385",
+          "source_id": "1769298385"
+        },
+        {
+          "check": "actual road preserves all coordinates of each selected source direction",
+          "section_id": "1769298385",
+          "source_id": "4224337788"
+        },
+        {
+          "check": "MongoDB section ID exists in source",
+          "section_id": "2192002421"
+        },
+        {
+          "check": "reverse-direction duplicate is absent from MongoDB",
+          "section_id": "2192002421"
+        },
+        {
+          "check": "only transport road pairs are registered",
+          "section_id": "2192002421"
+        },
+        {
+          "check": "every vertex preserves source coordinates in loading-to-leveling orientation",
+          "section_id": "2192002421",
+          "vertices": 2
+        },
+        {
+          "check": "road coordinate endpoints coincide with the designated Point features",
+          "section_id": "2192002421"
+        },
+        {
+          "check": "label derives from both endpoint route ranks",
+          "section_id": "2192002421"
+        },
+        {
+          "check": "road identity, type, preferred direction and machine scope match specification",
+          "section_id": "2192002421"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "2192002421",
+          "field": "z"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "2192002421",
+          "field": "qx"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "2192002421",
+          "field": "qy"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "2192002421",
+          "field": "qz"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "2192002421",
+          "field": "qw"
+        },
+        {
+          "check": "actual road preserves all coordinates of each selected source direction",
+          "section_id": "2192002421",
+          "source_id": "2192002421"
+        },
+        {
+          "check": "actual road preserves all coordinates of each selected source direction",
+          "section_id": "2192002421",
+          "source_id": "4224337797"
+        },
+        {
+          "check": "MongoDB section ID exists in source",
+          "section_id": "1547089919"
+        },
+        {
+          "check": "reverse-direction duplicate is absent from MongoDB",
+          "section_id": "1547089919"
+        },
+        {
+          "check": "only transport road pairs are registered",
+          "section_id": "1547089919"
+        },
+        {
+          "check": "every vertex preserves source coordinates in loading-to-leveling orientation",
+          "section_id": "1547089919",
+          "vertices": 2
+        },
+        {
+          "check": "road coordinate endpoints coincide with the designated Point features",
+          "section_id": "1547089919"
+        },
+        {
+          "check": "label derives from both endpoint route ranks",
+          "section_id": "1547089919"
+        },
+        {
+          "check": "road identity, type, preferred direction and machine scope match specification",
+          "section_id": "1547089919"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "1547089919",
+          "field": "z"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "1547089919",
+          "field": "qx"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "1547089919",
+          "field": "qy"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "1547089919",
+          "field": "qz"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "1547089919",
+          "field": "qw"
+        },
+        {
+          "check": "actual road preserves all coordinates of each selected source direction",
+          "section_id": "1547089919",
+          "source_id": "1547089919"
+        },
+        {
+          "check": "actual road preserves all coordinates of each selected source direction",
+          "section_id": "1547089919",
+          "source_id": "4224337796"
+        },
+        {
+          "check": "MongoDB section ID exists in source",
+          "section_id": "2758184951"
+        },
+        {
+          "check": "reverse-direction duplicate is absent from MongoDB",
+          "section_id": "2758184951"
+        },
+        {
+          "check": "only transport road pairs are registered",
+          "section_id": "2758184951"
+        },
+        {
+          "check": "every vertex preserves source coordinates in loading-to-leveling orientation",
+          "section_id": "2758184951",
+          "vertices": 2
+        },
+        {
+          "check": "road coordinate endpoints coincide with the designated Point features",
+          "section_id": "2758184951"
+        },
+        {
+          "check": "label derives from both endpoint route ranks",
+          "section_id": "2758184951"
+        },
+        {
+          "check": "road identity, type, preferred direction and machine scope match specification",
+          "section_id": "2758184951"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "2758184951",
+          "field": "z"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "2758184951",
+          "field": "qx"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "2758184951",
+          "field": "qy"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "2758184951",
+          "field": "qz"
+        },
+        {
+          "check": "navigation z and quaternion arrays match every vertex",
+          "section_id": "2758184951",
+          "field": "qw"
+        },
+        {
+          "check": "actual road preserves all coordinates of each selected source direction",
+          "section_id": "2758184951",
+          "source_id": "2758184951"
+        },
+        {
+          "check": "actual road preserves all coordinates of each selected source direction",
+          "section_id": "2758184951",
+          "source_id": "4224337795"
+        },
+        {
+          "check": "all selected transport endpoint pairs are present in MongoDB"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "2206133296",
+          "field": "related_point_up_main",
+          "expected": "3260195895",
+          "actual": "3260195895"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "2206133296",
+          "field": "related_point_up_main",
+          "linked_section_id": "3260195895"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "2206133296",
+          "field": "related_point_up_sub",
+          "expected": "",
+          "actual": ""
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "2206133296",
+          "field": "related_point_down_main",
+          "expected": "",
+          "actual": ""
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "2206133296",
+          "field": "related_point_down_sub",
+          "expected": "",
+          "actual": ""
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "3260195895",
+          "field": "related_point_up_main",
+          "expected": "3453947199",
+          "actual": "3453947199"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "3260195895",
+          "field": "related_point_up_main",
+          "linked_section_id": "3453947199"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "3260195895",
+          "field": "related_point_up_sub",
+          "expected": "768363352",
+          "actual": "768363352"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "3260195895",
+          "field": "related_point_up_sub",
+          "linked_section_id": "768363352"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "3260195895",
+          "field": "related_point_down_main",
+          "expected": "2206133296",
+          "actual": "2206133296"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "3260195895",
+          "field": "related_point_down_main",
+          "linked_section_id": "2206133296"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "3260195895",
+          "field": "related_point_down_sub",
+          "expected": "",
+          "actual": ""
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "3453947199",
+          "field": "related_point_up_main",
+          "expected": "3775605330",
+          "actual": "3775605330"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "3453947199",
+          "field": "related_point_up_main",
+          "linked_section_id": "3775605330"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "3453947199",
+          "field": "related_point_up_sub",
+          "expected": "1769298385",
+          "actual": "1769298385"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "3453947199",
+          "field": "related_point_up_sub",
+          "linked_section_id": "1769298385"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "3453947199",
+          "field": "related_point_down_main",
+          "expected": "3260195895",
+          "actual": "3260195895"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "3453947199",
+          "field": "related_point_down_main",
+          "linked_section_id": "3260195895"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "3453947199",
+          "field": "related_point_down_sub",
+          "expected": "768363352",
+          "actual": "768363352"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "3453947199",
+          "field": "related_point_down_sub",
+          "linked_section_id": "768363352"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "3775605330",
+          "field": "related_point_up_main",
+          "expected": "2109419383",
+          "actual": "2109419383"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "3775605330",
+          "field": "related_point_up_main",
+          "linked_section_id": "2109419383"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "3775605330",
+          "field": "related_point_up_sub",
+          "expected": "",
+          "actual": ""
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "3775605330",
+          "field": "related_point_down_main",
+          "expected": "3453947199",
+          "actual": "3453947199"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "3775605330",
+          "field": "related_point_down_main",
+          "linked_section_id": "3453947199"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "3775605330",
+          "field": "related_point_down_sub",
+          "expected": "1769298385",
+          "actual": "1769298385"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "3775605330",
+          "field": "related_point_down_sub",
+          "linked_section_id": "1769298385"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "2109419383",
+          "field": "related_point_up_main",
+          "expected": "944236149",
+          "actual": "944236149"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "2109419383",
+          "field": "related_point_up_main",
+          "linked_section_id": "944236149"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "2109419383",
+          "field": "related_point_up_sub",
+          "expected": "",
+          "actual": ""
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "2109419383",
+          "field": "related_point_down_main",
+          "expected": "3775605330",
+          "actual": "3775605330"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "2109419383",
+          "field": "related_point_down_main",
+          "linked_section_id": "3775605330"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "2109419383",
+          "field": "related_point_down_sub",
+          "expected": "",
+          "actual": ""
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "944236149",
+          "field": "related_point_up_main",
+          "expected": "1285700315",
+          "actual": "1285700315"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "944236149",
+          "field": "related_point_up_main",
+          "linked_section_id": "1285700315"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "944236149",
+          "field": "related_point_up_sub",
+          "expected": "",
+          "actual": ""
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "944236149",
+          "field": "related_point_down_main",
+          "expected": "2109419383",
+          "actual": "2109419383"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "944236149",
+          "field": "related_point_down_main",
+          "linked_section_id": "2109419383"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "944236149",
+          "field": "related_point_down_sub",
+          "expected": "",
+          "actual": ""
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "1285700315",
+          "field": "related_point_up_main",
+          "expected": "3483617579",
+          "actual": "3483617579"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "1285700315",
+          "field": "related_point_up_main",
+          "linked_section_id": "3483617579"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "1285700315",
+          "field": "related_point_up_sub",
+          "expected": "2192002421",
+          "actual": "2192002421"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "1285700315",
+          "field": "related_point_up_sub",
+          "linked_section_id": "2192002421"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "1285700315",
+          "field": "related_point_down_main",
+          "expected": "944236149",
+          "actual": "944236149"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "1285700315",
+          "field": "related_point_down_main",
+          "linked_section_id": "944236149"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "1285700315",
+          "field": "related_point_down_sub",
+          "expected": "",
+          "actual": ""
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "3483617579",
+          "field": "related_point_up_main",
+          "expected": "1901058875",
+          "actual": "1901058875"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "3483617579",
+          "field": "related_point_up_main",
+          "linked_section_id": "1901058875"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "3483617579",
+          "field": "related_point_up_sub",
+          "expected": "2758184951",
+          "actual": "2758184951"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "3483617579",
+          "field": "related_point_up_sub",
+          "linked_section_id": "2758184951"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "3483617579",
+          "field": "related_point_down_main",
+          "expected": "1285700315",
+          "actual": "1285700315"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "3483617579",
+          "field": "related_point_down_main",
+          "linked_section_id": "1285700315"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "3483617579",
+          "field": "related_point_down_sub",
+          "expected": "2192002421",
+          "actual": "2192002421"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "3483617579",
+          "field": "related_point_down_sub",
+          "linked_section_id": "2192002421"
+        },
+        {
+          "check": "only terminal fan-out has several continuations in the scalar schema",
+          "section_id": "1901058875"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "1901058875",
+          "field": "related_point_up_main",
+          "expected": "",
+          "actual": ""
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "1901058875",
+          "field": "related_point_up_sub",
+          "expected": "",
+          "actual": ""
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "1901058875",
+          "field": "related_point_down_main",
+          "expected": "3483617579",
+          "actual": "3483617579"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "1901058875",
+          "field": "related_point_down_main",
+          "linked_section_id": "3483617579"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "1901058875",
+          "field": "related_point_down_sub",
+          "expected": "2758184951",
+          "actual": "2758184951"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "1901058875",
+          "field": "related_point_down_sub",
+          "linked_section_id": "2758184951"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "840315598",
+          "field": "related_point_up_main",
+          "expected": "",
+          "actual": ""
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "840315598",
+          "field": "related_point_up_sub",
+          "expected": "",
+          "actual": ""
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "840315598",
+          "field": "related_point_down_main",
+          "expected": "1901058875",
+          "actual": "1901058875"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "840315598",
+          "field": "related_point_down_main",
+          "linked_section_id": "1901058875"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "840315598",
+          "field": "related_point_down_sub",
+          "expected": "",
+          "actual": ""
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "3159144693",
+          "field": "related_point_up_main",
+          "expected": "",
+          "actual": ""
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "3159144693",
+          "field": "related_point_up_sub",
+          "expected": "",
+          "actual": ""
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "3159144693",
+          "field": "related_point_down_main",
+          "expected": "1901058875",
+          "actual": "1901058875"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "3159144693",
+          "field": "related_point_down_main",
+          "linked_section_id": "1901058875"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "3159144693",
+          "field": "related_point_down_sub",
+          "expected": "",
+          "actual": ""
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "936963196",
+          "field": "related_point_up_main",
+          "expected": "",
+          "actual": ""
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "936963196",
+          "field": "related_point_up_sub",
+          "expected": "",
+          "actual": ""
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "936963196",
+          "field": "related_point_down_main",
+          "expected": "1901058875",
+          "actual": "1901058875"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "936963196",
+          "field": "related_point_down_main",
+          "linked_section_id": "1901058875"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "936963196",
+          "field": "related_point_down_sub",
+          "expected": "",
+          "actual": ""
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "768363352",
+          "field": "related_point_up_main",
+          "expected": "",
+          "actual": ""
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "768363352",
+          "field": "related_point_up_sub",
+          "expected": "3851915284",
+          "actual": "3851915284"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "768363352",
+          "field": "related_point_up_sub",
+          "linked_section_id": "3851915284"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "768363352",
+          "field": "related_point_down_main",
+          "expected": "3260195895",
+          "actual": "3260195895"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "768363352",
+          "field": "related_point_down_main",
+          "linked_section_id": "3260195895"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "768363352",
+          "field": "related_point_down_sub",
+          "expected": "",
+          "actual": ""
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "3851915284",
+          "field": "related_point_up_main",
+          "expected": "",
+          "actual": ""
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "3851915284",
+          "field": "related_point_up_sub",
+          "expected": "1769298385",
+          "actual": "1769298385"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "3851915284",
+          "field": "related_point_up_sub",
+          "linked_section_id": "1769298385"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "3851915284",
+          "field": "related_point_down_main",
+          "expected": "",
+          "actual": ""
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "3851915284",
+          "field": "related_point_down_sub",
+          "expected": "768363352",
+          "actual": "768363352"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "3851915284",
+          "field": "related_point_down_sub",
+          "linked_section_id": "768363352"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "1769298385",
+          "field": "related_point_up_main",
+          "expected": "3775605330",
+          "actual": "3775605330"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "1769298385",
+          "field": "related_point_up_main",
+          "linked_section_id": "3775605330"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "1769298385",
+          "field": "related_point_up_sub",
+          "expected": "",
+          "actual": ""
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "1769298385",
+          "field": "related_point_down_main",
+          "expected": "",
+          "actual": ""
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "1769298385",
+          "field": "related_point_down_sub",
+          "expected": "3851915284",
+          "actual": "3851915284"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "1769298385",
+          "field": "related_point_down_sub",
+          "linked_section_id": "3851915284"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "2192002421",
+          "field": "related_point_up_main",
+          "expected": "",
+          "actual": ""
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "2192002421",
+          "field": "related_point_up_sub",
+          "expected": "1547089919",
+          "actual": "1547089919"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "2192002421",
+          "field": "related_point_up_sub",
+          "linked_section_id": "1547089919"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "2192002421",
+          "field": "related_point_down_main",
+          "expected": "1285700315",
+          "actual": "1285700315"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "2192002421",
+          "field": "related_point_down_main",
+          "linked_section_id": "1285700315"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "2192002421",
+          "field": "related_point_down_sub",
+          "expected": "",
+          "actual": ""
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "1547089919",
+          "field": "related_point_up_main",
+          "expected": "",
+          "actual": ""
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "1547089919",
+          "field": "related_point_up_sub",
+          "expected": "2758184951",
+          "actual": "2758184951"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "1547089919",
+          "field": "related_point_up_sub",
+          "linked_section_id": "2758184951"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "1547089919",
+          "field": "related_point_down_main",
+          "expected": "",
+          "actual": ""
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "1547089919",
+          "field": "related_point_down_sub",
+          "expected": "2192002421",
+          "actual": "2192002421"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "1547089919",
+          "field": "related_point_down_sub",
+          "linked_section_id": "2192002421"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "2758184951",
+          "field": "related_point_up_main",
+          "expected": "1901058875",
+          "actual": "1901058875"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "2758184951",
+          "field": "related_point_up_main",
+          "linked_section_id": "1901058875"
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "2758184951",
+          "field": "related_point_up_sub",
+          "expected": "",
+          "actual": ""
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "2758184951",
+          "field": "related_point_down_main",
+          "expected": "",
+          "actual": ""
+        },
+        {
+          "check": "related link matches actual endpoint topology",
+          "section_id": "2758184951",
+          "field": "related_point_down_sub",
+          "expected": "1547089919",
+          "actual": "1547089919"
+        },
+        {
+          "check": "stored link resolves to a geometrically connected registered section",
+          "section_id": "2758184951",
+          "field": "related_point_down_sub",
+          "linked_section_id": "1547089919"
+        },
+        {
+          "check": "explicit MongoDB example record is stored",
+          "section_id": "2206133296",
+          "spec_line": 2439
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "2206133296",
+          "field": "model_name",
+          "spec_line": 2439
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "2206133296",
+          "field": "type",
+          "spec_line": 2439
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "2206133296",
+          "field": "x",
+          "spec_line": 2439
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "2206133296",
+          "field": "y",
+          "spec_line": 2439
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "2206133296",
+          "field": "z",
+          "spec_line": 2439
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "2206133296",
+          "field": "qx",
+          "spec_line": 2439
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "2206133296",
+          "field": "qy",
+          "spec_line": 2439
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "2206133296",
+          "field": "qz",
+          "spec_line": 2439
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "2206133296",
+          "field": "qw",
+          "spec_line": 2439
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "2206133296",
+          "field": "record_name",
+          "spec_line": 2439
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "2206133296",
+          "field": "section_id",
+          "spec_line": 2439
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "2206133296",
+          "field": "label",
+          "spec_line": 2439
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "2206133296",
+          "field": "related_point_up_main",
+          "spec_line": 2439
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "2206133296",
+          "field": "related_point_up_sub",
+          "spec_line": 2439
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "2206133296",
+          "field": "related_point_down_main",
+          "spec_line": 2439
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "2206133296",
+          "field": "related_point_down_sub",
+          "spec_line": 2439
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "2206133296",
+          "field": "preferred_direction",
+          "spec_line": 2439
+        },
+        {
+          "check": "explicit MongoDB example record is stored",
+          "section_id": "3260195895",
+          "spec_line": 2458
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3260195895",
+          "field": "model_name",
+          "spec_line": 2458
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3260195895",
+          "field": "type",
+          "spec_line": 2458
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3260195895",
+          "field": "x",
+          "spec_line": 2458
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3260195895",
+          "field": "y",
+          "spec_line": 2458
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3260195895",
+          "field": "z",
+          "spec_line": 2458
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3260195895",
+          "field": "qx",
+          "spec_line": 2458
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3260195895",
+          "field": "qy",
+          "spec_line": 2458
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3260195895",
+          "field": "qz",
+          "spec_line": 2458
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3260195895",
+          "field": "qw",
+          "spec_line": 2458
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3260195895",
+          "field": "record_name",
+          "spec_line": 2458
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3260195895",
+          "field": "section_id",
+          "spec_line": 2458
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3260195895",
+          "field": "label",
+          "spec_line": 2458
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3260195895",
+          "field": "related_point_up_main",
+          "spec_line": 2458
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3260195895",
+          "field": "related_point_up_sub",
+          "spec_line": 2458
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3260195895",
+          "field": "related_point_down_main",
+          "spec_line": 2458
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3260195895",
+          "field": "related_point_down_sub",
+          "spec_line": 2458
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3260195895",
+          "field": "preferred_direction",
+          "spec_line": 2458
+        },
+        {
+          "check": "explicit MongoDB example record is stored",
+          "section_id": "3453947199",
+          "spec_line": 2477
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3453947199",
+          "field": "model_name",
+          "spec_line": 2477
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3453947199",
+          "field": "type",
+          "spec_line": 2477
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3453947199",
+          "field": "x",
+          "spec_line": 2477
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3453947199",
+          "field": "y",
+          "spec_line": 2477
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3453947199",
+          "field": "z",
+          "spec_line": 2477
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3453947199",
+          "field": "qx",
+          "spec_line": 2477
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3453947199",
+          "field": "qy",
+          "spec_line": 2477
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3453947199",
+          "field": "qz",
+          "spec_line": 2477
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3453947199",
+          "field": "qw",
+          "spec_line": 2477
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3453947199",
+          "field": "record_name",
+          "spec_line": 2477
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3453947199",
+          "field": "section_id",
+          "spec_line": 2477
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3453947199",
+          "field": "label",
+          "spec_line": 2477
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3453947199",
+          "field": "related_point_up_main",
+          "spec_line": 2477
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3453947199",
+          "field": "related_point_up_sub",
+          "spec_line": 2477
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3453947199",
+          "field": "related_point_down_main",
+          "spec_line": 2477
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3453947199",
+          "field": "related_point_down_sub",
+          "spec_line": 2477
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3453947199",
+          "field": "preferred_direction",
+          "spec_line": 2477
+        },
+        {
+          "check": "explicit MongoDB example record is stored",
+          "section_id": "3775605330",
+          "spec_line": 2496
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3775605330",
+          "field": "model_name",
+          "spec_line": 2496
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3775605330",
+          "field": "type",
+          "spec_line": 2496
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3775605330",
+          "field": "x",
+          "spec_line": 2496
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3775605330",
+          "field": "y",
+          "spec_line": 2496
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3775605330",
+          "field": "z",
+          "spec_line": 2496
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3775605330",
+          "field": "qx",
+          "spec_line": 2496
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3775605330",
+          "field": "qy",
+          "spec_line": 2496
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3775605330",
+          "field": "qz",
+          "spec_line": 2496
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3775605330",
+          "field": "qw",
+          "spec_line": 2496
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3775605330",
+          "field": "record_name",
+          "spec_line": 2496
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3775605330",
+          "field": "section_id",
+          "spec_line": 2496
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3775605330",
+          "field": "label",
+          "spec_line": 2496
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3775605330",
+          "field": "related_point_up_main",
+          "spec_line": 2496
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3775605330",
+          "field": "related_point_up_sub",
+          "spec_line": 2496
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3775605330",
+          "field": "related_point_down_main",
+          "spec_line": 2496
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3775605330",
+          "field": "related_point_down_sub",
+          "spec_line": 2496
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3775605330",
+          "field": "preferred_direction",
+          "spec_line": 2496
+        },
+        {
+          "check": "explicit MongoDB example record is stored",
+          "section_id": "2109419383",
+          "spec_line": 2515
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "2109419383",
+          "field": "model_name",
+          "spec_line": 2515
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "2109419383",
+          "field": "type",
+          "spec_line": 2515
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "2109419383",
+          "field": "x",
+          "spec_line": 2515
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "2109419383",
+          "field": "y",
+          "spec_line": 2515
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "2109419383",
+          "field": "z",
+          "spec_line": 2515
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "2109419383",
+          "field": "qx",
+          "spec_line": 2515
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "2109419383",
+          "field": "qy",
+          "spec_line": 2515
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "2109419383",
+          "field": "qz",
+          "spec_line": 2515
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "2109419383",
+          "field": "qw",
+          "spec_line": 2515
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "2109419383",
+          "field": "record_name",
+          "spec_line": 2515
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "2109419383",
+          "field": "section_id",
+          "spec_line": 2515
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "2109419383",
+          "field": "label",
+          "spec_line": 2515
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "2109419383",
+          "field": "related_point_up_main",
+          "spec_line": 2515
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "2109419383",
+          "field": "related_point_up_sub",
+          "spec_line": 2515
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "2109419383",
+          "field": "related_point_down_main",
+          "spec_line": 2515
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "2109419383",
+          "field": "related_point_down_sub",
+          "spec_line": 2515
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "2109419383",
+          "field": "preferred_direction",
+          "spec_line": 2515
+        },
+        {
+          "check": "explicit MongoDB example record is stored",
+          "section_id": "944236149",
+          "spec_line": 2534
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "944236149",
+          "field": "model_name",
+          "spec_line": 2534
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "944236149",
+          "field": "type",
+          "spec_line": 2534
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "944236149",
+          "field": "x",
+          "spec_line": 2534
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "944236149",
+          "field": "y",
+          "spec_line": 2534
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "944236149",
+          "field": "z",
+          "spec_line": 2534
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "944236149",
+          "field": "qx",
+          "spec_line": 2534
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "944236149",
+          "field": "qy",
+          "spec_line": 2534
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "944236149",
+          "field": "qz",
+          "spec_line": 2534
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "944236149",
+          "field": "qw",
+          "spec_line": 2534
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "944236149",
+          "field": "record_name",
+          "spec_line": 2534
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "944236149",
+          "field": "section_id",
+          "spec_line": 2534
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "944236149",
+          "field": "label",
+          "spec_line": 2534
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "944236149",
+          "field": "related_point_up_main",
+          "spec_line": 2534
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "944236149",
+          "field": "related_point_up_sub",
+          "spec_line": 2534
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "944236149",
+          "field": "related_point_down_main",
+          "spec_line": 2534
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "944236149",
+          "field": "related_point_down_sub",
+          "spec_line": 2534
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "944236149",
+          "field": "preferred_direction",
+          "spec_line": 2534
+        },
+        {
+          "check": "explicit MongoDB example record is stored",
+          "section_id": "1285700315",
+          "spec_line": 2553
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "1285700315",
+          "field": "model_name",
+          "spec_line": 2553
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "1285700315",
+          "field": "type",
+          "spec_line": 2553
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "1285700315",
+          "field": "x",
+          "spec_line": 2553
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "1285700315",
+          "field": "y",
+          "spec_line": 2553
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "1285700315",
+          "field": "z",
+          "spec_line": 2553
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "1285700315",
+          "field": "qx",
+          "spec_line": 2553
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "1285700315",
+          "field": "qy",
+          "spec_line": 2553
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "1285700315",
+          "field": "qz",
+          "spec_line": 2553
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "1285700315",
+          "field": "qw",
+          "spec_line": 2553
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "1285700315",
+          "field": "record_name",
+          "spec_line": 2553
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "1285700315",
+          "field": "section_id",
+          "spec_line": 2553
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "1285700315",
+          "field": "label",
+          "spec_line": 2553
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "1285700315",
+          "field": "related_point_up_main",
+          "spec_line": 2553
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "1285700315",
+          "field": "related_point_up_sub",
+          "spec_line": 2553
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "1285700315",
+          "field": "related_point_down_main",
+          "spec_line": 2553
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "1285700315",
+          "field": "related_point_down_sub",
+          "spec_line": 2553
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "1285700315",
+          "field": "preferred_direction",
+          "spec_line": 2553
+        },
+        {
+          "check": "explicit MongoDB example record is stored",
+          "section_id": "3483617579",
+          "spec_line": 2572
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3483617579",
+          "field": "model_name",
+          "spec_line": 2572
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3483617579",
+          "field": "type",
+          "spec_line": 2572
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3483617579",
+          "field": "x",
+          "spec_line": 2572
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3483617579",
+          "field": "y",
+          "spec_line": 2572
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3483617579",
+          "field": "z",
+          "spec_line": 2572
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3483617579",
+          "field": "qx",
+          "spec_line": 2572
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3483617579",
+          "field": "qy",
+          "spec_line": 2572
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3483617579",
+          "field": "qz",
+          "spec_line": 2572
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3483617579",
+          "field": "qw",
+          "spec_line": 2572
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3483617579",
+          "field": "record_name",
+          "spec_line": 2572
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3483617579",
+          "field": "section_id",
+          "spec_line": 2572
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3483617579",
+          "field": "label",
+          "spec_line": 2572
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3483617579",
+          "field": "related_point_up_main",
+          "spec_line": 2572
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3483617579",
+          "field": "related_point_up_sub",
+          "spec_line": 2572
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3483617579",
+          "field": "related_point_down_main",
+          "spec_line": 2572
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3483617579",
+          "field": "related_point_down_sub",
+          "spec_line": 2572
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3483617579",
+          "field": "preferred_direction",
+          "spec_line": 2572
+        },
+        {
+          "check": "explicit MongoDB example record is stored",
+          "section_id": "1901058875",
+          "spec_line": 2591
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "1901058875",
+          "field": "model_name",
+          "spec_line": 2591
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "1901058875",
+          "field": "type",
+          "spec_line": 2591
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "1901058875",
+          "field": "x",
+          "spec_line": 2591
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "1901058875",
+          "field": "y",
+          "spec_line": 2591
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "1901058875",
+          "field": "z",
+          "spec_line": 2591
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "1901058875",
+          "field": "qx",
+          "spec_line": 2591
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "1901058875",
+          "field": "qy",
+          "spec_line": 2591
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "1901058875",
+          "field": "qz",
+          "spec_line": 2591
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "1901058875",
+          "field": "qw",
+          "spec_line": 2591
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "1901058875",
+          "field": "record_name",
+          "spec_line": 2591
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "1901058875",
+          "field": "section_id",
+          "spec_line": 2591
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "1901058875",
+          "field": "label",
+          "spec_line": 2591
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "1901058875",
+          "field": "related_point_up_main",
+          "spec_line": 2591
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "1901058875",
+          "field": "related_point_up_sub",
+          "spec_line": 2591
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "1901058875",
+          "field": "related_point_down_main",
+          "spec_line": 2591
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "1901058875",
+          "field": "related_point_down_sub",
+          "spec_line": 2591
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "1901058875",
+          "field": "preferred_direction",
+          "spec_line": 2591
+        },
+        {
+          "check": "explicit MongoDB example record is stored",
+          "section_id": "840315598",
+          "spec_line": 2610
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "840315598",
+          "field": "model_name",
+          "spec_line": 2610
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "840315598",
+          "field": "type",
+          "spec_line": 2610
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "840315598",
+          "field": "x",
+          "spec_line": 2610
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "840315598",
+          "field": "y",
+          "spec_line": 2610
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "840315598",
+          "field": "z",
+          "spec_line": 2610
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "840315598",
+          "field": "qx",
+          "spec_line": 2610
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "840315598",
+          "field": "qy",
+          "spec_line": 2610
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "840315598",
+          "field": "qz",
+          "spec_line": 2610
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "840315598",
+          "field": "qw",
+          "spec_line": 2610
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "840315598",
+          "field": "record_name",
+          "spec_line": 2610
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "840315598",
+          "field": "section_id",
+          "spec_line": 2610
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "840315598",
+          "field": "label",
+          "spec_line": 2610
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "840315598",
+          "field": "related_point_up_main",
+          "spec_line": 2610
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "840315598",
+          "field": "related_point_up_sub",
+          "spec_line": 2610
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "840315598",
+          "field": "related_point_down_main",
+          "spec_line": 2610
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "840315598",
+          "field": "related_point_down_sub",
+          "spec_line": 2610
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "840315598",
+          "field": "preferred_direction",
+          "spec_line": 2610
+        },
+        {
+          "check": "explicit MongoDB example record is stored",
+          "section_id": "3159144693",
+          "spec_line": 2629
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3159144693",
+          "field": "model_name",
+          "spec_line": 2629
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3159144693",
+          "field": "type",
+          "spec_line": 2629
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3159144693",
+          "field": "x",
+          "spec_line": 2629
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3159144693",
+          "field": "y",
+          "spec_line": 2629
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3159144693",
+          "field": "z",
+          "spec_line": 2629
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3159144693",
+          "field": "qx",
+          "spec_line": 2629
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3159144693",
+          "field": "qy",
+          "spec_line": 2629
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3159144693",
+          "field": "qz",
+          "spec_line": 2629
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3159144693",
+          "field": "qw",
+          "spec_line": 2629
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3159144693",
+          "field": "record_name",
+          "spec_line": 2629
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3159144693",
+          "field": "section_id",
+          "spec_line": 2629
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3159144693",
+          "field": "label",
+          "spec_line": 2629
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3159144693",
+          "field": "related_point_up_main",
+          "spec_line": 2629
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3159144693",
+          "field": "related_point_up_sub",
+          "spec_line": 2629
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3159144693",
+          "field": "related_point_down_main",
+          "spec_line": 2629
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3159144693",
+          "field": "related_point_down_sub",
+          "spec_line": 2629
+        },
+        {
+          "check": "stored field equals explicit specification example",
+          "section_id": "3159144693",
+          "field": "preferred_direction",
+          "spec_line": 2629
+        }
+      ],
+      "spec_notes_file": "/tmp/tms_if_input-actual-verify/route_spec_notes.json"
+    },
+    "tasks": {
+      "status": "passed",
+      "checks": 280,
+      "failures": [],
+      "inputs": {
+        "xml": "/home/kasahara/SIP_PROJECTS/ros2_tms_ws/src/tms_if_input/json_samples/261001-kyoto.xml",
+        "actual_task": "/tmp/tms_if_input-rostmsdb-verify/actual_task.json",
+        "actual_parameter": "/tmp/tms_if_input-rostmsdb-verify/actual_parameter.json"
+      },
+      "independence": "Standard-library XML/JSON parsing only; compiler not called; no MongoDB access.",
+      "models": [
+        {
+          "model_name": "zx200",
+          "source_task_ids": [
+            "2291039772",
+            "2830494948"
+          ],
+          "primitive_names": [
+            "subtask_excavator_change_pose",
+            "subtask_excavator_follow_waypoints",
+            "subtask_excavator_change_pose",
+            "excavation_loading"
+          ],
+          "wait_dependencies": [
+            {
+              "task_id": "2830494948",
+              "predecessor_ids": [
+                "2291039772",
+                "2547316300",
+                "4199082663",
+                "4223803073"
+              ]
+            }
+          ]
+        },
+        {
+          "model_name": "mst110cr",
+          "source_task_ids": [
+            "4223803073",
+            "2847776408"
+          ],
+          "primitive_names": [
+            "subtask_crawlerdump_swing",
+            "subtask_crawlerdump_release_soil",
+            "subtask_crawlerdump_follow_waypoints",
+            "subtask_crawlerdump_swing",
+            "transport"
+          ],
+          "wait_dependencies": [
+            {
+              "task_id": "2847776408",
+              "predecessor_ids": [
+                "2291039772",
+                "2547316300",
+                "4199082663",
+                "4223803073"
+              ]
+            }
+          ]
+        },
+        {
+          "model_name": "mst2200vdr",
+          "source_task_ids": [
+            "2547316300",
+            "2983743032"
+          ],
+          "primitive_names": [
+            "subtask_crawlerdump_swing",
+            "subtask_crawlerdump_release_soil",
+            "subtask_crawlerdump_follow_waypoints",
+            "subtask_crawlerdump_swing",
+            "transport"
+          ],
+          "wait_dependencies": [
+            {
+              "task_id": "2983743032",
+              "predecessor_ids": [
+                "2291039772",
+                "2547316300",
+                "4199082663",
+                "4223803073"
+              ]
+            }
+          ]
+        },
+        {
+          "model_name": "d37pxi",
+          "source_task_ids": [
+            "4199082663",
+            "3516795761"
+          ],
+          "primitive_names": [
+            "subtask_bulldozer_follow_waypoints",
+            "leveling"
+          ],
+          "wait_dependencies": [
+            {
+              "task_id": "3516795761",
+              "predecessor_ids": [
+                "2291039772",
+                "2547316300",
+                "4199082663",
+                "4223803073"
+              ]
+            }
+          ]
+        }
+      ],
+      "runtime_behavior": "not_executed",
+      "limitations": [
+        "Stored tree structure and references verified; custom BT executor compatibility and real/simulated machinery behavior remain unverified.",
+        "For this input each machine initializes once and each work kind uses one context. Fresh imported flags are expected false."
+      ]
+    },
+    "direct_ideal_parameter_comparison": {
+      "readable_ideal_objects_checked": 45,
+      "unique_records": 45,
+      "mismatches": [
+        {
+          "key": [
+            "geo_fence",
+            "null"
+          ],
+          "errors": [
+            [
+              ".coordinates[1]",
+              "length",
+              11,
+              12
+            ],
+            [
+              ".coordinates[1][5].y",
+              -62.9751,
+              -128.121
+            ],
+            [
+              ".coordinates[1][5].x",
+              63.8112,
+              64.1523
+            ],
+            [
+              ".coordinates[1][6].y",
+              -55.2099,
+              -62.9751
+            ],
+            [
+              ".coordinates[1][6].x",
+              67.1473,
+              63.8112
+            ],
+            [
+              ".coordinates[1][7].y",
+              -52.3176,
+              -55.2099
+            ],
+            [
+              ".coordinates[1][7].x",
+              80.342,
+              67.1473
+            ],
+            [
+              ".coordinates[1][8].y",
+              -58.2216,
+              -52.3176
+            ],
+            [
+              ".coordinates[1][8].x",
+              108.771,
+              80.342
+            ],
+            [
+              ".coordinates[1][9].y",
+              -60.3828,
+              -58.2216
+            ],
+            [
+              ".coordinates[1][9].x",
+              109.035,
+              108.771
+            ],
+            [
+              ".coordinates[1][10].y",
+              -68.8156,
+              -60.3828
+            ],
+            [
+              ".coordinates[1][10].x",
+              91.0643,
+              109.035
+            ]
+          ]
+        },
+        {
+          "key": [
+            "initial_pose",
+            "[\"mst2200vdr\"]"
+          ],
+          "errors": [
+            [
+              ".target_angle",
+              0.001003635,
+              0.3531637
+            ]
+          ]
+        }
+      ],
+      "basis": "Original specification before the latest user-requested entry rule change; entry position intentionally differs now."
+    }
+  },
+  "specification_example_notes": {
+    "parameters": {
+      "specification": "/home/kasahara/Downloads/仕様",
+      "source_of_truth": [
+        "json_samples/261001-kyoto.geojson",
+        "json_samples/261001-kyoto.xml"
+      ],
+      "principle": "仕様自身が例は固定でなく実際の GeoJSON/XML の値を使用することを求めるため、説明文と入力に矛盾する理想例は入力値を優先して検証する。",
+      "mistakes": [
+        {
+          "lines": [
+            111,
+            112,
+            113,
+            114
+          ],
+          "record_name": "geo_fence",
+          "field": "coordinates[1]",
+          "ideal_example": {
+            "x": 64.1523,
+            "y": -128.121
+          },
+          "reason": "内側リングに元データにない頂点が混入している。この頂点は外側リングの頂点であり、仕様冒頭の元 GeoJSON 例にも内側リングの頂点として存在しない。",
+          "correct_value": "内側リングは元 GeoJSON と同じ 11 頂点。第5頂点 {x:62.5575,y:-82.2441} の直後は {x:63.8112,y:-62.9751}。外側リングは 9 頂点。"
+        },
+        {
+          "lines": [
+            616,
+            660,
+            670
+          ],
+          "record_name": "initial_pose",
+          "model_name": [
+            "mst2200vdr"
+          ],
+          "field": "target_angle",
+          "ideal_example": 0.3531637,
+          "reason": "例に記載された値が同じ資料の initialize タスクと実際の XML の swing と一致しない。",
+          "correct_value": 0.001003635
+        },
+        {
+          "lines": [
+            616,
+            617,
+            623,
+            660,
+            687
+          ],
+          "record_name": "initial_pose_vessel",
+          "model_name": [
+            "mst2200vdr"
+          ],
+          "field": "document",
+          "ideal_example": "mst2200vdr の説明では vessel 用文書の例が省略されている。",
+          "reason": "同じダンプとして前節と同じ処理と説明され、XML に vessel が存在するため、mst110cr と同様に vessel の文書が必要。BehaviorTree の初期化も initial_pose_vessel を参照している。",
+          "correct_value": {
+            "model_name": [
+              "mst2200vdr"
+            ],
+            "type": "dynamic",
+            "target_angle": 0.0,
+            "record_name": "initial_pose_vessel"
+          }
+        },
+        {
+          "lines": [
+            929,
+            930,
+            931,
+            932,
+            933,
+            934,
+            935,
+            936
+          ],
+          "record_name": "excavation_loading_params",
+          "field": "block_center",
+          "ideal_example": "3要素目の直後で配列を閉じてから4要素目が置かれている。",
+          "reason": "理想例の括弧の誤り。XML の block_center は 4 要素であり、対応する backhoe_node/dump_node も 4 要素。",
+          "correct_value": [
+            {
+              "x": 83.25481,
+              "y": -97.21698,
+              "z": 11.29403
+            },
+            {
+              "x": 84.16229,
+              "y": -99.77327,
+              "z": 11.29403
+            },
+            {
+              "x": 85.06977,
+              "y": -102.3296,
+              "z": 11.29403
+            },
+            {
+              "x": 85.97725,
+              "y": -104.8858,
+              "z": 11.29403
+            }
+          ]
+        },
+        {
+          "lines": [
+            946,
+            947,
+            948,
+            949,
+            950
+          ],
+          "record_name": "excavation_loading_params",
+          "field": "backhoe_node",
+          "ideal_example": "3要素目と4要素目の間のカンマがない。",
+          "reason": "理想例の JSON 構文の誤り。元 XML の参照4点を同じ順序で配列に格納する。",
+          "correct_value": [
+            {
+              "x": 85.1914,
+              "y": -102.672
+            },
+            {
+              "x": 86.0989,
+              "y": -105.229
+            },
+            {
+              "x": 87.0064,
+              "y": -107.785
+            },
+            {
+              "x": 87.9138,
+              "y": -110.341
+            }
+          ]
+        },
+        {
+          "lines": [
+            134,
+            136,
+            138,
+            574,
+            576,
+            601,
+            603,
+            1134,
+            1487
+          ],
+          "field": "text format",
+          "ideal_example": "ページ番号 2/60、スマートクォート、末尾カンマなどが JSON 例に混入する。",
+          "reason": "資料の整形上の問題。文書の意味を JSON データに落とす際にはこうした印刷用文字を格納しない。",
+          "correct_value": "標準 JSON/BSON として有効な文書。"
+        }
+      ],
+      "rounding_not_errors": [
+        {
+          "lines": [
+            1127,
+            1128,
+            1140,
+            1141,
+            1997,
+            1998
+          ],
+          "field": "quaternion",
+          "reason": "資料の四元数は小数6〜7桁に丸められている。向きの定義に従って計算した値を保持する実装との差は丸めのみ。",
+          "dump_exact": {
+            "qx": 0.0,
+            "qy": 0.0,
+            "qz": -0.5284411892483951,
+            "qw": 0.8489699108365042
+          },
+          "bulldozer_exact": {
+            "qx": 0.0,
+            "qy": 0.0,
+            "qz": 0.8489699108365042,
+            "qw": 0.5284411892483951
+          }
+        }
+      ],
+      "checked_scope": "ジオフェンス、全4機械の初期位置/関節/荷台/移動姿勢、掘削積載パラメータ、全4積載位置、敷き均し入口、全9放土経路/ブルドーザ地点/ブロック、および全機械の初期化フラグ。計47文書。",
+      "method": "コンパイラを利用せず Python 標準ライブラリ json / ElementTree / math で入力から期待値を独立計算し、実DBから取得した全フィールド・配列・型・座標・姿勢・関節・フラグと比較する。",
+      "user_overrides": [
+        {
+          "record_name": "dumps_entry_point_leveling_area",
+          "previous_rule": "Middle element of XML connection_node array",
+          "new_rule": "First XML connection_node matching the up-direction end of a transport/passing section",
+          "basis_ja": "最新のユーザー指示により元資料の中央要素ルールを変更。入口はXMLで指定されたconnection_node IDのいずれかとする。"
+        }
+      ]
+    },
+    "routes": [
+      {
+        "source": "/home/kasahara/Downloads/仕様",
+        "line": 2325,
+        "kind": "clarification",
+        "detail": "不要ノード一覧に 3626199267 が残るのは掘削 backhoe_node にも使うため。initialize の参照だけを理由に除外を解除すると掘削専用 3 道路が誤って運搬経路へ入る。",
+        "evidence": "XML excavation_loading.backhoe_node=[3626199267,3585519927,819174456,1414895479]; all those roads have both endpoints used in work."
+      },
+      {
+        "source": "/home/kasahara/Downloads/仕様",
+        "line": 2434,
+        "kind": "incorrect_endpoint_ids",
+        "detail": "積載位置に接続する区間を 3453947199 とする説明、および同区間の反対ノードを 7609442 とする説明は入力と矛盾する。",
+        "evidence": "3453947199 endpoints are 365138918 and 1755144311; loading 1924610930 connects via 2206133296. Loading-to-connection chain printed later is correct."
+      },
+      {
+        "source": "/home/kasahara/Downloads/仕様",
+        "line": 2434,
+        "kind": "reverse_direction_in_prose",
+        "detail": "2 本目の離合経路を 2758184951 →1547089919→2192002421 と述べる箇所は down 向き。次の2435行の up 向き説明が入力と整合する。",
+        "evidence": "up attachment is 1327926290 then 3813604511,2995202696,2357889456; section order is 2192002421,1547089919,2758184951."
+      },
+      {
+        "source": "/home/kasahara/Downloads/仕様",
+        "line": 2438,
+        "kind": "incomplete_mongodb_example",
+        "detail": "18 区間と定義しているが MongoDB 例は 11 区間。幹線 936963196 と離合 6 区間が省略され、最後の配列を閉じる括弧もない。欠けた例を理由に7区間を捨てると接続が失われる。",
+        "evidence": "Required main roads 12 and sub roads 6 are all selected by source endpoint rule; terminal branch 936963196 reaches connection_node 575106410. Six omitted sub-road IDs: 768363352,3851915284,1769298385,2192002421,1547089919,2758184951."
+      },
+      {
+        "source": "/home/kasahara/Downloads/仕様",
+        "line": 2604,
+        "kind": "schema_limit",
+        "detail": "1901058875 の up_main は空文字だが、その終点から3本の幹線終端枝が分岐する。スカラー列に3本を格納できないため、枝側の down_main=1901058875 と全区間の座標接続で関係を保持する。",
+        "evidence": "Node 758911660 joins terminal branches 840315598,3159144693,936963196. The source example also leaves related_point_up_main empty."
+      }
+    ],
+    "tasks": {
+      "specification": "/home/kasahara/Downloads/仕様",
+      "basis": "The source XML and descriptive synchronization rule take precedence over copied ideal examples, as requested by the user.",
+      "notes": [
+        {
+          "category": "spec_example_error",
+          "lines": [
+            2927,
+            2928,
+            2929
+          ],
+          "finding": "mst110cr task example stores model_name=zx200 although its primitive model_name and description are mst110cr.",
+          "basis": "Input machines map machine_2 to mst110cr; task document model must identify the same executing machine."
+        },
+        {
+          "category": "spec_example_error",
+          "lines": [
+            2941,
+            2942,
+            2943
+          ],
+          "finding": "mst2200vdr task example stores model_name=zx200 and uses LeafNodeExcavator for transport despite crawler-dump initialization.",
+          "basis": "Input machine_3 is mst2200vdr and its task is transport. The machine-specific LeafNodeCrawlerDump is required."
+        },
+        {
+          "category": "spec_example_error",
+          "lines": [
+            2841,
+            2844,
+            2845,
+            2929,
+            2943
+          ],
+          "finding": "Crawler-dump initialization examples use target_record_name/previous_target_record_name although their Leaf declaration has record_name/read_direction.",
+          "basis": "Actual crawler-dump bindings are checked through its declared record_name port. Using undeclared excavator-specific ports cannot be treated as harmless XML text formatting."
+        },
+        {
+          "category": "spec_example_error",
+          "lines": [
+            2946,
+            2954,
+            2955,
+            2956
+          ],
+          "finding": "The section introduced as d37pxi instead copies zx200/mst2200vdr models, crawler-dump initialization, mst110cr completion flag and excavation_loading.",
+          "basis": "Input machine_4 is d37pxi with initialize and leveling. A matching bulldozer Leaf, initial_position reference, own completion flag and leveling action are derived from that actual input."
+        },
+        {
+          "category": "synchronization_conflict",
+          "lines": [
+            2765,
+            2792,
+            2802,
+            2965,
+            2970
+          ],
+          "finding": "zx200 example writes initialize_flg into a record named initialize_flg, which is not the declared initialize_flgs record.",
+          "basis": "The synchronization document declares initialize_flg_<model> boolean fields under initialize_flgs. Undeclared flag references are rejected."
+        },
+        {
+          "category": "synchronization_conflict",
+          "lines": [
+            2765,
+            2777,
+            2778,
+            2779,
+            2929,
+            2943
+          ],
+          "finding": "Crawler-dump examples reset their shared completion flag to false as soon as their own barrier opens.",
+          "basis": "All four work tasks independently wait for all four initializations in the source flow. Resetting a shared flag can make a later reader wait forever. Stored trees must publish true once and leave shared flags monotonic."
+        },
+        {
+          "category": "synchronization_conflict",
+          "lines": [
+            2793,
+            2803,
+            2807,
+            2826,
+            2827,
+            2828
+          ],
+          "finding": "The example gives KeepRunningUntilFlgup an empty key and places work inside the polling decorator.",
+          "basis": "A usable local boolean completion key and a polling child that updates it are needed. Work is checked to run after the wait, once, without being repeatedly invoked by polling."
+        },
+        {
+          "category": "nonsemantic_difference",
+          "lines": [
+            2812,
+            2899,
+            2914,
+            2928,
+            2942
+          ],
+          "finding": "Unused TreeNodesModel candidates, XML whitespace/attribute ordering and descriptive filenames can differ without changing the executable tree.",
+          "basis": "Validation checks used node/port declarations and executable action structure; it does not demand literal XML string equality or an exact set of unused candidates."
+        },
+        {
+          "category": "runtime_not_verified",
+          "lines": [
+            2822,
+            2833,
+            2843,
+            2850
+          ],
+          "finding": "The specification uses primitive_name for construction Leafs. Executor compatibility and actual construction motion are outside this document-only check.",
+          "basis": "No BehaviorTree executor or physical/simulated machinery is executed. A structurally valid stored task is not evidence that construction operations succeeded."
+        }
+      ]
+    }
+  },
+  "source_inputs_sha256": {
+    "json_samples/261001-kyoto.geojson": "eac4b495f7238fd9dc90a19fced5ff88a9d2023ea02c0860861b23f1da67ac55",
+    "json_samples/261001-kyoto.xml": "8d4725b83be294c6178338764f3c51387a7b34782a32d8a04d7fbad156b34cd8"
+  },
+  "evidence": {
+    "directory": "/tmp/tms_if_input-entry-change",
+    "export_sha256": {
+      "before_parameter.json": "8f0c260c497f266d382fc48beabf96dea3ce5424fea541accc470fbaa9523012",
+      "before_task.json": "d01156674b784d8faa0a98ac159bf0dd219f811c6983431be8d05fdf12600b2c",
+      "after_parameter.json": "cb80da295e6cf6cfc0c68695033feea943d58c5b7139a62dab084a44518b63e7",
+      "after_task.json": "d01156674b784d8faa0a98ac159bf0dd219f811c6983431be8d05fdf12600b2c",
+      "actual_parameter.json": "cb80da295e6cf6cfc0c68695033feea943d58c5b7139a62dab084a44518b63e7",
+      "actual_task.json": "d01156674b784d8faa0a98ac159bf0dd219f811c6983431be8d05fdf12600b2c"
+    },
+    "workspace_launch_log": "/tmp/tms_if_input-entry-change/workspace_launch.log",
+    "latest_entry_change_directory": "/tmp/tms_if_input-entry-change",
+    "previous_verification_directory": "/tmp/tms_if_input-rostmsdb-verify",
+    "historical_export_sha256_before_entry_change": {
+      "before_parameter.json": "8f0c260c497f266d382fc48beabf96dea3ce5424fea541accc470fbaa9523012",
+      "before_task.json": "d01156674b784d8faa0a98ac159bf0dd219f811c6983431be8d05fdf12600b2c",
+      "after_parameter.json": "8f0c260c497f266d382fc48beabf96dea3ce5424fea541accc470fbaa9523012",
+      "after_task.json": "d01156674b784d8faa0a98ac159bf0dd219f811c6983431be8d05fdf12600b2c",
+      "actual_parameter.json": "8f0c260c497f266d382fc48beabf96dea3ce5424fea541accc470fbaa9523012",
+      "actual_task.json": "d01156674b784d8faa0a98ac159bf0dd219f811c6983431be8d05fdf12600b2c"
+    }
+  },
+  "limitations_ja": [
+    "今回の検証対象は送付された261001-kyoto.geojson/XML。既存DB内の同じキーの文書は上書きせず保持する。",
+    "MongoDBの_id/出典メタデータは資料の文書内容との比較から除外し、task_idの正整数・一意性は別検証。",
+    "BTの保存構造と参照は検証したが、BT実行側や実機・シミュレータの施工動作は実行していない。"
+  ],
+  "dump_and_route_recheck": {
+    "timestamp_utc": "2026-10-04T11:57:12.172149+00:00",
+    "mongo_uri": "mongodb://localhost:27017",
+    "database": "rostmsdb",
+    "collection": "parameter",
+    "total_documents": 65,
+    "dump_count": 9,
+    "dump_record_names": [
+      "dump_node_1",
+      "dump_node_2",
+      "dump_node_3",
+      "dump_node_4",
+      "dump_node_5",
+      "dump_node_6",
+      "dump_node_7",
+      "dump_node_8",
+      "dump_node_9"
+    ],
+    "route_count": 18,
+    "route_labels": {
+      "main": 12,
+      "sub": 6
+    },
+    "route_record_names": [
+      "2206133296",
+      "3260195895",
+      "3453947199",
+      "3775605330",
+      "2109419383",
+      "944236149",
+      "1285700315",
+      "3483617579",
+      "1901058875",
+      "840315598",
+      "3159144693",
+      "936963196",
+      "768363352",
+      "3851915284",
+      "1769298385",
+      "2192002421",
+      "1547089919",
+      "2758184951"
+    ],
+    "dump_comparison": {
+      "missing": [],
+      "different": []
+    },
+    "route_comparison": {
+      "missing": [],
+      "different": []
+    },
+    "first_twenty_record_names": [
+      "geo_fence",
+      "initial_position",
+      "initial_pose",
+      "initial_move_pose",
+      "initial_position",
+      "initial_pose",
+      "initial_pose_vessel",
+      "initial_move_pose",
+      "initial_position",
+      "initial_pose",
+      "initial_pose_vessel",
+      "initial_move_pose",
+      "initial_position",
+      "excavation_loading_params",
+      "loading_position_1",
+      "loading_position_2",
+      "loading_position_3",
+      "loading_position_4",
+      "dumps_entry_point_leveling_area",
+      "dump_node_1"
+    ],
+    "first_twenty_dump_count": 1,
+    "first_twenty_route_count": 0,
+    "first_route_position_one_based": 47,
+    "dump_query": {
+      "record_name": {
+        "$regex": "^dump_node_[0-9]+$"
+      }
+    },
+    "route_query": {
+      "section_id": {
+        "$exists": true
+      }
+    },
+    "main_query": {
+      "label": "main"
+    },
+    "sub_query": {
+      "label": "sub"
+    },
+    "variable_input_regression": {
+      "checked_dump_counts": [
+        1,
+        2,
+        4,
+        12,
+        15
+      ],
+      "checks": "All dump record names, coordinates, connection waypoints and orientations are derived from the input; all tested cases pass.",
+      "test_file": "test/test_compilation.py",
+      "passed_cases": 5
+    },
+    "route_variable_input_regression": [
+      {
+        "dump_points": 9,
+        "connection_points": 9,
+        "excavation_blocks": 5,
+        "routes": 15,
+        "main": 12,
+        "sub": 3,
+        "all_input_vertices_and_links_verified": true
+      },
+      {
+        "dump_points": 10,
+        "connection_points": 10,
+        "excavation_blocks": 2,
+        "routes": 16,
+        "main": 13,
+        "sub": 3,
+        "all_input_vertices_and_links_verified": true
+      },
+      {
+        "dump_points": 17,
+        "connection_points": 17,
+        "excavation_blocks": 11,
+        "routes": 23,
+        "main": 20,
+        "sub": 3,
+        "all_input_vertices_and_links_verified": true
+      },
+      {
+        "dump_points": 27,
+        "connection_points": 27,
+        "excavation_blocks": 14,
+        "routes": 33,
+        "main": 30,
+        "sub": 3,
+        "all_input_vertices_and_links_verified": true
+      },
+      {
+        "dump_points": 64,
+        "connection_points": 64,
+        "excavation_blocks": 20,
+        "routes": 70,
+        "main": 67,
+        "sub": 3,
+        "all_input_vertices_and_links_verified": true
+      }
+    ]
+  },
+  "entry_rule_change": {
+    "status": "passed",
+    "timestamp_utc": "2026-10-04T12:15:45.213219+00:00",
+    "database": "rostmsdb",
+    "collection": "parameter",
+    "entry_rule": "First connection_node in XML order matching an up-direction transport/passing section endpoint",
+    "modified_entries": [
+      {
+        "record_name": "dumps_entry_point_leveling_area",
+        "model_name": [
+          "mst110cr",
+          "mst2200vdr"
+        ],
+        "node_id": "919561426",
+        "old_position": {
+          "x": 55.3152,
+          "y": -94.2296
+        },
+        "new_position": {
+          "x": 58.9042,
+          "y": -92.4637
+        }
+      }
+    ],
+    "changed_fields": [
+      {
+        "record_name": "dumps_entry_point_leveling_area",
+        "fields": [
+          "x",
+          "y"
+        ]
+      }
+    ],
+    "collection_counts": {
+      "parameter": 65,
+      "task": 4
+    },
+    "existing_documents_removed": 0,
+    "unrelated_documents_modified": 0,
+    "compiled_payload_mismatches": 0
+  },
+  "unrelated_existing_documents_modified": 0
+}

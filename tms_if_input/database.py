@@ -5,9 +5,6 @@ from __future__ import annotations
 from copy import deepcopy
 
 
-OWNER_FIELD = '_tms_if_input'
-
-
 def parameter_filter(document: dict) -> dict:
     query = {'record_name': document['record_name']}
     if 'model_name' in document:
@@ -28,7 +25,7 @@ def _next_id(used: set[int]) -> int:
 
 
 def write_database(compilation, *, mongo_uri='mongodb://localhost:27017',
-                   mongo_db='rostmsdb', import_key='default', timeout_ms=5000,
+                   mongo_db='rostmsdb', timeout_ms=5000,
                    client_factory=None) -> dict:
     """Insert missing parameters/tasks and preserve every existing document.
 
@@ -39,14 +36,11 @@ def write_database(compilation, *, mongo_uri='mongodb://localhost:27017',
     """
     from .compiler import validate_documents
     validate_documents(compilation)
-    if not import_key.strip():
-        raise ValueError('import_key must not be empty')
     if timeout_ms <= 0:
         raise ValueError('MongoDB timeout must be positive')
     if client_factory is None:
         from pymongo import MongoClient
         client_factory = MongoClient
-    marker = {'import_key': import_key}
     client = client_factory(mongo_uri, serverSelectionTimeoutMS=timeout_ms,
                             connectTimeoutMS=timeout_ms, socketTimeoutMS=timeout_ms)
     try:
@@ -79,7 +73,6 @@ def write_database(compilation, *, mongo_uri='mongodb://localhost:27017',
             task_id = _next_id(used_ids)
             document = deepcopy(source)
             document['task_id'] = task_id
-            document[OWNER_FIELD] = marker.copy()
             planned_tasks.append(document)
             assigned[source['model_name']] = task_id
         inserted_parameters = 0
@@ -89,7 +82,6 @@ def write_database(compilation, *, mongo_uri='mongodb://localhost:27017',
                 skipped_parameters += 1
                 continue
             document = deepcopy(source)
-            document[OWNER_FIELD] = marker.copy()
             parameters.insert_one(document)
             inserted_parameters += 1
         for document in planned_tasks:

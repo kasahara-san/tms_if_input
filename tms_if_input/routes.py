@@ -5,7 +5,7 @@ from collections import defaultdict, deque
 from dataclasses import dataclass
 from typing import Iterable
 
-from .model import GeoGraph, Plan, Section
+from .model import GeoGraph, Plan, Section, Task
 
 
 @dataclass(frozen=True)
@@ -220,10 +220,8 @@ def _validate_transport_pairs(plan: Plan, sections: list[_DirectedSection]) -> N
             raise ValueError(f"Task {task.id}: no transport path from its loading area to leveling connection nodes: {', '.join(sorted(missing))}")
 
 
-def build_route_documents(plan: Plan, graph: GeoGraph) -> list[dict]:
-    """Return every main and passing section, oriented loading -> leveling."""
-    if not any(task.name == "transport" for task in plan.tasks.values()):
-        return []
+def _directed_transport_sections(plan: Plan, graph: GeoGraph) -> tuple[list[_DirectedSection], set[str]]:
+    """Share the same validated road selection and orientation across consumers."""
     sections = _selected_sections(plan, graph)
     if not sections:
         raise ValueError("Transport tasks require connected GeoJSON road sections")
@@ -234,6 +232,28 @@ def build_route_documents(plan: Plan, graph: GeoGraph) -> list[dict]:
     directed, depths, roots_by_point = _orient_main(main, loading, connections)
     directed.extend(_orient_sub(sub, depths, roots_by_point))
     _validate_transport_pairs(plan, directed)
+    return directed, connections
+
+
+def leveling_entry_node(plan: Plan, graph: GeoGraph, task: Task) -> str:
+    """Select the first XML connection node that ends an up-direction road section."""
+    if not any(candidate.name == "transport" for candidate in plan.tasks.values()):
+        raise ValueError(f"Task {task.id}: leveling entry requires a transport road")
+    directed, _ = _directed_transport_sections(plan, graph)
+    endpoints = {section.end for section in directed}
+    for node in task.parameters["connection_node"]:
+        identifier = str(node)
+        if identifier in endpoints:
+            return identifier
+    raise ValueError(
+        f"Task {task.id}: no connection_node is an up-direction transport or passing section endpoint")
+
+
+def build_route_documents(plan: Plan, graph: GeoGraph) -> list[dict]:
+    """Return every main and passing section, oriented loading -> leveling."""
+    if not any(task.name == "transport" for task in plan.tasks.values()):
+        return []
+    directed, connections = _directed_transport_sections(plan, graph)
     adjacency: dict[str, list[_DirectedSection]] = defaultdict(list)
     for section in directed:
         adjacency[section.start].append(section)

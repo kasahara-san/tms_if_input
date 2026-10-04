@@ -15,7 +15,6 @@ def main(argv=None) -> int:
     parser.add_argument('--dry-run', action='store_true', help='Export without writing MongoDB')
     parser.add_argument('--mongo-uri', default='mongodb://localhost:27017')
     parser.add_argument('--mongo-db', default='rostmsdb')
-    parser.add_argument('--import-key', default='default', help='Provenance label for new records')
     parser.add_argument('--mongo-timeout-ms', type=int, default=5000)
     args = parser.parse_args(argv)
     try:
@@ -28,7 +27,7 @@ def main(argv=None) -> int:
             from .database import write_database
             report.update(write_database(
                 compilation, mongo_uri=args.mongo_uri, mongo_db=args.mongo_db,
-                import_key=args.import_key, timeout_ms=args.mongo_timeout_ms))
+                timeout_ms=args.mongo_timeout_ms))
         print(json.dumps(report, ensure_ascii=False))
         return 0
     except Exception as exc:
