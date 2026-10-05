@@ -3,6 +3,7 @@
 import copy
 import json
 import math
+import re
 from pathlib import Path
 import xml.etree.ElementTree as ET
 
@@ -39,6 +40,31 @@ def assert_quaternion(document, vector, direction=1, array=False):
     expected = {"qx": 0, "qy": 0, "qz": math.sin(yaw / 2), "qw": math.cos(yaw / 2)}
     for key, value in expected.items():
         assert document[key] == pytest.approx([value, value] if array else value)
+
+
+def route_geometry(document):
+    return document["label"], tuple(document["x"]), tuple(document["y"])
+
+
+def assert_route_schema(routes):
+    by_id = {document["section_id"]: document for document in routes}
+    assert len(by_id) == len(routes)
+    for document in routes:
+        assert re.fullmatch(r"route_[0-9a-f]{16}_.+", document["section_id"])
+        assert document["record_name"] == document["section_id"]
+        assert document["preferred_direction"] == "up"
+        size = len(document["x"])
+        assert size >= 1
+        for key in ("y", "z", "qx", "qy", "qz", "qw"):
+            assert len(document[key]) == size
+        for key in ("z", "qx", "qy", "qz"):
+            assert document[key] == [0] * size
+        assert document["qw"] == [1] * size
+        for direction in ("up", "down"):
+            for label in ("main", "sub"):
+                linked = document[f"related_point_{direction}_{label}"]
+                if linked:
+                    assert by_id[linked]["label"] == label
 
 
 def assert_parameter_schema(compilation, plan, graph, entry_nodes):
@@ -231,21 +257,35 @@ def test_sample_compiles_from_input_values_and_contains_every_route():
     assert_parameter_schema(result, plan, graph, {"2600159710": "919561426"})
     assert len(result.tasks) == len(plan.machines)
     routes = [document for document in result.parameters if "section_id" in document]
-    endpoint_pairs = set()
-    for task in plan.tasks.values():
-        if task.name != "transport":
-            continue
-        explicit = {str(node) for field in ("main_node", "sub_node") for node in task.parameters[field]}
-        excavation = plan.tasks[task.parameters["excavation_loading_task"]]
-        leveling = plan.tasks[task.parameters["leveling_task"]]
-        allowed = explicit | {str(node) for node in excavation.parameters["dump_node"]}
-        allowed.update(str(node) for node in leveling.parameters["connection_node"])
-        endpoint_pairs.update(frozenset((section.start, section.end)) for section in graph.sections
-                              if section.start in allowed and section.end in allowed
-                              and (section.start in explicit or section.end in explicit))
-    assert len(routes) == len(endpoint_pairs)
-    assert {document["label"] for document in routes} == {"main", "sub"}
-    assert all(document["preferred_direction"] == "up" for document in routes)
+    assert len(result.parameters) == 54
+    assert len(routes) == 7
+    assert sum(document["label"] == "main" for document in routes) == 5
+    assert sum(document["label"] == "sub" for document in routes) == 2
+    assert_route_schema(routes)
+    # These fixture-known paths stop at the XML-listed nodes. Loading and
+    # leveling access roads must not appear in the stored navigation groups.
+    expected_paths = [
+        ("main", ["7609442", "1755144311"]),
+        ("main", ["1755144311", "365138918"]),
+        ("main", ["365138918", "2943157174", "95297176", "3887281787", "1327926290"]),
+        ("main", ["1327926290", "2357889456"]),
+        ("main", ["2357889456", "758911660"]),
+        ("sub", ["1755144311", "2657600551", "4025910820", "365138918"]),
+        ("sub", ["1327926290", "3813604511", "2995202696", "2357889456"]),
+    ]
+    expected_geometries = set()
+    for label, path in expected_paths:
+        vertices = []
+        for start, end in zip(path, path[1:]):
+            section = next(section for section in graph.sections
+                           if {section.start, section.end} == {start, end})
+            coordinates = list(section.coordinates)
+            if section.start != start:
+                coordinates.reverse()
+            vertices.extend(coordinates[1:] if vertices and vertices[-1] == coordinates[0] else coordinates)
+        expected_geometries.add((label, tuple(point[0] for point in vertices),
+                                tuple(point[1] for point in vertices)))
+    assert {route_geometry(document) for document in routes} == expected_geometries
 
 
 @pytest.mark.parametrize("connections,blocks", [(1, 1), (2, 3), (4, 2), (12, 5), (15, 12)])
@@ -264,7 +304,7 @@ def test_variable_rings_blocks_connections_and_machine_count(tmp_path, connectio
             if document["record_name"].startswith("dump_node_")} == {
                 f"dump_node_{index}" for index in range(1, connections + 1)}
     assert len(record(result, "geo_fence")["coordinates"]) == 2
-    assert len([document for document in result.parameters if "section_id" in document]) == 6 + connections
+    assert len([document for document in result.parameters if "section_id" in document]) == 4
 
 
 def test_explicit_transport_lists_ignore_point_metadata_and_unlisted_roads(tmp_path):
@@ -325,30 +365,110 @@ def test_entry_follows_first_matching_connection_without_changing_dump_paths(
 def test_routes_reverse_all_vertices_and_link_multiple_passing_nodes(tmp_path):
     geojson, root = synthetic_inputs()
     result = compile_scenario(*write_pair(tmp_path, geojson, root))
-    routes = {document["section_id"]: document for document in result.parameters if "section_id" in document}
-    assert set(routes) == {"main-0", "main-1", "main-2", "terminal-0", "sub-0", "sub-1", "sub-2"}
-    assert routes["main-0"]["x"] == [0, 5, 10]
-    assert routes["main-0"]["y"] == [0, 1, 0]
-    assert routes["main-1"]["x"] == [10, 13, 17, 20]
-    assert routes["sub-1"]["x"] == [10, 15, 20]
-    assert routes["sub-1"]["y"] == [3, 4, 3]
+    documents = [document for document in result.parameters if "section_id" in document]
+    assert len(documents) == 4
+    assert_route_schema(documents)
+    routes = {route_geometry(document): document for document in documents}
+    names = {
+        "entry": ("main", (10,), (0,)),
+        "first": ("main", (10, 13, 17, 20), (0, 0, 0, 0)),
+        "last": ("main", (20, 30), (0, 0)),
+        "passing": ("sub", (10, 10, 15, 20, 20), (0, 3, 4, 3, 0)),
+    }
+    assert set(routes) == set(names.values())
+    routes = {name: routes[geometry] for name, geometry in names.items()}
+    assert routes["entry"]["section_id"].endswith("_road-A")
+    assert routes["first"]["section_id"].endswith("_main-1")
+    assert routes["last"]["section_id"].endswith("_main-2")
+    assert routes["passing"]["section_id"].endswith("_sub-0")
     expected_links = {
-        "main-0": ("main-1", "sub-0", "", ""),
-        "main-1": ("main-2", "sub-2", "main-0", "sub-0"),
-        "main-2": ("terminal-0", "", "main-1", "sub-2"),
-        "terminal-0": ("", "", "main-2", ""),
-        "sub-0": ("", "sub-1", "main-0", ""),
-        "sub-1": ("", "sub-2", "", "sub-0"),
-        "sub-2": ("main-2", "", "", "sub-1"),
+        "entry": ("first", "passing", "", ""),
+        "first": ("last", "", "entry", ""),
+        "last": ("", "", "first", "passing"),
+        "passing": ("last", "", "entry", ""),
     }
     for name, links in expected_links.items():
         document = routes[name]
         assert tuple(document[f"related_point_{direction}_{label}"]
-                     for direction, label in (("up", "main"), ("up", "sub"), ("down", "main"), ("down", "sub"))) == links
-        length = len(document["x"])
-        assert all(len(document[key]) == length for key in ("y", "z", "qx", "qy", "qz", "qw"))
-        assert document["qz"] == [0] * length
-        assert document["qw"] == [1] * length
+                     for direction, label in (("up", "main"), ("up", "sub"), ("down", "main"), ("down", "sub"))) == tuple(
+                         routes[link]["section_id"] if link else "" for link in links)
+
+
+@pytest.mark.parametrize("join_offset", [0, 0.0001])
+def test_joined_main_preserves_internal_vertices_and_only_drops_identical_join(tmp_path, join_offset):
+    geojson, root = synthetic_inputs()
+    root.find("./procedure/tasks/task[@id='haul-work']/parameter[@name='sub_node']").set("value", '[]')
+    geojson["features"] = [feature for feature in geojson["features"]
+                           if not feature["properties"].get("id", "").removeprefix("reverse-").startswith("sub-")]
+    for feature in geojson["features"]:
+        identifier = feature["properties"].get("id")
+        coordinates = feature["geometry"]["coordinates"]
+        if identifier == "main-1":
+            coordinates.insert(-2, [13, 0])
+        elif identifier == "reverse-main-1":
+            coordinates.insert(1, [13, 0])
+        elif identifier == "main-2":
+            coordinates[0] = [20 + join_offset, 0]
+        elif identifier == "reverse-main-2":
+            coordinates[-1] = [20 + join_offset, 0]
+    result = compile_scenario(*write_pair(tmp_path, geojson, root))
+    routes = [document for document in result.parameters if "section_id" in document]
+    assert len(routes) == 1
+    assert_route_schema(routes)
+    expected_x = [10, 13, 13, 17, 20] + ([20 + join_offset] if join_offset else []) + [30]
+    assert routes[0]["x"] == expected_x
+    assert routes[0]["y"] == [0] * len(expected_x)
+
+
+def test_group_ids_are_stable_and_change_when_geometry_changes_without_new_source_ids(tmp_path):
+    geojson, root = synthetic_inputs()
+    paths = write_pair(tmp_path, geojson, root)
+    baseline = compile_scenario(*paths)
+    assert compile_scenario(*paths).parameters == baseline.parameters
+    original_ids = {document["section_id"] for document in baseline.parameters if "section_id" in document}
+    # Machine and task names do not describe the road or change its identity.
+    for machine in root.findall("./machines/machine"):
+        machine.set("type", "replacement_" + machine.get("id"))
+    root.find("./procedure/tasks/task[@id='haul-work']").set("id", "renamed-haul-work")
+    for edge in root.findall("./procedure/flow/edge"):
+        for key in ("from", "to"):
+            if edge.get(key) == "haul-work":
+                edge.set(key, "renamed-haul-work")
+    same_roads = compile_scenario(*write_pair(tmp_path, geojson, root))
+    assert {document["section_id"] for document in same_roads.parameters if "section_id" in document} == original_ids
+    for feature in geojson["features"]:
+        if feature["properties"].get("id") == "main-1":
+            feature["geometry"]["coordinates"][1] = [17, 2]
+        elif feature["properties"].get("id") == "reverse-main-1":
+            feature["geometry"]["coordinates"][-2] = [17, 2]
+    changed = compile_scenario(*write_pair(tmp_path, geojson, root))
+    changed_ids = {document["section_id"] for document in changed.parameters if "section_id" in document}
+    assert len(changed_ids) == len(original_ids) == 4
+    assert not original_ids & changed_ids
+
+
+def test_single_explicit_main_node_is_one_waypoint_and_excludes_access_roads(tmp_path):
+    geojson, root = synthetic_inputs()
+    geojson["features"] = [feature for feature in geojson["features"]
+                           if feature["geometry"]["type"] != "LineString"
+                           or feature["properties"]["id"] in {"main-0", "reverse-main-0"}]
+    geojson["features"].append({"type": "Feature", "properties": {
+        "id": "access", "startid": "road-A", "endid": "connection-0"},
+        "geometry": {"type": "LineString", "coordinates": [[10, 0], [25, 1], [40, 0]]}})
+    transport = root.find("./procedure/tasks/task[@id='haul-work']")
+    transport.find("parameter[@name='main_node']").set("value", '["road-A"]')
+    transport.find("parameter[@name='sub_node']").set("value", '[]')
+    paths = write_pair(tmp_path, geojson, root)
+    result = compile_scenario(*paths)
+    plan, graph = load_inputs(*paths)
+    assert_parameter_schema(result, plan, graph, {"grade-work": "connection-0"})
+    routes = [document for document in result.parameters if "section_id" in document]
+    assert_route_schema(routes)
+    assert len(routes) == 1
+    assert route_geometry(routes[0]) == ("main", (10,), (0,))
+    assert routes[0]["section_id"].endswith("_road-A")
+    assert all(routes[0][f"related_point_{direction}_{label}"] == ""
+               for direction in ("up", "down") for label in ("main", "sub"))
 
 
 def transformed_sample():
@@ -429,17 +549,26 @@ def test_replacing_all_ids_models_coordinates_and_vectors_changes_output(tmp_pat
     assert_parameter_schema(result, plan, graph, {leveling.id: id_map["919561426"]})
     assert {task["model_name"] for task in result.tasks} == set(model_map.values())
     baseline = compile_scenario(SAMPLES / "261004-kyoto.geojson", SAMPLES / "261004-kyoto.xml")
-    routes = {document["section_id"]: document for document in result.parameters if "section_id" in document}
-    for previous in (document for document in baseline.parameters if "section_id" in document):
-        changed = routes[id_map[previous["section_id"]]]
+    routes = {route_geometry(document): document for document in result.parameters if "section_id" in document}
+    previous_routes = [document for document in baseline.parameters if "section_id" in document]
+    correspondence = {}
+    for previous in previous_routes:
+        changed = routes[(previous["label"], tuple(-y + 1000 for y in previous["y"]),
+                          tuple(x - 700 for x in previous["x"]))]
+        correspondence[previous["section_id"]] = changed["section_id"]
+        assert changed["section_id"] != previous["section_id"]
         assert changed["x"] == pytest.approx([-y + 1000 for y in previous["y"]])
         assert changed["y"] == pytest.approx([x - 700 for x in previous["x"]])
         assert changed["label"] == previous["label"]
         assert changed["model_name"] == [model_map[model] for model in previous["model_name"]]
+    assert len(correspondence) == len(routes) == len(previous_routes)
+    changed_by_id = {document["section_id"]: document for document in routes.values()}
+    for previous in previous_routes:
+        changed = changed_by_id[correspondence[previous["section_id"]]]
         for direction in ("up", "down"):
             for label in ("main", "sub"):
                 key = f"related_point_{direction}_{label}"
-                assert changed[key] == id_map.get(previous[key], "")
+                assert changed[key] == correspondence.get(previous[key], "")
     assert len(record(result, "geo_fence")["coordinates"]) == 3
     for task in result.tasks:
         tree = ET.fromstring(task["task_sequence"])
@@ -548,10 +677,16 @@ def test_two_sequential_work_areas_keep_parameter_and_route_references_separate(
         leveling = plan.tasks[task.parameters["leveling_task"]]
         assert context["excavation_loading_record"] == record_name(plan, excavation, "excavation_loading_params")
         assert context["entry_record"] == record_name(plan, leveling, "dumps_entry_point_leveling_area")
-        assert all(section.startswith(prefix) == identifier.startswith(prefix)
+        assert len(context["route_section_ids"]) == 4
+        assert all((record(result, section)["x"][0] >= 100) == identifier.startswith(prefix)
                    for section in context["route_section_ids"])
         for key in ("loading_position_records", "dump_records"):
             assert all(record(result, name) for name in context[key])
+    first_ids = set(record(result, "transport_params_haul-work")["route_section_ids"])
+    second_ids = set(record(result, "transport_params_" + prefix + "haul-work")["route_section_ids"])
+    assert not first_ids & second_ids
+    assert first_ids | second_ids == {document["section_id"] for document in result.parameters
+                                    if "section_id" in document}
     completions = record(result, "task_completion_flgs")
     assert all(completions["completed_flg_" + identifier] is False
                for identifier in ("dig-work", "grade-work", "haul-work"))

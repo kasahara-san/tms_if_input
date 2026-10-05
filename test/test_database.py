@@ -4,6 +4,7 @@ from copy import deepcopy
 from types import SimpleNamespace
 import unittest
 
+from bson.int64 import Int64
 from pymongo.errors import NetworkTimeout, ServerSelectionTimeoutError
 
 from tms_if_input.compiler import Compilation
@@ -295,7 +296,7 @@ class DatabaseTests(unittest.TestCase):
         self.assertEqual(compilation, original)
         self.assertTrue(all(client.closed for client in factory.clients))
 
-    def test_changed_input_keeps_existing_parameter_and_task_content(self):
+    def test_changed_task_content_is_added_without_changing_existing_data(self):
         old_parameter = owned({"record_name": "route", "model_name": "truck", "points": [[1, 2, 3]],
                                "runtime": {"progress": 2}})
         old_task = owned({**task("truck", 42), "task_sequence": "<old />", "enabled": False})
@@ -305,10 +306,16 @@ class DatabaseTests(unittest.TestCase):
         ], [{**task("truck", 99), "task_sequence": "<new />"}]),
             client_factory=ClientFactory(database))
         self.assertEqual(database["parameter"].documents, [old_parameter])
-        self.assertEqual(database["task"].documents, [old_task])
-        self.assert_no_inserts(database)
-        self.assertEqual(result["task_ids"], {"truck": 42})
-        self.assertEqual(result["skipped_tasks"], 1)
+        new_task = {**task("truck", 1), "task_sequence": "<new />"}
+        self.assertEqual(database["task"].documents, [old_task, new_task])
+        self.assertEqual(database["parameter"].insert_calls, [])
+        self.assertEqual(result["task_ids"], {"truck": 1})
+        self.assertEqual(result["inserted_tasks"], 1)
+        self.assertEqual(result["skipped_tasks"], 0)
+        retry = write_database(Compilation([], [new_task]), client_factory=ClientFactory(database))
+        self.assertEqual(retry["task_ids"], {"truck": 1})
+        self.assertEqual(retry["inserted_tasks"], 0)
+        self.assertEqual(database["task"].documents, [old_task, new_task])
 
     def test_stale_managed_and_manual_documents_remain_when_input_changes(self):
         old_parameters = [
@@ -569,27 +576,82 @@ class DatabaseTests(unittest.TestCase):
                 self.assert_no_inserts(database)
                 self.assertTrue(factory.clients[0].closed)
 
-    def test_duplicate_existing_matching_models_are_rejected_before_any_write(self):
-        old_tasks = [task("zx200", 9), task("zx200", 10)]
+    def test_many_existing_tasks_for_same_model_allow_new_task_and_stable_retry(self):
+        old_tasks = [
+            {**task("zx200", index), "task_sequence": f'<root legacy="{index}" />',
+             "runtime": {"enabled": bool(index % 2)}}
+            for index in range(1, 101)
+        ]
+        old_tasks += [
+            {**task("zx200", 101), "description": "another_task.xml"},
+            {key: value for key, value in task("zx200", 102).items() if key != "task_sequence"},
+            {**task("zx200", 103), "type": "other"},
+        ]
         database = FakeDatabase(tasks=old_tasks)
         factory = ClientFactory(database)
-        with self.assertRaises(ValueError):
-            write_database(Compilation([{"record_name": "should_not_be_written"}], [task("zx200")]),
-                           client_factory=factory)
+        compilation = Compilation([{"record_name": "new_parameter"}],
+                                  [task("zx200", 99), task("mst110cr", 100)])
+        original = deepcopy(compilation)
+        first = write_database(compilation, client_factory=factory)
+        self.assertEqual(first["task_ids"], {"zx200": 104, "mst110cr": 105})
+        self.assertEqual((first["inserted_tasks"], first["skipped_tasks"]), (2, 0))
+        self.assertEqual(database["task"].documents[:len(old_tasks)], old_tasks)
+        self.assertEqual(database["task"].documents[len(old_tasks):],
+                         [task("zx200", 104), task("mst110cr", 105)])
+        stored = deepcopy(database["task"].documents)
+        second = write_database(Compilation(compilation.parameters, list(reversed(compilation.tasks))),
+                                client_factory=factory)
+        self.assertEqual(second["task_ids"], first["task_ids"])
+        self.assertEqual((second["inserted_tasks"], second["skipped_tasks"]), (0, 2))
+        self.assertEqual(second["inserted_parameters"], 0)
+        self.assertEqual(database["task"].documents, stored)
+        self.assertEqual(compilation, original)
+        self.assertTrue(all(client.closed for client in factory.clients))
+
+    def test_multiple_identical_tasks_reuse_smallest_valid_id_in_any_order(self):
+        old_tasks = [owned(task("zx200", 10)), {**task("zx200", 9), "enabled": False},
+                     task("zx200", None)]
+        database = FakeDatabase(tasks=old_tasks)
+        factory = ClientFactory(database)
+        first = write_database(Compilation([], [task("zx200", 99)]), client_factory=factory)
+        self.assertEqual(first["task_ids"], {"zx200": 9})
+        self.assertEqual((first["inserted_tasks"], first["skipped_tasks"]), (0, 1))
         self.assertEqual(database["task"].documents, old_tasks)
         self.assert_no_inserts(database)
-        self.assertTrue(factory.clients[0].closed)
+        database["task"].documents.reverse()
+        second = write_database(Compilation([], [task("zx200")]), client_factory=factory)
+        self.assertEqual(second["task_ids"], first["task_ids"])
+        self.assertEqual(database["task"].documents, list(reversed(old_tasks)))
+        self.assert_no_inserts(database)
+        self.assertTrue(all(client.closed for client in factory.clients))
+
+    def test_bson_long_task_ids_are_reserved_and_existing_matching_id_is_reused(self):
+        old_tasks = [task("unrelated", Int64(1)), task("zx200", Int64(42)),
+                     task("another", 3), {**task("legacy", Int64(2)), "type": "other"}]
+        database = FakeDatabase(tasks=old_tasks)
+        factory = ClientFactory(database)
+        compilation = Compilation([], [task("zx200", 99), task("mst110cr", 100)])
+        first = write_database(compilation, client_factory=factory)
+        self.assertEqual(first["task_ids"], {"zx200": 42, "mst110cr": 4})
+        self.assertEqual((first["inserted_tasks"], first["skipped_tasks"]), (1, 1))
+        self.assertEqual(database["task"].documents, old_tasks + [task("mst110cr", 4)])
+        second = write_database(compilation, client_factory=factory)
+        self.assertEqual(second["task_ids"], first["task_ids"])
+        self.assertEqual(second["inserted_tasks"], 0)
+        self.assertEqual(database["task"].documents, old_tasks + [task("mst110cr", 4)])
 
     def test_duplicate_existing_positive_task_ids_are_rejected_before_any_write(self):
-        old_tasks = [task("zx200", 9), task("mst110cr", 9)]
-        database = FakeDatabase(tasks=old_tasks)
-        factory = ClientFactory(database)
-        with self.assertRaises(ValueError):
-            write_database(Compilation([{"record_name": "should_not_be_written"}], [task("zx200")]),
-                           client_factory=factory)
-        self.assertEqual(database["task"].documents, old_tasks)
-        self.assert_no_inserts(database)
-        self.assertTrue(factory.clients[0].closed)
+        for duplicate_id in (9, Int64(9)):
+            with self.subTest(task_id=duplicate_id):
+                old_tasks = [task("zx200", 9), task("mst110cr", duplicate_id)]
+                database = FakeDatabase(tasks=old_tasks)
+                factory = ClientFactory(database)
+                with self.assertRaises(ValueError):
+                    write_database(Compilation([{"record_name": "should_not_be_written"}],
+                                               [task("zx200")]), client_factory=factory)
+                self.assertEqual(database["task"].documents, old_tasks)
+                self.assert_no_inserts(database)
+                self.assertTrue(factory.clients[0].closed)
 
 
 if __name__ == "__main__":

@@ -24,15 +24,21 @@ def _next_id(used: set[int]) -> int:
     return candidate
 
 
+def _valid_task_id(value) -> bool:
+    # BSON Int64 is an int subclass; boolean values are not task IDs.
+    return isinstance(value, int) and not isinstance(value, bool) and value > 0
+
+
 def write_database(compilation, *, mongo_uri='mongodb://localhost:27017',
                    mongo_db='rostmsdb', timeout_ms=30000,
                    client_factory=None) -> dict:
     """Insert missing parameters/tasks and preserve every existing document.
 
-    Matching record names/model scopes are skipped, even when their contents
-    differ from the compilation. Repeated or smaller imports never replace,
-    reset or delete previously stored data. A retry adds only records that
-    were not inserted before a failure.
+    Parameters with matching record names/model scopes are skipped, even when
+    their contents differ. Tasks are skipped only when type, model_name,
+    description and task_sequence match. Different tasks for the same machine
+    receive unused IDs. Imports never replace, reset or delete stored data.
+    A retry adds only records that were not inserted before a failure.
     """
     from .compiler import validate_documents
     validate_documents(compilation)
@@ -50,11 +56,11 @@ def write_database(compilation, *, mongo_uri='mongodb://localhost:27017',
         database = client[mongo_db]
         parameters, tasks = database['parameter'], database['task']
         operation = 'read task collection'
-        current_tasks = list(tasks.find({}, {'task_id': 1, 'model_name': 1, 'type': 1}))
-        used_ids = {doc['task_id'] for doc in current_tasks
-                    if type(doc.get('task_id')) is int and doc['task_id'] > 0}
+        current_tasks = list(tasks.find({}, {'task_id': 1, 'model_name': 1, 'type': 1,
+                                             'description': 1, 'task_sequence': 1}))
         positive_ids = [doc['task_id'] for doc in current_tasks
-                        if type(doc.get('task_id')) is int and doc['task_id'] > 0]
+                        if _valid_task_id(doc.get('task_id'))]
+        used_ids = set(positive_ids)
         if len(positive_ids) != len(used_ids):
             raise ValueError('Existing task records contain duplicate positive task IDs')
         assigned = {}
@@ -62,14 +68,16 @@ def write_database(compilation, *, mongo_uri='mongodb://localhost:27017',
         skipped_tasks = 0
         for source in compilation.tasks:
             existing = [doc for doc in current_tasks
-                        if doc.get('model_name') == source['model_name'] and
-                        doc.get('type') == 'task']
-            if len(existing) > 1:
-                raise ValueError(f"Duplicate existing task records for {source['model_name']}")
+                        if all(doc.get(key) == source[key] for key in
+                               ('type', 'model_name', 'description', 'task_sequence'))]
             if existing:
-                task_id = existing[0].get('task_id')
-                if type(task_id) is not int or task_id <= 0:
+                matching_ids = [doc['task_id'] for doc in existing
+                                if _valid_task_id(doc.get('task_id'))]
+                if not matching_ids:
                     raise ValueError(f"Existing task for {source['model_name']} has an invalid task ID")
+                # Existing duplicates are preserved; retries choose the same
+                # usable ID regardless of MongoDB's document iteration order.
+                task_id = min(matching_ids)
                 assigned[source['model_name']] = task_id
                 skipped_tasks += 1
                 continue

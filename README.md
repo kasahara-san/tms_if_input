@@ -1,6 +1,6 @@
 # tms_if_input
 
-GeoJSONと施工計画XMLから、施工機械ごとのタスクとパラメータを生成するROS 2パッケージです。
+GeoJSONと施工計画XMLから、施工機械ごとのタスクとパラメータを生成するROS 2パッケージです。連続する走行経路は分岐・合流点でまとめます。
 MongoDBの `rostmsdb.parameter` と `rostmsdb.task` に未登録データだけを追加し、既存データは削除・更新しません。
 
 ```bash

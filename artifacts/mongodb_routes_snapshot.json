@@ -1,0 +1,385 @@
+{
+  "captured_at": "2026-10-05T09:06:01.393066+09:00",
+  "database": "rostmsdb",
+  "collection": "parameter",
+  "query": {
+    "section_id": {
+      "$exists": true
+    }
+  },
+  "parameter_count": 54,
+  "task_count": 4,
+  "routes": [
+    {
+      "_id": {
+        "$oid": "6ac2e933156c61ba8b27c530"
+      },
+      "model_name": [
+        "mst110cr",
+        "mst2200vdr"
+      ],
+      "type": "static",
+      "x": [
+        87.5675,
+        88.4665
+      ],
+      "y": [
+        -90.4818,
+        -82.9166
+      ],
+      "z": [
+        0.0,
+        0.0
+      ],
+      "qx": [
+        0.0,
+        0.0
+      ],
+      "qy": [
+        0.0,
+        0.0
+      ],
+      "qz": [
+        0.0,
+        0.0
+      ],
+      "qw": [
+        1.0,
+        1.0
+      ],
+      "record_name": "route_e86b16da63ce1bb1_3260195895",
+      "section_id": "route_e86b16da63ce1bb1_3260195895",
+      "label": "main",
+      "preferred_direction": "up",
+      "related_point_up_main": "route_e86b16da63ce1bb1_3453947199",
+      "related_point_up_sub": "route_e86b16da63ce1bb1_768363352",
+      "related_point_down_main": "",
+      "related_point_down_sub": ""
+    },
+    {
+      "_id": {
+        "$oid": "6ac2e933156c61ba8b27c531"
+      },
+      "model_name": [
+        "mst110cr",
+        "mst2200vdr"
+      ],
+      "type": "static",
+      "x": [
+        88.4665,
+        102.969
+      ],
+      "y": [
+        -82.9166,
+        -76.0847
+      ],
+      "z": [
+        0.0,
+        0.0
+      ],
+      "qx": [
+        0.0,
+        0.0
+      ],
+      "qy": [
+        0.0,
+        0.0
+      ],
+      "qz": [
+        0.0,
+        0.0
+      ],
+      "qw": [
+        1.0,
+        1.0
+      ],
+      "record_name": "route_e86b16da63ce1bb1_3453947199",
+      "section_id": "route_e86b16da63ce1bb1_3453947199",
+      "label": "main",
+      "preferred_direction": "up",
+      "related_point_up_main": "route_e86b16da63ce1bb1_3775605330",
+      "related_point_up_sub": "",
+      "related_point_down_main": "route_e86b16da63ce1bb1_3260195895",
+      "related_point_down_sub": ""
+    },
+    {
+      "_id": {
+        "$oid": "6ac2e933156c61ba8b27c532"
+      },
+      "model_name": [
+        "mst110cr",
+        "mst2200vdr"
+      ],
+      "type": "static",
+      "x": [
+        102.969,
+        116.069,
+        111.888,
+        80.7026,
+        64.1088
+      ],
+      "y": [
+        -76.0847,
+        -67.4023,
+        -55.5402,
+        -48.3454,
+        -51.7322
+      ],
+      "z": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "qx": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "qy": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "qz": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "qw": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "record_name": "route_e86b16da63ce1bb1_3775605330",
+      "section_id": "route_e86b16da63ce1bb1_3775605330",
+      "label": "main",
+      "preferred_direction": "up",
+      "related_point_up_main": "route_e86b16da63ce1bb1_3483617579",
+      "related_point_up_sub": "route_e86b16da63ce1bb1_2192002421",
+      "related_point_down_main": "route_e86b16da63ce1bb1_3453947199",
+      "related_point_down_sub": "route_e86b16da63ce1bb1_768363352"
+    },
+    {
+      "_id": {
+        "$oid": "6ac2e933156c61ba8b27c533"
+      },
+      "model_name": [
+        "mst110cr",
+        "mst2200vdr"
+      ],
+      "type": "static",
+      "x": [
+        64.1088,
+        55.6729
+      ],
+      "y": [
+        -51.7322,
+        -61.7772
+      ],
+      "z": [
+        0.0,
+        0.0
+      ],
+      "qx": [
+        0.0,
+        0.0
+      ],
+      "qy": [
+        0.0,
+        0.0
+      ],
+      "qz": [
+        0.0,
+        0.0
+      ],
+      "qw": [
+        1.0,
+        1.0
+      ],
+      "record_name": "route_e86b16da63ce1bb1_3483617579",
+      "section_id": "route_e86b16da63ce1bb1_3483617579",
+      "label": "main",
+      "preferred_direction": "up",
+      "related_point_up_main": "route_e86b16da63ce1bb1_1901058875",
+      "related_point_up_sub": "",
+      "related_point_down_main": "route_e86b16da63ce1bb1_3775605330",
+      "related_point_down_sub": ""
+    },
+    {
+      "_id": {
+        "$oid": "6ac2e933156c61ba8b27c534"
+      },
+      "model_name": [
+        "mst110cr",
+        "mst2200vdr"
+      ],
+      "type": "static",
+      "x": [
+        55.6729,
+        56.0019
+      ],
+      "y": [
+        -61.7772,
+        -75.6994
+      ],
+      "z": [
+        0.0,
+        0.0
+      ],
+      "qx": [
+        0.0,
+        0.0
+      ],
+      "qy": [
+        0.0,
+        0.0
+      ],
+      "qz": [
+        0.0,
+        0.0
+      ],
+      "qw": [
+        1.0,
+        1.0
+      ],
+      "record_name": "route_e86b16da63ce1bb1_1901058875",
+      "section_id": "route_e86b16da63ce1bb1_1901058875",
+      "label": "main",
+      "preferred_direction": "up",
+      "related_point_up_main": "",
+      "related_point_up_sub": "",
+      "related_point_down_main": "route_e86b16da63ce1bb1_3483617579",
+      "related_point_down_sub": "route_e86b16da63ce1bb1_2192002421"
+    },
+    {
+      "_id": {
+        "$oid": "6ac2e933156c61ba8b27c535"
+      },
+      "model_name": [
+        "mst110cr",
+        "mst2200vdr"
+      ],
+      "type": "static",
+      "x": [
+        88.4665,
+        89.7179,
+        96.3116,
+        102.969
+      ],
+      "y": [
+        -82.9166,
+        -76.1697,
+        -73.1424,
+        -76.0847
+      ],
+      "z": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "qx": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "qy": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "qz": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "qw": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "record_name": "route_e86b16da63ce1bb1_768363352",
+      "section_id": "route_e86b16da63ce1bb1_768363352",
+      "label": "sub",
+      "preferred_direction": "up",
+      "related_point_up_main": "route_e86b16da63ce1bb1_3775605330",
+      "related_point_up_sub": "",
+      "related_point_down_main": "route_e86b16da63ce1bb1_3260195895",
+      "related_point_down_sub": ""
+    },
+    {
+      "_id": {
+        "$oid": "6ac2e933156c61ba8b27c536"
+      },
+      "model_name": [
+        "mst110cr",
+        "mst2200vdr"
+      ],
+      "type": "static",
+      "x": [
+        64.1088,
+        56.2724,
+        51.8944,
+        55.6729
+      ],
+      "y": [
+        -51.7322,
+        -51.0818,
+        -56.3473,
+        -61.7772
+      ],
+      "z": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "qx": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "qy": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "qz": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "qw": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "record_name": "route_e86b16da63ce1bb1_2192002421",
+      "section_id": "route_e86b16da63ce1bb1_2192002421",
+      "label": "sub",
+      "preferred_direction": "up",
+      "related_point_up_main": "route_e86b16da63ce1bb1_1901058875",
+      "related_point_up_sub": "",
+      "related_point_down_main": "route_e86b16da63ce1bb1_3775605330",
+      "related_point_down_sub": ""
+    }
+  ]
+}

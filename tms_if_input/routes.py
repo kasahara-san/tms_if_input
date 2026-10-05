@@ -3,16 +3,22 @@ from __future__ import annotations
 
 from collections import defaultdict
 from dataclasses import dataclass
+import hashlib
+import json
 
 from .model import GeoGraph, Plan, Section, Task, identifier
+
+
+_Endpoint = str | tuple[str, str]
 
 
 @dataclass(frozen=True)
 class _DirectedSection:
     section: Section
-    start: str
-    end: str
+    start: _Endpoint
+    end: _Endpoint
     label: str
+    source_ids: tuple[str, ...] = ()
 
 
 def _nodes(task: Task, name: str, *, allow_empty=False) -> list[str]:
@@ -128,10 +134,109 @@ def _task_sections(plan: Plan, graph: GeoGraph, task: Task) -> tuple[list[_Direc
     return directed, connections
 
 
-def transport_section_ids(plan: Plan, graph: GeoGraph, task: Task) -> list[str]:
-    """Return only the sections explicitly selected for this transport task."""
+def _group_task_sections(plan: Plan, graph: GeoGraph, task: Task) -> list[_DirectedSection]:
+    """Join travel roads between junctions, excluding loading/dumping connectors."""
     directed, _ = _task_sections(plan, graph, task)
-    return [section.section.id for section in directed]
+    main_nodes = _nodes(task, "main_node")
+    sub_nodes = _nodes(task, "sub_node", allow_empty=True)
+    main = set(main_nodes)
+    allowed = main | set(sub_nodes)
+    travel = [road for road in directed if {road.start, road.end} <= allowed]
+    incoming, outgoing = defaultdict(list), defaultdict(list)
+    for road in travel:
+        incoming[road.end].append(road)
+        outgoing[road.start].append(road)
+    for node in allowed:
+        for direction, neighbors in (("up", outgoing[node]), ("down", incoming[node])):
+            for label in ("main", "sub"):
+                if sum(road.label == label for road in neighbors) > 1:
+                    raise ValueError(f"Task {task.id}: multiple {direction} {label} links at {node} cannot fit the MongoDB schema")
+    # Each passing lane starts/ends on the main road. Those junctions split
+    # the main road even when it has exactly one incoming and outgoing edge.
+    junctions = {node for road in travel if road.label == "sub"
+                 for node in (road.start, road.end) if node in main}
+    junctions.update(node for node in allowed
+                     if len(incoming[node]) != 1 or len(outgoing[node]) != 1)
+    groups, visited = [], set()
+    for first in travel:
+        if first.start not in junctions or first.section.id in visited:
+            continue
+        path, coordinates = [], []
+        road = first
+        while True:
+            if road.section.id in visited:
+                raise ValueError(f"Task {task.id}: cyclic travel section {road.section.id}")
+            visited.add(road.section.id)
+            path.append(road.section.id)
+            vertices = road.section.coordinates
+            if road.start != road.section.start:
+                vertices = tuple(reversed(vertices))
+            # Keep all source vertices except the repeated joining coordinate.
+            coordinates.extend(vertices[1:] if coordinates and coordinates[-1] == vertices[0]
+                               else vertices)
+            if road.end in junctions:
+                break
+            following = outgoing[road.end]
+            if len(following) != 1 or following[0].label != first.label:
+                raise ValueError(f"Task {task.id}: travel section changes role outside a junction")
+            road = following[0]
+        groups.append(_DirectedSection(
+            Section(first.section.id, first.start, road.end, tuple(coordinates)),
+            first.start, road.end, first.label, tuple(path)))
+    if len(visited) != len(travel):
+        raise ValueError(f"Task {task.id}: travel roads contain a cycle without a junction")
+
+    # A route containing only one main waypoint has no internal LineString.
+    # Loading/leveling connectors still validate it, but are not travel data.
+    covered = {node for road in travel for node in (road.start, road.end)}
+    singletons = set()
+    for label, nodes in (("main", main_nodes), ("sub", sub_nodes)):
+        for node in nodes:
+            before_sub = any(road.label == "sub" for road in incoming[node])
+            after_sub = any(road.label == "sub" for road in outgoing[node])
+            before_main = any(road.label == "main" for road in incoming[node])
+            after_main = any(road.label == "main" for road in outgoing[node])
+            # A junction at an area's boundary, or two consecutive passing
+            # lanes, still needs a main section to make the routing choice.
+            main_junction = label == "main" and (
+                (after_sub and not before_main) or (before_sub and not after_main)
+                or (before_sub and after_sub))
+            if node not in covered or main_junction:
+                point = graph.point(node)
+                groups.append(_DirectedSection(Section(node, node, node, ((point.x, point.y),)),
+                                               node, node, label, (node,)))
+                if label == "main":
+                    singletons.add(node)
+    order = {node: index for index, node in enumerate(main_nodes)}
+    groups.sort(key=lambda road: (road.label != "main", order.get(road.start, -1),
+                                  order.get(road.end, len(main_nodes)), road.section.id))
+
+    # Separate the two sides of a one-point junction. A bypass must link to
+    # the intervening main section before considering the next passing lane.
+    groups = [_DirectedSection(
+        road.section,
+        (road.start, "down" if road.start == road.end and road.label == "main" else "up")
+        if road.start in singletons else road.start,
+        (road.end, "up" if road.start == road.end and road.label == "main" else "down")
+        if road.end in singletons else road.end,
+        road.label, road.source_ids) for road in groups]
+
+    # Insert-only MongoDB imports must not mistake a new grouping or changed
+    # geometry for an old record. Version the complete graph so every link
+    # refers to the same import, including otherwise unchanged neighbors.
+    contents = [(road.label, road.start, road.end, road.source_ids, road.section.coordinates)
+                for road in groups]
+    digest = hashlib.sha256(json.dumps(contents, ensure_ascii=False, separators=(',', ':'),
+                                       allow_nan=False).encode('utf-8')).hexdigest()[:16]
+    return [_DirectedSection(
+        Section(f"route_{digest}_{road.section.id}", road.section.start, road.section.end,
+                road.section.coordinates),
+        road.start, road.end, road.label, road.source_ids) for road in groups]
+
+
+def transport_section_ids(plan: Plan, graph: GeoGraph, task: Task) -> list[str]:
+    """Return the grouped travel IDs used in this transport task's documents."""
+    return [road.section.id for road in _group_task_sections(plan, graph, task)]
 
 
 def leveling_entry_node(plan: Plan, graph: GeoGraph, task: Task) -> str:
@@ -149,64 +254,44 @@ def leveling_entry_node(plan: Plan, graph: GeoGraph, task: Task) -> str:
     raise ValueError(f"Task {task.id}: no connection_node is an up-direction transport or passing section endpoint")
 
 
-def _neighbor(identifier: str, point: str, label: str, direction: str,
-              adjacency: dict[str, list[_DirectedSection]], connections: set[str]) -> str:
+def _neighbor(identifier: str, point: _Endpoint, label: str, direction: str,
+              adjacency: dict[_Endpoint, list[_DirectedSection]]) -> str:
     others = [section for section in adjacency[point]
-              if section.section.id != identifier and section.label == label]
-    if label == "main":
-        others = [section for section in others
-                  if (section.start == point if direction == "up" else section.end == point)]
-    elif len(others) > 1:
-        # Consecutive passing lanes can share one main-road anchor. Preserve
-        # a single lane's endpoint link; distinguish incoming/outgoing lanes
-        # when both exist at that anchor.
-        directional = [section for section in others
-                       if (section.start == point if direction == "up" else section.end == point)]
-        if len(directional) == 1:
-            others = directional
+              if section.section.id != identifier and section.label == label and
+              (section.start == point if direction == "up" else section.end == point)]
     if len(others) > 1:
-        # Scalar link fields cannot list all terminal leveling-column branches;
-        # each branch retains its link back to the shared preceding section.
-        if direction == "up" and label == "main" and all(section.end in connections for section in others):
-            return ""
         raise ValueError(f"Section {identifier}: multiple {direction} {label} links cannot fit the MongoDB schema")
     return others[0].section.id if others else ""
 
 
 def build_route_documents(plan: Plan, graph: GeoGraph) -> list[dict]:
-    """Extract every declared main/passing section, oriented loading -> leveling."""
-    sections, connections = {}, set()
+    """Compile one waypoint array per travel section between junctions."""
+    models = list(dict.fromkeys(model for alias, model in plan.machines.items()
+                                if plan.machine_kind(alias) == "crawler_dump"))
+    documents = {}
     for task in plan.tasks.values():
         if task.name != "transport":
             continue
-        directed, ends = _task_sections(plan, graph, task)
-        connections.update(ends)
-        for section in directed:
-            previous = sections.setdefault(section.section.id, section)
-            if previous != section:
-                raise ValueError(f"Transport tasks disagree on section {section.section.id} direction or label")
-    adjacency = defaultdict(list)
-    for section in sections.values():
-        adjacency[section.start].append(section)
-        adjacency[section.end].append(section)
-    models = list(dict.fromkeys(model for alias, model in plan.machines.items()
-                                if plan.machine_kind(alias) == "crawler_dump"))
-    documents = []
-    for section in sections.values():
-        coordinates = section.section.coordinates
-        if section.start != section.section.start:
-            coordinates = tuple(reversed(coordinates))
-        size = len(coordinates)
-        document = {"model_name": models, "type": "static",
-                    "x": [point[0] for point in coordinates],
-                    "y": [point[1] for point in coordinates], "z": [0.0] * size,
-                    "qx": [0.0] * size, "qy": [0.0] * size,
-                    "qz": [0.0] * size, "qw": [1.0] * size,
-                    "record_name": section.section.id, "section_id": section.section.id,
-                    "label": section.label, "preferred_direction": "up"}
-        for direction, point in (("up", section.end), ("down", section.start)):
-            for label in ("main", "sub"):
-                document[f"related_point_{direction}_{label}"] = _neighbor(
-                    section.section.id, point, label, direction, adjacency, connections)
-        documents.append(document)
-    return documents
+        sections = _group_task_sections(plan, graph, task)
+        adjacency = defaultdict(list)
+        for section in sections:
+            adjacency[section.start].append(section)
+            adjacency[section.end].append(section)
+        for section in sections:
+            coordinates = section.section.coordinates
+            size = len(coordinates)
+            document = {"model_name": models, "type": "static",
+                        "x": [point[0] for point in coordinates],
+                        "y": [point[1] for point in coordinates], "z": [0.0] * size,
+                        "qx": [0.0] * size, "qy": [0.0] * size,
+                        "qz": [0.0] * size, "qw": [1.0] * size,
+                        "record_name": section.section.id, "section_id": section.section.id,
+                        "label": section.label, "preferred_direction": "up"}
+            for direction, point in (("up", section.end), ("down", section.start)):
+                for label in ("main", "sub"):
+                    document[f"related_point_{direction}_{label}"] = _neighbor(
+                        section.section.id, point, label, direction, adjacency)
+            previous = documents.setdefault(section.section.id, document)
+            if previous != document:
+                raise ValueError(f"Transport tasks disagree on section {section.section.id}")
+    return list(documents.values())
