@@ -1,0 +1,221 @@
+{
+  "status": "passed",
+  "verified_at_utc": "2026-10-05T02:55:58.947451+00:00",
+  "database": "rostmsdb",
+  "mongo_uri": "mongodb://localhost:27017",
+  "inputs": {
+    "geojson": "json_samples/261004-kyoto.geojson",
+    "xml": "json_samples/261004-kyoto.xml",
+    "sha256": {
+      "261004-kyoto.xml": "9e69200773f2cbafd1e27d2a7fd6b2cb96c76376cbfeee4e51221ff4a67f4571",
+      "261004-kyoto.geojson": "a85b8abef83a9101f00d58d8a99a239a83db8142bcf12561bc6acf37d2bc1aed"
+    }
+  },
+  "launch_command": "ros2 launch tms_if_input tms_if_input.launch.py geojson_path:=261004-kyoto.geojson xml_path:=261004-kyoto.xml",
+  "before_counts": {
+    "parameter": 0,
+    "task": 0
+  },
+  "after_counts": {
+    "parameter": 54,
+    "task": 4
+  },
+  "runs": [
+    {
+      "phase": "import",
+      "exit_code": 0,
+      "automatic_exit": true,
+      "elapsed_seconds": 4.267544,
+      "inserted_parameters": 54,
+      "inserted_tasks": 4,
+      "skipped_parameters": 0,
+      "skipped_tasks": 0
+    },
+    {
+      "phase": "repeat",
+      "exit_code": 0,
+      "automatic_exit": true,
+      "elapsed_seconds": 1.284192,
+      "inserted_parameters": 0,
+      "inserted_tasks": 0,
+      "skipped_parameters": 54,
+      "skipped_tasks": 4
+    }
+  ],
+  "stored_payload_checks": {
+    "parameters": 54,
+    "tasks": 4,
+    "parameter_mismatches": 0,
+    "task_mismatches": 0
+  },
+  "independent_parameter_checks": {
+    "status": "passed",
+    "oracle": "XML/GeoJSON plus explicit user requests; no production imports",
+    "expected_nonroute_documents": 47,
+    "matched_nonroute_documents": 47,
+    "facts": {
+      "scalar_angle_fields": 9,
+      "quaternion_components_preserved": 32,
+      "loading_positions": 4,
+      "dump_nodes": 9,
+      "bulldozer_nodes": 9,
+      "blocks": 9,
+      "context_records_required": 0,
+      "leveling_entry_ids": [
+        "919561426"
+      ],
+      "initialize_flag_fields": 4
+    },
+    "errors": [],
+    "preserved_runtime_flag_differences": []
+  },
+  "independent_route_checks": {
+    "status": "passed",
+    "oracle": "XML node order + raw GeoJSON + PPT slide 2",
+    "models": [
+      "mst110cr",
+      "mst2200vdr"
+    ],
+    "matched_graph_versions": [
+      "e86b16da63ce1bb1"
+    ],
+    "stored_parameter_count": 54,
+    "main_sections_verified": 5,
+    "sub_sections_verified": 2,
+    "source_line_strings_verified": 14,
+    "retained_waypoint_count": 21,
+    "related_point_fields_verified": 28,
+    "group_geometry_mismatches": 0,
+    "group_payload_mismatches": 0,
+    "work_area_connector_ids_excluded": [
+      "2206133296",
+      "4224337805",
+      "840315598",
+      "4224337827",
+      "3159144693",
+      "4224337828",
+      "936963196",
+      "4224337829"
+    ],
+    "unmatched_historical_versions": {}
+  },
+  "independent_task_checks": {
+    "status": "passed",
+    "checks": 416,
+    "verification_source": "MongoDB BSON snapshots, input XML, original specification",
+    "production_compiler_imported": false,
+    "selected_task_count": 4,
+    "selected_tasks": {
+      "zx200": {
+        "selected_task_id": 1,
+        "matching_task_documents": 1,
+        "other_existing_task_documents_ignored": 0
+      },
+      "mst110cr": {
+        "selected_task_id": 2,
+        "matching_task_documents": 1,
+        "other_existing_task_documents_ignored": 0
+      },
+      "mst2200vdr": {
+        "selected_task_id": 3,
+        "matching_task_documents": 1,
+        "other_existing_task_documents_ignored": 0
+      },
+      "d37pxi": {
+        "selected_task_id": 4,
+        "matching_task_documents": 1,
+        "other_existing_task_documents_ignored": 0
+      }
+    },
+    "bt_dependency_schedules_verified": 24,
+    "bt_work_primitives_in_xml_order": [
+      [
+        "zx200",
+        "excavation_loading"
+      ],
+      [
+        "mst110cr",
+        "transport"
+      ],
+      [
+        "mst2200vdr",
+        "transport"
+      ],
+      [
+        "d37pxi",
+        "leveling"
+      ]
+    ],
+    "all_selected_task_ids_positive_unique": true,
+    "all_parameter_references_resolved": true,
+    "initial_move_pose": {
+      "_id": {
+        "$oid": "6ac31134834c190426409ce6"
+      },
+      "planning_group": "manipulator",
+      "model_name": "zx200",
+      "record_name": "initial_move_pose",
+      "waypoints": [
+        {
+          "type": "joint_values_relative",
+          "data": {
+            "boom_joint": -0.174533,
+            "arm_joint": 2.61799,
+            "bucket_joint": 2.26893,
+            "swing_joint": 0.0
+          }
+        }
+      ],
+      "time_scale": 1,
+      "acceleration_scale": 1,
+      "velocity_scale": 1
+    },
+    "scalar_radian_values": {
+      "zx200.initial_pose.boom_joint": -1.1546042406997026,
+      "zx200.initial_pose.arm_joint": 2.3853240354081304,
+      "zx200.initial_pose.bucket_joint": -0.014664813135287743,
+      "zx200.initial_pose.swing_joint": -0.04741892026060402,
+      "mst110cr.initial_pose.target_angle": 0.007084356011027307,
+      "mst110cr.initial_pose_vessel.target_angle": 0.0,
+      "mst2200vdr.initial_pose.target_angle": 1.751673523825329e-05,
+      "mst2200vdr.initial_pose_vessel.target_angle": 0.0,
+      "zx200.excavation_loading_params.block_angle": 0.6981317007977318
+    },
+    "stored_initialization_flags": {
+      "initialize_flg_d37pxi": false,
+      "initialize_flg_mst110cr": false,
+      "initialize_flg_mst2200vdr": false,
+      "initialize_flg_zx200": false
+    },
+    "note": "Only matching scenario tasks checked; unrelated preexisting tasks ignored. Original BT examples contain copied model/leaf/flag errors; latest XML and correct typed synchronization semantics are used."
+  },
+  "preservation": {
+    "deleted_documents": 0,
+    "updated_documents": 0,
+    "repeat_document_changes": 0
+  },
+  "unit_tests": {
+    "passed": 180,
+    "command": "python3 -m pytest -q"
+  },
+  "raw_database_snapshots": {
+    "parameter": {
+      "path": "/home/kasahara/SIP_PROJECTS/ros2_tms_ws/src/tms_if_input/artifacts/mongodb_verified_parameter.json",
+      "sha256": "8203b309598bd529bfaaf10585391f175164249e17a3a32ce62719e1b012f75a",
+      "documents": 54
+    },
+    "task": {
+      "path": "/home/kasahara/SIP_PROJECTS/ros2_tms_ws/src/tms_if_input/artifacts/mongodb_verified_task.json",
+      "sha256": "7d2e206f49e34bab0a0fd407b076e5d8ae6f40c855c668d5a71697dd402e8bdf",
+      "documents": 4
+    }
+  },
+  "specification_priority": [
+    "Current XML/GeoJSON values",
+    "Latest requested grouped route structure (main 5, sub 2 for this input)",
+    "Scalar input angles are deg; stored angles are rad",
+    "Latest initial_move_pose: joint_values_relative with four specified radian values"
+  ],
+  "verification_scope": "Actual ROS import and MongoDB readback; BT behavior additionally checked using an in-memory simulation. No physical robot was operated.",
+  "evidence_directory": "/tmp/tms_if_input-live-verify"
+}

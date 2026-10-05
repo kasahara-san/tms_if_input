@@ -1,0 +1,1454 @@
+[
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409ce3"
+    },
+    "type": "static",
+    "record_name": "geo_fence",
+    "coordinates": [
+      [
+        {
+          "x": 113.73,
+          "y": -51.5993
+        },
+        {
+          "x": 82.0863,
+          "y": -44.8968
+        },
+        {
+          "x": 59.6577,
+          "y": -45.7352
+        },
+        {
+          "x": 43.1507,
+          "y": -54.4752
+        },
+        {
+          "x": 48.0943,
+          "y": -99.5301
+        },
+        {
+          "x": 64.1523,
+          "y": -128.121
+        },
+        {
+          "x": 101.654,
+          "y": -107.822
+        },
+        {
+          "x": 121.129,
+          "y": -70.3229
+        },
+        {
+          "x": 113.73,
+          "y": -51.5993
+        }
+      ],
+      [
+        {
+          "x": 91.0643,
+          "y": -68.8156
+        },
+        {
+          "x": 67.9885,
+          "y": -85.7238
+        },
+        {
+          "x": 79.205,
+          "y": -116.723
+        },
+        {
+          "x": 76.1876,
+          "y": -118.086
+        },
+        {
+          "x": 62.5575,
+          "y": -82.2441
+        },
+        {
+          "x": 63.8112,
+          "y": -62.9751
+        },
+        {
+          "x": 67.1473,
+          "y": -55.2099
+        },
+        {
+          "x": 80.342,
+          "y": -52.3176
+        },
+        {
+          "x": 108.771,
+          "y": -58.2216
+        },
+        {
+          "x": 109.035,
+          "y": -60.3828
+        },
+        {
+          "x": 91.0643,
+          "y": -68.8156
+        }
+      ]
+    ]
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409ce4"
+    },
+    "type": "static",
+    "model_name": "zx200",
+    "record_name": "initial_position",
+    "x": 85.1914,
+    "y": -102.672,
+    "z": 0.0,
+    "qx": 0.0,
+    "qy": 0.0,
+    "qz": 0.8180996,
+    "qw": 0.5750766
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409ce5"
+    },
+    "planning_group": "manipulator",
+    "model_name": "zx200",
+    "record_name": "initial_pose",
+    "waypoints": [
+      {
+        "type": "joint_values_relative",
+        "data": {
+          "boom_joint": -1.1546042406997026,
+          "swing_joint": -0.04741892026060402,
+          "arm_joint": 2.3853240354081304,
+          "bucket_joint": -0.014664813135287743
+        }
+      }
+    ],
+    "time_scale": 1,
+    "acceleration_scale": 1,
+    "velocity_scale": 1
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409ce6"
+    },
+    "planning_group": "manipulator",
+    "model_name": "zx200",
+    "record_name": "initial_move_pose",
+    "waypoints": [
+      {
+        "type": "joint_values_relative",
+        "data": {
+          "boom_joint": -0.174533,
+          "arm_joint": 2.61799,
+          "bucket_joint": 2.26893,
+          "swing_joint": 0.0
+        }
+      }
+    ],
+    "time_scale": 1,
+    "acceleration_scale": 1,
+    "velocity_scale": 1
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409ce7"
+    },
+    "type": "static",
+    "model_name": "mst110cr",
+    "record_name": "initial_position",
+    "x": 87.5675,
+    "y": -90.4818,
+    "z": 0.0,
+    "qx": 0.0,
+    "qy": 0.0,
+    "qz": -0.5821939,
+    "qw": 0.81305
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409ce8"
+    },
+    "model_name": [
+      "mst110cr"
+    ],
+    "type": "static",
+    "target_angle": 0.007084356011027307,
+    "record_name": "initial_pose"
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409ce9"
+    },
+    "model_name": [
+      "mst110cr"
+    ],
+    "type": "dynamic",
+    "target_angle": 0.0,
+    "record_name": "initial_pose_vessel"
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409cea"
+    },
+    "model_name": [
+      "mst110cr"
+    ],
+    "type": "static",
+    "target_angle": 0.0,
+    "record_name": "initial_move_pose"
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409ceb"
+    },
+    "type": "static",
+    "model_name": "mst2200vdr",
+    "record_name": "initial_position",
+    "x": 89.7179,
+    "y": -76.1697,
+    "z": 0.0,
+    "qx": 0.0,
+    "qy": 0.0,
+    "qz": -0.8101951,
+    "qw": 0.5861602
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409cec"
+    },
+    "model_name": [
+      "mst2200vdr"
+    ],
+    "type": "static",
+    "target_angle": 1.751673523825329e-05,
+    "record_name": "initial_pose"
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409ced"
+    },
+    "model_name": [
+      "mst2200vdr"
+    ],
+    "type": "dynamic",
+    "target_angle": 0.0,
+    "record_name": "initial_pose_vessel"
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409cee"
+    },
+    "model_name": [
+      "mst2200vdr"
+    ],
+    "type": "static",
+    "target_angle": 0.0,
+    "record_name": "initial_move_pose"
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409cef"
+    },
+    "type": "static",
+    "model_name": "d37pxi",
+    "record_name": "initial_position",
+    "x": 67.2928,
+    "y": -109.512,
+    "z": 0.0,
+    "qx": 0.0,
+    "qy": 0.0,
+    "qz": 0.8538176,
+    "qw": 0.5205724
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409cf0"
+    },
+    "model_name": "zx200",
+    "type": "dynamic",
+    "task_type": "excavation_loading",
+    "record_name": "excavation_loading_params",
+    "block_size": {
+      "x": 2.712584,
+      "y": 8.379402,
+      "z": 2.245142
+    },
+    "block_angle": 0.6981317007977318,
+    "block_vector": {
+      "x": -0.3345438,
+      "y": 0.9423802,
+      "z": 0.0
+    },
+    "block_center": [
+      {
+        "x": 83.25481,
+        "y": -97.21698,
+        "z": 11.29403
+      },
+      {
+        "x": 84.16229,
+        "y": -99.77327,
+        "z": 11.29403
+      },
+      {
+        "x": 85.06977,
+        "y": -102.3296,
+        "z": 11.29403
+      },
+      {
+        "x": 85.97725,
+        "y": -104.8858,
+        "z": 11.29403
+      }
+    ],
+    "backhoe_node": [
+      {
+        "x": 85.1914,
+        "y": -102.672
+      },
+      {
+        "x": 86.0989,
+        "y": -105.229
+      },
+      {
+        "x": 87.0064,
+        "y": -107.785
+      },
+      {
+        "x": 87.9138,
+        "y": -110.341
+      }
+    ],
+    "dump_node": [
+      {
+        "x": 91.7881,
+        "y": -100.33
+      },
+      {
+        "x": 92.6955,
+        "y": -102.887
+      },
+      {
+        "x": 93.603,
+        "y": -105.443
+      },
+      {
+        "x": 94.5105,
+        "y": -107.999
+      }
+    ]
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409cf1"
+    },
+    "type": "static",
+    "model_name": [
+      "mst110cr",
+      "mst2200vdr"
+    ],
+    "record_name": "loading_position_1",
+    "x": 91.7881,
+    "y": -100.33,
+    "z": 0.0,
+    "qx": 0.0,
+    "qy": 0.0,
+    "qz": 0.8168671,
+    "qw": 0.5768259
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409cf2"
+    },
+    "type": "static",
+    "model_name": [
+      "mst110cr",
+      "mst2200vdr"
+    ],
+    "record_name": "loading_position_2",
+    "x": 92.6955,
+    "y": -102.887,
+    "z": 0.0,
+    "qx": 0.0,
+    "qy": 0.0,
+    "qz": 0.8168671,
+    "qw": 0.5768259
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409cf3"
+    },
+    "type": "static",
+    "model_name": [
+      "mst110cr",
+      "mst2200vdr"
+    ],
+    "record_name": "loading_position_3",
+    "x": 93.603,
+    "y": -105.443,
+    "z": 0.0,
+    "qx": 0.0,
+    "qy": 0.0,
+    "qz": 0.8168671,
+    "qw": 0.5768259
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409cf4"
+    },
+    "type": "static",
+    "model_name": [
+      "mst110cr",
+      "mst2200vdr"
+    ],
+    "record_name": "loading_position_4",
+    "x": 94.5105,
+    "y": -107.999,
+    "z": 0.0,
+    "qx": 0.0,
+    "qy": 0.0,
+    "qz": 0.8168671,
+    "qw": 0.5768259
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409cf5"
+    },
+    "type": "static",
+    "model_name": [
+      "mst110cr",
+      "mst2200vdr"
+    ],
+    "record_name": "dumps_entry_point_leveling_area",
+    "x": 58.9042,
+    "y": -92.4637,
+    "z": 0.0,
+    "qx": 0.0,
+    "qy": 0.0,
+    "qz": -0.5284411892483951,
+    "qw": 0.8489699108365042
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409cf6"
+    },
+    "type": "static",
+    "model_name": [
+      "mst110cr",
+      "mst2200vdr"
+    ],
+    "record_name": "dump_node_1",
+    "x": [
+      58.9042,
+      62.8777
+    ],
+    "y": [
+      -92.4637,
+      -100.539
+    ],
+    "z": [
+      0.0,
+      0.0
+    ],
+    "qx": [
+      0.0,
+      0.0
+    ],
+    "qy": [
+      0.0,
+      0.0
+    ],
+    "qz": [
+      -0.5284411892483951,
+      -0.5284411892483951
+    ],
+    "qw": [
+      0.8489699108365042,
+      0.8489699108365042
+    ]
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409cf7"
+    },
+    "type": "static",
+    "model_name": [
+      "mst110cr",
+      "mst2200vdr"
+    ],
+    "record_name": "dump_node_2",
+    "x": [
+      55.3152,
+      59.2887
+    ],
+    "y": [
+      -94.2296,
+      -102.305
+    ],
+    "z": [
+      0.0,
+      0.0
+    ],
+    "qx": [
+      0.0,
+      0.0
+    ],
+    "qy": [
+      0.0,
+      0.0
+    ],
+    "qz": [
+      -0.5284411892483951,
+      -0.5284411892483951
+    ],
+    "qw": [
+      0.8489699108365042,
+      0.8489699108365042
+    ]
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409cf8"
+    },
+    "type": "static",
+    "model_name": [
+      "mst110cr",
+      "mst2200vdr"
+    ],
+    "record_name": "dump_node_3",
+    "x": [
+      51.7262,
+      55.6997
+    ],
+    "y": [
+      -95.9956,
+      -104.071
+    ],
+    "z": [
+      0.0,
+      0.0
+    ],
+    "qx": [
+      0.0,
+      0.0
+    ],
+    "qy": [
+      0.0,
+      0.0
+    ],
+    "qz": [
+      -0.5284411892483951,
+      -0.5284411892483951
+    ],
+    "qw": [
+      0.8489699108365042,
+      0.8489699108365042
+    ]
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409cf9"
+    },
+    "type": "static",
+    "model_name": [
+      "mst110cr",
+      "mst2200vdr"
+    ],
+    "record_name": "dump_node_4",
+    "x": [
+      51.7262,
+      54.8167
+    ],
+    "y": [
+      -95.9956,
+      -102.277
+    ],
+    "z": [
+      0.0,
+      0.0
+    ],
+    "qx": [
+      0.0,
+      0.0
+    ],
+    "qy": [
+      0.0,
+      0.0
+    ],
+    "qz": [
+      -0.5284411892483951,
+      -0.5284411892483951
+    ],
+    "qw": [
+      0.8489699108365042,
+      0.8489699108365042
+    ]
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409cfa"
+    },
+    "type": "static",
+    "model_name": [
+      "mst110cr",
+      "mst2200vdr"
+    ],
+    "record_name": "dump_node_5",
+    "x": [
+      55.3152,
+      58.4057
+    ],
+    "y": [
+      -94.2296,
+      -100.511
+    ],
+    "z": [
+      0.0,
+      0.0
+    ],
+    "qx": [
+      0.0,
+      0.0
+    ],
+    "qy": [
+      0.0,
+      0.0
+    ],
+    "qz": [
+      -0.5284411892483951,
+      -0.5284411892483951
+    ],
+    "qw": [
+      0.8489699108365042,
+      0.8489699108365042
+    ]
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409cfb"
+    },
+    "type": "static",
+    "model_name": [
+      "mst110cr",
+      "mst2200vdr"
+    ],
+    "record_name": "dump_node_6",
+    "x": [
+      58.9042,
+      61.9947
+    ],
+    "y": [
+      -92.4637,
+      -98.7445
+    ],
+    "z": [
+      0.0,
+      0.0
+    ],
+    "qx": [
+      0.0,
+      0.0
+    ],
+    "qy": [
+      0.0,
+      0.0
+    ],
+    "qz": [
+      -0.5284411892483951,
+      -0.5284411892483951
+    ],
+    "qw": [
+      0.8489699108365042,
+      0.8489699108365042
+    ]
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409cfc"
+    },
+    "type": "static",
+    "model_name": [
+      "mst110cr",
+      "mst2200vdr"
+    ],
+    "record_name": "dump_node_7",
+    "x": [
+      58.9042,
+      61.1117
+    ],
+    "y": [
+      -92.4637,
+      -96.9499
+    ],
+    "z": [
+      0.0,
+      0.0
+    ],
+    "qx": [
+      0.0,
+      0.0
+    ],
+    "qy": [
+      0.0,
+      0.0
+    ],
+    "qz": [
+      -0.5284411892483951,
+      -0.5284411892483951
+    ],
+    "qw": [
+      0.8489699108365042,
+      0.8489699108365042
+    ]
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409cfd"
+    },
+    "type": "static",
+    "model_name": [
+      "mst110cr",
+      "mst2200vdr"
+    ],
+    "record_name": "dump_node_8",
+    "x": [
+      55.3152,
+      57.5227
+    ],
+    "y": [
+      -94.2296,
+      -98.716
+    ],
+    "z": [
+      0.0,
+      0.0
+    ],
+    "qx": [
+      0.0,
+      0.0
+    ],
+    "qy": [
+      0.0,
+      0.0
+    ],
+    "qz": [
+      -0.5284411892483951,
+      -0.5284411892483951
+    ],
+    "qw": [
+      0.8489699108365042,
+      0.8489699108365042
+    ]
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409cfe"
+    },
+    "type": "static",
+    "model_name": [
+      "mst110cr",
+      "mst2200vdr"
+    ],
+    "record_name": "dump_node_9",
+    "x": [
+      51.7262,
+      53.9337
+    ],
+    "y": [
+      -95.9956,
+      -100.482
+    ],
+    "z": [
+      0.0,
+      0.0
+    ],
+    "qx": [
+      0.0,
+      0.0
+    ],
+    "qy": [
+      0.0,
+      0.0
+    ],
+    "qz": [
+      -0.5284411892483951,
+      -0.5284411892483951
+    ],
+    "qw": [
+      0.8489699108365042,
+      0.8489699108365042
+    ]
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409cff"
+    },
+    "type": "static",
+    "model_name": "d37pxi",
+    "record_name": "bulldozer_node_1",
+    "x": 67.2928,
+    "y": -109.512,
+    "z": 0.0,
+    "qx": 0.0,
+    "qy": 0.0,
+    "qz": 0.8489699108365042,
+    "qw": 0.5284411892483951
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409d00"
+    },
+    "type": "static",
+    "model_name": "d37pxi",
+    "record_name": "bulldozer_node_2",
+    "x": 63.7037,
+    "y": -111.278,
+    "z": 0.0,
+    "qx": 0.0,
+    "qy": 0.0,
+    "qz": 0.8489699108365042,
+    "qw": 0.5284411892483951
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409d01"
+    },
+    "type": "static",
+    "model_name": "d37pxi",
+    "record_name": "bulldozer_node_3",
+    "x": 60.1147,
+    "y": -113.044,
+    "z": 0.0,
+    "qx": 0.0,
+    "qy": 0.0,
+    "qz": 0.8489699108365042,
+    "qw": 0.5284411892483951
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409d02"
+    },
+    "type": "static",
+    "model_name": "d37pxi",
+    "record_name": "bulldozer_node_4",
+    "x": 59.2317,
+    "y": -111.249,
+    "z": 0.0,
+    "qx": 0.0,
+    "qy": 0.0,
+    "qz": 0.8489699108365042,
+    "qw": 0.5284411892483951
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409d03"
+    },
+    "type": "static",
+    "model_name": "d37pxi",
+    "record_name": "bulldozer_node_5",
+    "x": 62.8207,
+    "y": -109.483,
+    "z": 0.0,
+    "qx": 0.0,
+    "qy": 0.0,
+    "qz": 0.8489699108365042,
+    "qw": 0.5284411892483951
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409d04"
+    },
+    "type": "static",
+    "model_name": "d37pxi",
+    "record_name": "bulldozer_node_6",
+    "x": 66.4097,
+    "y": -107.717,
+    "z": 0.0,
+    "qx": 0.0,
+    "qy": 0.0,
+    "qz": 0.8489699108365042,
+    "qw": 0.5284411892483951
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409d05"
+    },
+    "type": "static",
+    "model_name": "d37pxi",
+    "record_name": "bulldozer_node_7",
+    "x": 65.5268,
+    "y": -105.923,
+    "z": 0.0,
+    "qx": 0.0,
+    "qy": 0.0,
+    "qz": 0.8489699108365042,
+    "qw": 0.5284411892483951
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409d06"
+    },
+    "type": "static",
+    "model_name": "d37pxi",
+    "record_name": "bulldozer_node_8",
+    "x": 61.9377,
+    "y": -107.689,
+    "z": 0.0,
+    "qx": 0.0,
+    "qy": 0.0,
+    "qz": 0.8489699108365042,
+    "qw": 0.5284411892483951
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409d07"
+    },
+    "type": "static",
+    "model_name": "d37pxi",
+    "record_name": "bulldozer_node_9",
+    "x": 58.3487,
+    "y": -109.455,
+    "z": 0.0,
+    "qx": 0.0,
+    "qy": 0.0,
+    "qz": 0.8489699108365042,
+    "qw": 0.5284411892483951
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409d08"
+    },
+    "type": "static",
+    "record_name": "block_1",
+    "block_size": {
+      "x": 2.0,
+      "y": 4.0
+    },
+    "block_center": {
+      "x": 64.20224,
+      "y": -103.2308,
+      "z": 9.896704
+    },
+    "soil_volume": 5.646
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409d09"
+    },
+    "type": "static",
+    "record_name": "block_2",
+    "block_size": {
+      "x": 2.0,
+      "y": 4.0
+    },
+    "block_center": {
+      "x": 60.61319,
+      "y": -104.9968,
+      "z": 9.896704
+    },
+    "soil_volume": 5.609
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409d0a"
+    },
+    "type": "static",
+    "record_name": "block_3",
+    "block_size": {
+      "x": 2.0,
+      "y": 4.0
+    },
+    "block_center": {
+      "x": 57.02414,
+      "y": -106.7628,
+      "z": 9.896704
+    },
+    "soil_volume": 5.806
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409d0b"
+    },
+    "type": "static",
+    "record_name": "block_4",
+    "block_size": {
+      "x": 2.0,
+      "y": 4.0
+    },
+    "block_center": {
+      "x": 56.14114,
+      "y": -104.9682,
+      "z": 9.896704
+    },
+    "soil_volume": 4.72
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409d0c"
+    },
+    "type": "static",
+    "record_name": "block_5",
+    "block_size": {
+      "x": 2.0,
+      "y": 4.0
+    },
+    "block_center": {
+      "x": 59.73019,
+      "y": -103.2022,
+      "z": 9.896704
+    },
+    "soil_volume": 4.655
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409d0d"
+    },
+    "type": "static",
+    "record_name": "block_6",
+    "block_size": {
+      "x": 2.0,
+      "y": 4.0
+    },
+    "block_center": {
+      "x": 63.31924,
+      "y": -101.4362,
+      "z": 9.896704
+    },
+    "soil_volume": 5.156
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409d0e"
+    },
+    "type": "static",
+    "record_name": "block_7",
+    "block_size": {
+      "x": 2.0,
+      "y": 4.0
+    },
+    "block_center": {
+      "x": 62.43624,
+      "y": -99.64173,
+      "z": 9.896704
+    },
+    "soil_volume": 4.239
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409d0f"
+    },
+    "type": "static",
+    "record_name": "block_8",
+    "block_size": {
+      "x": 2.0,
+      "y": 4.0
+    },
+    "block_center": {
+      "x": 58.84719,
+      "y": -101.4077,
+      "z": 9.896704
+    },
+    "soil_volume": 4.108
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409d10"
+    },
+    "type": "static",
+    "record_name": "block_9",
+    "block_size": {
+      "x": 2.0,
+      "y": 4.0
+    },
+    "block_center": {
+      "x": 55.25814,
+      "y": -103.1737,
+      "z": 9.896704
+    },
+    "soil_volume": 3.608
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409d11"
+    },
+    "model_name": [
+      "mst110cr",
+      "mst2200vdr"
+    ],
+    "type": "static",
+    "x": [
+      87.5675,
+      88.4665
+    ],
+    "y": [
+      -90.4818,
+      -82.9166
+    ],
+    "z": [
+      0.0,
+      0.0
+    ],
+    "qx": [
+      0.0,
+      0.0
+    ],
+    "qy": [
+      0.0,
+      0.0
+    ],
+    "qz": [
+      0.0,
+      0.0
+    ],
+    "qw": [
+      1.0,
+      1.0
+    ],
+    "record_name": "route_e86b16da63ce1bb1_3260195895",
+    "section_id": "route_e86b16da63ce1bb1_3260195895",
+    "label": "main",
+    "preferred_direction": "up",
+    "related_point_up_main": "route_e86b16da63ce1bb1_3453947199",
+    "related_point_up_sub": "route_e86b16da63ce1bb1_768363352",
+    "related_point_down_main": "",
+    "related_point_down_sub": ""
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409d12"
+    },
+    "model_name": [
+      "mst110cr",
+      "mst2200vdr"
+    ],
+    "type": "static",
+    "x": [
+      88.4665,
+      102.969
+    ],
+    "y": [
+      -82.9166,
+      -76.0847
+    ],
+    "z": [
+      0.0,
+      0.0
+    ],
+    "qx": [
+      0.0,
+      0.0
+    ],
+    "qy": [
+      0.0,
+      0.0
+    ],
+    "qz": [
+      0.0,
+      0.0
+    ],
+    "qw": [
+      1.0,
+      1.0
+    ],
+    "record_name": "route_e86b16da63ce1bb1_3453947199",
+    "section_id": "route_e86b16da63ce1bb1_3453947199",
+    "label": "main",
+    "preferred_direction": "up",
+    "related_point_up_main": "route_e86b16da63ce1bb1_3775605330",
+    "related_point_up_sub": "",
+    "related_point_down_main": "route_e86b16da63ce1bb1_3260195895",
+    "related_point_down_sub": ""
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409d13"
+    },
+    "model_name": [
+      "mst110cr",
+      "mst2200vdr"
+    ],
+    "type": "static",
+    "x": [
+      102.969,
+      116.069,
+      111.888,
+      80.7026,
+      64.1088
+    ],
+    "y": [
+      -76.0847,
+      -67.4023,
+      -55.5402,
+      -48.3454,
+      -51.7322
+    ],
+    "z": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "qx": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "qy": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "qz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "qw": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "record_name": "route_e86b16da63ce1bb1_3775605330",
+    "section_id": "route_e86b16da63ce1bb1_3775605330",
+    "label": "main",
+    "preferred_direction": "up",
+    "related_point_up_main": "route_e86b16da63ce1bb1_3483617579",
+    "related_point_up_sub": "route_e86b16da63ce1bb1_2192002421",
+    "related_point_down_main": "route_e86b16da63ce1bb1_3453947199",
+    "related_point_down_sub": "route_e86b16da63ce1bb1_768363352"
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409d14"
+    },
+    "model_name": [
+      "mst110cr",
+      "mst2200vdr"
+    ],
+    "type": "static",
+    "x": [
+      64.1088,
+      55.6729
+    ],
+    "y": [
+      -51.7322,
+      -61.7772
+    ],
+    "z": [
+      0.0,
+      0.0
+    ],
+    "qx": [
+      0.0,
+      0.0
+    ],
+    "qy": [
+      0.0,
+      0.0
+    ],
+    "qz": [
+      0.0,
+      0.0
+    ],
+    "qw": [
+      1.0,
+      1.0
+    ],
+    "record_name": "route_e86b16da63ce1bb1_3483617579",
+    "section_id": "route_e86b16da63ce1bb1_3483617579",
+    "label": "main",
+    "preferred_direction": "up",
+    "related_point_up_main": "route_e86b16da63ce1bb1_1901058875",
+    "related_point_up_sub": "",
+    "related_point_down_main": "route_e86b16da63ce1bb1_3775605330",
+    "related_point_down_sub": ""
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409d15"
+    },
+    "model_name": [
+      "mst110cr",
+      "mst2200vdr"
+    ],
+    "type": "static",
+    "x": [
+      55.6729,
+      56.0019
+    ],
+    "y": [
+      -61.7772,
+      -75.6994
+    ],
+    "z": [
+      0.0,
+      0.0
+    ],
+    "qx": [
+      0.0,
+      0.0
+    ],
+    "qy": [
+      0.0,
+      0.0
+    ],
+    "qz": [
+      0.0,
+      0.0
+    ],
+    "qw": [
+      1.0,
+      1.0
+    ],
+    "record_name": "route_e86b16da63ce1bb1_1901058875",
+    "section_id": "route_e86b16da63ce1bb1_1901058875",
+    "label": "main",
+    "preferred_direction": "up",
+    "related_point_up_main": "",
+    "related_point_up_sub": "",
+    "related_point_down_main": "route_e86b16da63ce1bb1_3483617579",
+    "related_point_down_sub": "route_e86b16da63ce1bb1_2192002421"
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409d16"
+    },
+    "model_name": [
+      "mst110cr",
+      "mst2200vdr"
+    ],
+    "type": "static",
+    "x": [
+      88.4665,
+      89.7179,
+      96.3116,
+      102.969
+    ],
+    "y": [
+      -82.9166,
+      -76.1697,
+      -73.1424,
+      -76.0847
+    ],
+    "z": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "qx": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "qy": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "qz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "qw": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "record_name": "route_e86b16da63ce1bb1_768363352",
+    "section_id": "route_e86b16da63ce1bb1_768363352",
+    "label": "sub",
+    "preferred_direction": "up",
+    "related_point_up_main": "route_e86b16da63ce1bb1_3775605330",
+    "related_point_up_sub": "",
+    "related_point_down_main": "route_e86b16da63ce1bb1_3260195895",
+    "related_point_down_sub": ""
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409d17"
+    },
+    "model_name": [
+      "mst110cr",
+      "mst2200vdr"
+    ],
+    "type": "static",
+    "x": [
+      64.1088,
+      56.2724,
+      51.8944,
+      55.6729
+    ],
+    "y": [
+      -51.7322,
+      -51.0818,
+      -56.3473,
+      -61.7772
+    ],
+    "z": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "qx": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "qy": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "qz": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "qw": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "record_name": "route_e86b16da63ce1bb1_2192002421",
+    "section_id": "route_e86b16da63ce1bb1_2192002421",
+    "label": "sub",
+    "preferred_direction": "up",
+    "related_point_up_main": "route_e86b16da63ce1bb1_1901058875",
+    "related_point_up_sub": "",
+    "related_point_down_main": "route_e86b16da63ce1bb1_3775605330",
+    "related_point_down_sub": ""
+  },
+  {
+    "_id": {
+      "$oid": "6ac31134834c190426409d18"
+    },
+    "type": "static",
+    "record_name": "initialize_flgs",
+    "initialize_flg_zx200": false,
+    "initialize_flg_mst110cr": false,
+    "initialize_flg_mst2200vdr": false,
+    "initialize_flg_d37pxi": false
+  }
+]

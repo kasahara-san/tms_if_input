@@ -90,13 +90,16 @@ def assert_parameter_schema(compilation, plan, graph, entry_nodes):
                 pose = record(compilation, record_name(plan, task, "initial_pose"), model)
                 assert pose["planning_group"] == "manipulator"
                 assert pose["waypoints"] == [{"type": "joint_values_relative", "data": {
-                    joint + "_joint": params[joint]
+                    joint + "_joint": math.radians(params[joint])
                     for joint in ("boom", "swing", "arm", "bucket") if joint in params
                 }}]
                 for key in ("time_scale", "acceleration_scale", "velocity_scale"):
                     assert pose[key] == 1
                 move = record(compilation, record_name(plan, task, "initial_move_pose"), model)
-                assert move["waypoints"][0]["data"] == {"swing_joint": 0}
+                assert move["waypoints"] == [{"type": "joint_values_relative", "data": {
+                    "boom_joint": -0.174533, "arm_joint": 2.61799,
+                    "bucket_joint": 2.26893, "swing_joint": 0,
+                }}]
             elif kind == "crawler_dump":
                 for name, key, document_type in (
                     ("initial_pose", "swing", "static"),
@@ -106,12 +109,13 @@ def assert_parameter_schema(compilation, plan, graph, entry_nodes):
                     pose = record(compilation, record_name(plan, task, name), model)
                     assert pose["model_name"] == [model]
                     assert pose["type"] == document_type
-                    assert pose["target_angle"] == (params[key] if key else 0)
+                    assert pose["target_angle"] == (math.radians(params[key]) if key else 0)
         elif task.name == "excavation_loading":
             area = record(compilation, record_name(plan, task, "excavation_loading_params"))
             assert area["model_name"] == plan.model(task)
             assert (area["type"], area["task_type"]) == ("dynamic", "excavation_loading")
-            for key in ("block_size", "block_angle", "block_center", "block_vector"):
+            assert area["block_angle"] == math.radians(params["block_angle"])
+            for key in ("block_size", "block_center", "block_vector"):
                 assert area[key] == params[key]
             for key in ("backhoe_node", "dump_node"):
                 assert area[key] == [graph.point(node).xy() for node in params[key]]
@@ -248,6 +252,41 @@ def synthetic_inputs(connection_count=1, excavation_count=1):
     for work in ("dig-work", "grade-work", "haul-work"):
         ET.SubElement(flow, "edge", {"from": work, "to": "finish"})
     return {"type": "FeatureCollection", "features": features}, root
+
+
+@pytest.mark.parametrize("degrees,radians", [
+    (0, 0), (90, math.pi / 2), (-180, -math.pi), (450, 2.5 * math.pi),
+])
+def test_all_scalar_angles_convert_once_without_changing_geometry_or_quaternions(
+        tmp_path, degrees, radians):
+    geojson, root = synthetic_inputs()
+    baseline = compile_scenario(*write_pair(tmp_path, geojson, root))
+    angular_parameters = {
+        "ready-dig": ("boom", "swing", "arm", "bucket"),
+        "ready-haul": ("swing", "vessel"),
+        "dig-work": ("block_angle",),
+    }
+    for task_id, names in angular_parameters.items():
+        task = root.find(f"./procedure/tasks/task[@id='{task_id}']")
+        for name in names:
+            task.find(f"parameter[@name='{name}']").set("value", str(degrees))
+    paths = write_pair(tmp_path, geojson, root)
+    result = compile_scenario(*paths)
+    expected = copy.deepcopy(baseline)
+    record(expected, "initial_pose", "zx120")["waypoints"][0]["data"] = {
+        joint + "_joint": radians for joint in ("boom", "swing", "arm", "bucket")}
+    for name in ("initial_pose", "initial_pose_vessel"):
+        record(expected, name, "mst110cr")["target_angle"] = radians
+    record(expected, "excavation_loading_params")["block_angle"] = radians
+    # Comparing all documents also protects input quaternions, coordinates,
+    # direction vectors, route IDs, and non-angle values from conversion.
+    assert result.parameters == expected.parameters
+    assert result.tasks == expected.tasks
+    assert compile_scenario(*paths) == result
+    plan, _ = load_inputs(*paths)
+    for task_id, names in angular_parameters.items():
+        assert {name: plan.tasks[task_id].parameters[name] for name in names} == {
+            name: degrees for name in names}
 
 
 def test_sample_compiles_from_input_values_and_contains_every_route():

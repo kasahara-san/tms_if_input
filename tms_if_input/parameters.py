@@ -17,6 +17,11 @@ def _number(value: Any, context: str) -> float:
     return float(value)
 
 
+def _angle_radians(value: Any, context: str) -> float:
+    """Convert degree-valued input angles for MongoDB parameter documents."""
+    return math.radians(_number(value, context))
+
+
 def _vector(value: Any, axes: str, context: str) -> dict:
     if not isinstance(value, dict):
         raise ValueError(f"{context} must be an object")
@@ -74,17 +79,19 @@ def _initial_documents(plan: Plan, graph: GeoGraph, task: Task) -> list[dict]:
                            {"q" + key: rotation[key] for key in "xyzw"})]
     kind = plan.machine_kind(task.machine)
     if kind == "excavator":
-        joints = {key + "_joint": _number(task.parameters[key], f"Task {task.id} {key}")
+        joints = {key + "_joint": _angle_radians(task.parameters[key], f"Task {task.id} {key}")
                   for key in ("boom", "swing", "arm", "bucket") if key in task.parameters}
         documents.append(_joint_pose(model, record_name(plan, task, "initial_pose"), joints))
         documents.append(_joint_pose(model, record_name(plan, task, "initial_move_pose"),
-                                     {"swing_joint": 0.0}))
+                                     # The movement pose is already specified in radians.
+                                     {"boom_joint": -0.174533, "arm_joint": 2.61799,
+                                      "bucket_joint": 2.26893, "swing_joint": 0.0}))
     elif kind == "crawler_dump":
         for base, parameter, document_type in (("initial_pose", "swing", "static"),
                                                 ("initial_pose_vessel", "vessel", "dynamic"),
                                                 ("initial_move_pose", None, "static")):
-            angle = 0.0 if parameter is None else _number(_required(task, parameter),
-                                                        f"Task {task.id} {parameter}")
+            angle = 0.0 if parameter is None else _angle_radians(_required(task, parameter),
+                                                               f"Task {task.id} {parameter}")
             documents.append({"model_name": [model], "type": document_type,
                               "target_angle": angle, "record_name": record_name(plan, task, base)})
     return documents
@@ -105,7 +112,7 @@ def _excavation_documents(plan: Plan, graph: GeoGraph, task: Task,
                   "task_type": "excavation_loading",
                   "record_name": record_name(plan, task, "excavation_loading_params"),
                   "block_size": block_size,
-                  "block_angle": _number(_required(task, "block_angle"), f"Task {task.id} block_angle"),
+                  "block_angle": _angle_radians(_required(task, "block_angle"), f"Task {task.id} block_angle"),
                   "block_vector": vector, "block_center": centers,
                   "backhoe_node": backhoe, "dump_node": dump}]
     for index, (point, rotation) in enumerate(zip(dump, rotations), 1):
