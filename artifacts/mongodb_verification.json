@@ -1,52 +1,143 @@
 {
   "status": "passed",
-  "verified_at_utc": "2026-10-05T02:55:58.947451+00:00",
+  "verified_at_utc": "2026-10-05T03:26:38.675782+00:00",
   "database": "rostmsdb",
   "mongo_uri": "mongodb://localhost:27017",
-  "inputs": {
-    "geojson": "json_samples/261004-kyoto.geojson",
-    "xml": "json_samples/261004-kyoto.xml",
-    "sha256": {
-      "261004-kyoto.xml": "9e69200773f2cbafd1e27d2a7fd6b2cb96c76376cbfeee4e51221ff4a67f4571",
-      "261004-kyoto.geojson": "a85b8abef83a9101f00d58d8a99a239a83db8142bcf12561bc6acf37d2bc1aed"
-    }
-  },
   "launch_command": "ros2 launch tms_if_input tms_if_input.launch.py geojson_path:=261004-kyoto.geojson xml_path:=261004-kyoto.xml",
   "before_counts": {
-    "parameter": 0,
-    "task": 0
+    "parameter": 54,
+    "task": 4
   },
   "after_counts": {
     "parameter": 54,
     "task": 4
   },
-  "runs": [
+  "joint_pose_mode": "joint_values_absolute",
+  "actual_joint_poses": [
     {
-      "phase": "import",
-      "exit_code": 0,
-      "automatic_exit": true,
-      "elapsed_seconds": 4.267544,
-      "inserted_parameters": 54,
-      "inserted_tasks": 4,
-      "skipped_parameters": 0,
-      "skipped_tasks": 0
+      "_id": {
+        "$oid": "6ac317cbac12f089f57a03d9"
+      },
+      "planning_group": "manipulator",
+      "model_name": "zx200",
+      "record_name": "initial_pose",
+      "waypoints": [
+        {
+          "type": "joint_values_absolute",
+          "data": {
+            "boom_joint": -1.1546042406997026,
+            "swing_joint": -0.04741892026060402,
+            "arm_joint": 2.3853240354081304,
+            "bucket_joint": -0.014664813135287743
+          }
+        }
+      ],
+      "time_scale": 1,
+      "acceleration_scale": 1,
+      "velocity_scale": 1
     },
     {
-      "phase": "repeat",
-      "exit_code": 0,
-      "automatic_exit": true,
-      "elapsed_seconds": 1.284192,
-      "inserted_parameters": 0,
-      "inserted_tasks": 0,
-      "skipped_parameters": 54,
-      "skipped_tasks": 4
+      "_id": {
+        "$oid": "6ac317cbac12f089f57a03da"
+      },
+      "planning_group": "manipulator",
+      "model_name": "zx200",
+      "record_name": "initial_move_pose",
+      "waypoints": [
+        {
+          "type": "joint_values_absolute",
+          "data": {
+            "boom_joint": -0.174533,
+            "arm_joint": 2.61799,
+            "bucket_joint": 2.26893,
+            "swing_joint": 0.0
+          }
+        }
+      ],
+      "time_scale": 1,
+      "acceleration_scale": 1,
+      "velocity_scale": 1
     }
   ],
-  "stored_payload_checks": {
-    "parameters": 54,
-    "tasks": 4,
-    "parameter_mismatches": 0,
-    "task_mismatches": 0
+  "full_database_scan": {
+    "database": "rostmsdb",
+    "collections": [
+      {
+        "collection": "default",
+        "documents_scanned": 18,
+        "sha256_bson": "23abde32f9c434a43479362578e9753538f1a9c51463e1c6d8c27536d35a0e3b"
+      },
+      {
+        "collection": "fs.chunks",
+        "documents_scanned": 486,
+        "sha256_bson": "f81fd23b2a54459a5d963ff543acda8089df37adfe43b98f36c79faa3ac182e2"
+      },
+      {
+        "collection": "fs.files",
+        "documents_scanned": 18,
+        "sha256_bson": "fcabf4d08a2d205cc740bc30650a4b865b6f378c3181c185647523dd511b84bf"
+      },
+      {
+        "collection": "machine",
+        "documents_scanned": 72,
+        "sha256_bson": "646e4b055d98111248598f509219aebaf4e6ec93ebfec182f87865f3325e9204"
+      },
+      {
+        "collection": "now",
+        "documents_scanned": 78,
+        "sha256_bson": "7f224b9a2f9b011423942861f16a9af6b9cfb51dcc8a51150930117e731eb4c8"
+      },
+      {
+        "collection": "official_subtask_parameters",
+        "documents_scanned": 8,
+        "sha256_bson": "2ef5670aba831bbda225db019205901fcc4f64448accedd0ae65a26b026c7eb6"
+      },
+      {
+        "collection": "official_subtasks",
+        "documents_scanned": 14,
+        "sha256_bson": "6aa0f99ca5da623f6063ed429ec1a74723affd8599a047c9b1003549f45c6c9e"
+      },
+      {
+        "collection": "parameter",
+        "documents_scanned": 54,
+        "sha256_bson": "1f497d80d98878d4b69965c0a45ed2b065d52066abf17f776f37d7821290c973"
+      },
+      {
+        "collection": "sensor",
+        "documents_scanned": 4,
+        "sha256_bson": "f86412d04f53175c196bccb19beaaf1e153ab7eaa45ebeecb986dcbc72bd41f9"
+      },
+      {
+        "collection": "task",
+        "documents_scanned": 4,
+        "sha256_bson": "4a491c148cf51f791a4d9b06ba1cf52a875aab1ba9a451472323bdb9511c889c"
+      }
+    ],
+    "documents_scanned": 756,
+    "relative_occurrences": 0,
+    "matches": []
+  },
+  "independent_bson_scan": {
+    "status": "passed",
+    "checked_at_utc": "2026-10-05T03:27:27.649468+00:00",
+    "database": "rostmsdb",
+    "method": "All documents serialized using BSON.encode and searched for exact byte sequence joint_values_relative",
+    "collection_counts": {
+      "default": 18,
+      "fs.chunks": 486,
+      "fs.files": 18,
+      "machine": 72,
+      "now": 78,
+      "official_subtask_parameters": 8,
+      "official_subtasks": 14,
+      "parameter": 54,
+      "sensor": 4,
+      "task": 4
+    },
+    "collections_scanned": 10,
+    "documents_scanned": 756,
+    "relative_document_hits": [],
+    "relative_document_hit_count": 0
   },
   "independent_parameter_checks": {
     "status": "passed",
@@ -68,36 +159,6 @@
     },
     "errors": [],
     "preserved_runtime_flag_differences": []
-  },
-  "independent_route_checks": {
-    "status": "passed",
-    "oracle": "XML node order + raw GeoJSON + PPT slide 2",
-    "models": [
-      "mst110cr",
-      "mst2200vdr"
-    ],
-    "matched_graph_versions": [
-      "e86b16da63ce1bb1"
-    ],
-    "stored_parameter_count": 54,
-    "main_sections_verified": 5,
-    "sub_sections_verified": 2,
-    "source_line_strings_verified": 14,
-    "retained_waypoint_count": 21,
-    "related_point_fields_verified": 28,
-    "group_geometry_mismatches": 0,
-    "group_payload_mismatches": 0,
-    "work_area_connector_ids_excluded": [
-      "2206133296",
-      "4224337805",
-      "840315598",
-      "4224337827",
-      "3159144693",
-      "4224337828",
-      "936963196",
-      "4224337829"
-    ],
-    "unmatched_historical_versions": {}
   },
   "independent_task_checks": {
     "status": "passed",
@@ -150,14 +211,14 @@
     "all_parameter_references_resolved": true,
     "initial_move_pose": {
       "_id": {
-        "$oid": "6ac31134834c190426409ce6"
+        "$oid": "6ac317cbac12f089f57a03da"
       },
       "planning_group": "manipulator",
       "model_name": "zx200",
       "record_name": "initial_move_pose",
       "waypoints": [
         {
-          "type": "joint_values_relative",
+          "type": "joint_values_absolute",
           "data": {
             "boom_joint": -0.174533,
             "arm_joint": 2.61799,
@@ -189,33 +250,78 @@
     },
     "note": "Only matching scenario tasks checked; unrelated preexisting tasks ignored. Original BT examples contain copied model/leaf/flag errors; latest XML and correct typed synchronization semantics are used."
   },
+  "independent_route_checks": {
+    "status": "passed",
+    "oracle": "XML node order + raw GeoJSON + PPT slide 2",
+    "models": [
+      "mst110cr",
+      "mst2200vdr"
+    ],
+    "matched_graph_versions": [
+      "e86b16da63ce1bb1"
+    ],
+    "stored_parameter_count": 54,
+    "main_sections_verified": 5,
+    "sub_sections_verified": 2,
+    "source_line_strings_verified": 14,
+    "retained_waypoint_count": 21,
+    "related_point_fields_verified": 28,
+    "group_geometry_mismatches": 0,
+    "group_payload_mismatches": 0,
+    "work_area_connector_ids_excluded": [
+      "2206133296",
+      "4224337805",
+      "840315598",
+      "4224337827",
+      "3159144693",
+      "4224337828",
+      "936963196",
+      "4224337829"
+    ],
+    "unmatched_historical_versions": {}
+  },
   "preservation": {
+    "updated_documents": 1,
+    "changed_fields": [
+      {
+        "_id": "6ac317cbac12f089f57a03d9",
+        "model_name": "zx200",
+        "record_name": "initial_pose",
+        "fields": [
+          "waypoints.0.type"
+        ],
+        "before": "joint_values_relative",
+        "after": "joint_values_absolute"
+      }
+    ],
+    "joint_values_changed": 0,
+    "other_parameter_changes": 0,
+    "task_changes": 0,
     "deleted_documents": 0,
-    "updated_documents": 0,
+    "repeat_insertions": 0,
     "repeat_document_changes": 0
   },
-  "unit_tests": {
-    "passed": 180,
-    "command": "python3 -m pytest -q"
+  "ros_launch": {
+    "exit_code": 0,
+    "automatic_exit": true
   },
+  "parameter_payloads_matched": 54,
+  "unit_tests_passed": 180,
   "raw_database_snapshots": {
     "parameter": {
       "path": "/home/kasahara/SIP_PROJECTS/ros2_tms_ws/src/tms_if_input/artifacts/mongodb_verified_parameter.json",
-      "sha256": "8203b309598bd529bfaaf10585391f175164249e17a3a32ce62719e1b012f75a",
-      "documents": 54
+      "documents": 54,
+      "sha256": "c98e0c0c7ec36d30491d7aa30239052ccdca93ba5c7e5c70d0a3bd6abf16626c"
     },
     "task": {
       "path": "/home/kasahara/SIP_PROJECTS/ros2_tms_ws/src/tms_if_input/artifacts/mongodb_verified_task.json",
-      "sha256": "7d2e206f49e34bab0a0fd407b076e5d8ae6f40c855c668d5a71697dd402e8bdf",
-      "documents": 4
+      "documents": 4,
+      "sha256": "0c6d2f2df74bd224395f19bbfa1bebb9cc582d477659e1e2db856a138269bc86"
     }
   },
-  "specification_priority": [
-    "Current XML/GeoJSON values",
-    "Latest requested grouped route structure (main 5, sub 2 for this input)",
-    "Scalar input angles are deg; stored angles are rad",
-    "Latest initial_move_pose: joint_values_relative with four specified radian values"
-  ],
-  "verification_scope": "Actual ROS import and MongoDB readback; BT behavior additionally checked using an in-memory simulation. No physical robot was operated.",
-  "evidence_directory": "/tmp/tms_if_input-live-verify"
+  "input_sha256": {
+    "261004-kyoto.xml": "9e69200773f2cbafd1e27d2a7fd6b2cb96c76376cbfeee4e51221ff4a67f4571",
+    "261004-kyoto.geojson": "a85b8abef83a9101f00d58d8a99a239a83db8142bcf12561bc6acf37d2bc1aed"
+  },
+  "backup_directory": "/tmp/tms_if_input-all-absolute-fix"
 }

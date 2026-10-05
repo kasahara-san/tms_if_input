@@ -1,0 +1,147 @@
+{
+  "status": "passed",
+  "verified_at_utc": "2026-10-05T03:26:38.675782+00:00",
+  "database": "rostmsdb",
+  "counts": {
+    "parameter": 54,
+    "task": 4
+  },
+  "updated_documents": 1,
+  "joint_values_changed": 0,
+  "other_parameter_changes": 0,
+  "task_changes": 0,
+  "deleted_documents": 0,
+  "repeat_insertions": 0,
+  "repeat_document_changes": 0,
+  "parameter_payloads_matched": 54,
+  "unit_tests_passed": 180,
+  "launch_exit_code": 0,
+  "automatic_exit": true,
+  "full_database_scan": {
+    "database": "rostmsdb",
+    "collections": [
+      {
+        "collection": "default",
+        "documents_scanned": 18,
+        "sha256_bson": "23abde32f9c434a43479362578e9753538f1a9c51463e1c6d8c27536d35a0e3b"
+      },
+      {
+        "collection": "fs.chunks",
+        "documents_scanned": 486,
+        "sha256_bson": "f81fd23b2a54459a5d963ff543acda8089df37adfe43b98f36c79faa3ac182e2"
+      },
+      {
+        "collection": "fs.files",
+        "documents_scanned": 18,
+        "sha256_bson": "fcabf4d08a2d205cc740bc30650a4b865b6f378c3181c185647523dd511b84bf"
+      },
+      {
+        "collection": "machine",
+        "documents_scanned": 72,
+        "sha256_bson": "646e4b055d98111248598f509219aebaf4e6ec93ebfec182f87865f3325e9204"
+      },
+      {
+        "collection": "now",
+        "documents_scanned": 78,
+        "sha256_bson": "7f224b9a2f9b011423942861f16a9af6b9cfb51dcc8a51150930117e731eb4c8"
+      },
+      {
+        "collection": "official_subtask_parameters",
+        "documents_scanned": 8,
+        "sha256_bson": "2ef5670aba831bbda225db019205901fcc4f64448accedd0ae65a26b026c7eb6"
+      },
+      {
+        "collection": "official_subtasks",
+        "documents_scanned": 14,
+        "sha256_bson": "6aa0f99ca5da623f6063ed429ec1a74723affd8599a047c9b1003549f45c6c9e"
+      },
+      {
+        "collection": "parameter",
+        "documents_scanned": 54,
+        "sha256_bson": "1f497d80d98878d4b69965c0a45ed2b065d52066abf17f776f37d7821290c973"
+      },
+      {
+        "collection": "sensor",
+        "documents_scanned": 4,
+        "sha256_bson": "f86412d04f53175c196bccb19beaaf1e153ab7eaa45ebeecb986dcbc72bd41f9"
+      },
+      {
+        "collection": "task",
+        "documents_scanned": 4,
+        "sha256_bson": "4a491c148cf51f791a4d9b06ba1cf52a875aab1ba9a451472323bdb9511c889c"
+      }
+    ],
+    "documents_scanned": 756,
+    "relative_occurrences": 0,
+    "matches": []
+  },
+  "actual_joint_poses": [
+    {
+      "_id": {
+        "$oid": "6ac317cbac12f089f57a03d9"
+      },
+      "planning_group": "manipulator",
+      "model_name": "zx200",
+      "record_name": "initial_pose",
+      "waypoints": [
+        {
+          "type": "joint_values_absolute",
+          "data": {
+            "boom_joint": -1.1546042406997026,
+            "swing_joint": -0.04741892026060402,
+            "arm_joint": 2.3853240354081304,
+            "bucket_joint": -0.014664813135287743
+          }
+        }
+      ],
+      "time_scale": 1,
+      "acceleration_scale": 1,
+      "velocity_scale": 1
+    },
+    {
+      "_id": {
+        "$oid": "6ac317cbac12f089f57a03da"
+      },
+      "planning_group": "manipulator",
+      "model_name": "zx200",
+      "record_name": "initial_move_pose",
+      "waypoints": [
+        {
+          "type": "joint_values_absolute",
+          "data": {
+            "boom_joint": -0.174533,
+            "arm_joint": 2.61799,
+            "bucket_joint": 2.26893,
+            "swing_joint": 0.0
+          }
+        }
+      ],
+      "time_scale": 1,
+      "acceleration_scale": 1,
+      "velocity_scale": 1
+    }
+  ],
+  "backup_directory": "/tmp/tms_if_input-all-absolute-fix",
+  "independent_bson_scan": {
+    "status": "passed",
+    "checked_at_utc": "2026-10-05T03:27:27.649468+00:00",
+    "database": "rostmsdb",
+    "method": "All documents serialized using BSON.encode and searched for exact byte sequence joint_values_relative",
+    "collection_counts": {
+      "default": 18,
+      "fs.chunks": 486,
+      "fs.files": 18,
+      "machine": 72,
+      "now": 78,
+      "official_subtask_parameters": 8,
+      "official_subtasks": 14,
+      "parameter": 54,
+      "sensor": 4,
+      "task": 4
+    },
+    "collections_scanned": 10,
+    "documents_scanned": 756,
+    "relative_document_hits": [],
+    "relative_document_hit_count": 0
+  }
+}

@@ -1,7 +1,7 @@
 [
   {
     "_id": {
-      "$oid": "6ac31134834c190426409ce3"
+      "$oid": "6ac317c3ac12f089f57a03d7"
     },
     "type": "static",
     "record_name": "geo_fence",
@@ -94,7 +94,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409ce4"
+      "$oid": "6ac317cbac12f089f57a03d8"
     },
     "type": "static",
     "model_name": "zx200",
@@ -109,14 +109,14 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409ce5"
+      "$oid": "6ac317cbac12f089f57a03d9"
     },
     "planning_group": "manipulator",
     "model_name": "zx200",
     "record_name": "initial_pose",
     "waypoints": [
       {
-        "type": "joint_values_relative",
+        "type": "joint_values_absolute",
         "data": {
           "boom_joint": -1.1546042406997026,
           "swing_joint": -0.04741892026060402,
@@ -131,14 +131,14 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409ce6"
+      "$oid": "6ac317cbac12f089f57a03da"
     },
     "planning_group": "manipulator",
     "model_name": "zx200",
     "record_name": "initial_move_pose",
     "waypoints": [
       {
-        "type": "joint_values_relative",
+        "type": "joint_values_absolute",
         "data": {
           "boom_joint": -0.174533,
           "arm_joint": 2.61799,
@@ -153,7 +153,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409ce7"
+      "$oid": "6ac317cbac12f089f57a03db"
     },
     "type": "static",
     "model_name": "mst110cr",
@@ -168,7 +168,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409ce8"
+      "$oid": "6ac317cbac12f089f57a03dc"
     },
     "model_name": [
       "mst110cr"
@@ -179,7 +179,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409ce9"
+      "$oid": "6ac317cbac12f089f57a03dd"
     },
     "model_name": [
       "mst110cr"
@@ -190,7 +190,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409cea"
+      "$oid": "6ac317cbac12f089f57a03de"
     },
     "model_name": [
       "mst110cr"
@@ -201,7 +201,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409ceb"
+      "$oid": "6ac317cbac12f089f57a03df"
     },
     "type": "static",
     "model_name": "mst2200vdr",
@@ -216,7 +216,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409cec"
+      "$oid": "6ac317cbac12f089f57a03e0"
     },
     "model_name": [
       "mst2200vdr"
@@ -227,7 +227,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409ced"
+      "$oid": "6ac317cbac12f089f57a03e1"
     },
     "model_name": [
       "mst2200vdr"
@@ -238,7 +238,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409cee"
+      "$oid": "6ac317cbac12f089f57a03e2"
     },
     "model_name": [
       "mst2200vdr"
@@ -249,7 +249,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409cef"
+      "$oid": "6ac317cbac12f089f57a03e3"
     },
     "type": "static",
     "model_name": "d37pxi",
@@ -264,7 +264,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409cf0"
+      "$oid": "6ac317cbac12f089f57a03e4"
     },
     "model_name": "zx200",
     "type": "dynamic",
@@ -342,7 +342,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409cf1"
+      "$oid": "6ac317cbac12f089f57a03e5"
     },
     "type": "static",
     "model_name": [
@@ -360,7 +360,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409cf2"
+      "$oid": "6ac317cbac12f089f57a03e6"
     },
     "type": "static",
     "model_name": [
@@ -378,7 +378,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409cf3"
+      "$oid": "6ac317cbac12f089f57a03e7"
     },
     "type": "static",
     "model_name": [
@@ -396,7 +396,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409cf4"
+      "$oid": "6ac317cbac12f089f57a03e8"
     },
     "type": "static",
     "model_name": [
@@ -414,7 +414,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409cf5"
+      "$oid": "6ac317cbac12f089f57a03e9"
     },
     "type": "static",
     "model_name": [
@@ -432,7 +432,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409cf6"
+      "$oid": "6ac317cbac12f089f57a03ea"
     },
     "type": "static",
     "model_name": [
@@ -471,7 +471,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409cf7"
+      "$oid": "6ac317cbac12f089f57a03eb"
     },
     "type": "static",
     "model_name": [
@@ -510,7 +510,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409cf8"
+      "$oid": "6ac317cbac12f089f57a03ec"
     },
     "type": "static",
     "model_name": [
@@ -549,7 +549,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409cf9"
+      "$oid": "6ac317cbac12f089f57a03ed"
     },
     "type": "static",
     "model_name": [
@@ -588,7 +588,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409cfa"
+      "$oid": "6ac317cbac12f089f57a03ee"
     },
     "type": "static",
     "model_name": [
@@ -627,7 +627,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409cfb"
+      "$oid": "6ac317cbac12f089f57a03ef"
     },
     "type": "static",
     "model_name": [
@@ -666,7 +666,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409cfc"
+      "$oid": "6ac317cbac12f089f57a03f0"
     },
     "type": "static",
     "model_name": [
@@ -705,7 +705,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409cfd"
+      "$oid": "6ac317cbac12f089f57a03f1"
     },
     "type": "static",
     "model_name": [
@@ -744,7 +744,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409cfe"
+      "$oid": "6ac317cbac12f089f57a03f2"
     },
     "type": "static",
     "model_name": [
@@ -783,7 +783,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409cff"
+      "$oid": "6ac317cbac12f089f57a03f3"
     },
     "type": "static",
     "model_name": "d37pxi",
@@ -798,7 +798,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409d00"
+      "$oid": "6ac317cbac12f089f57a03f4"
     },
     "type": "static",
     "model_name": "d37pxi",
@@ -813,7 +813,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409d01"
+      "$oid": "6ac317cbac12f089f57a03f5"
     },
     "type": "static",
     "model_name": "d37pxi",
@@ -828,7 +828,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409d02"
+      "$oid": "6ac317cbac12f089f57a03f6"
     },
     "type": "static",
     "model_name": "d37pxi",
@@ -843,7 +843,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409d03"
+      "$oid": "6ac317cbac12f089f57a03f7"
     },
     "type": "static",
     "model_name": "d37pxi",
@@ -858,7 +858,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409d04"
+      "$oid": "6ac317cbac12f089f57a03f8"
     },
     "type": "static",
     "model_name": "d37pxi",
@@ -873,7 +873,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409d05"
+      "$oid": "6ac317cbac12f089f57a03f9"
     },
     "type": "static",
     "model_name": "d37pxi",
@@ -888,7 +888,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409d06"
+      "$oid": "6ac317cbac12f089f57a03fa"
     },
     "type": "static",
     "model_name": "d37pxi",
@@ -903,7 +903,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409d07"
+      "$oid": "6ac317cbac12f089f57a03fb"
     },
     "type": "static",
     "model_name": "d37pxi",
@@ -918,7 +918,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409d08"
+      "$oid": "6ac317cbac12f089f57a03fc"
     },
     "type": "static",
     "record_name": "block_1",
@@ -935,7 +935,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409d09"
+      "$oid": "6ac317cbac12f089f57a03fd"
     },
     "type": "static",
     "record_name": "block_2",
@@ -952,7 +952,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409d0a"
+      "$oid": "6ac317cbac12f089f57a03fe"
     },
     "type": "static",
     "record_name": "block_3",
@@ -969,7 +969,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409d0b"
+      "$oid": "6ac317cbac12f089f57a03ff"
     },
     "type": "static",
     "record_name": "block_4",
@@ -986,7 +986,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409d0c"
+      "$oid": "6ac317cbac12f089f57a0400"
     },
     "type": "static",
     "record_name": "block_5",
@@ -1003,7 +1003,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409d0d"
+      "$oid": "6ac317cbac12f089f57a0401"
     },
     "type": "static",
     "record_name": "block_6",
@@ -1020,7 +1020,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409d0e"
+      "$oid": "6ac317cbac12f089f57a0402"
     },
     "type": "static",
     "record_name": "block_7",
@@ -1037,7 +1037,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409d0f"
+      "$oid": "6ac317cbac12f089f57a0403"
     },
     "type": "static",
     "record_name": "block_8",
@@ -1054,7 +1054,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409d10"
+      "$oid": "6ac317cbac12f089f57a0404"
     },
     "type": "static",
     "record_name": "block_9",
@@ -1071,7 +1071,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409d11"
+      "$oid": "6ac317cbac12f089f57a0405"
     },
     "model_name": [
       "mst110cr",
@@ -1117,7 +1117,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409d12"
+      "$oid": "6ac317cbac12f089f57a0406"
     },
     "model_name": [
       "mst110cr",
@@ -1163,7 +1163,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409d13"
+      "$oid": "6ac317cbac12f089f57a0407"
     },
     "model_name": [
       "mst110cr",
@@ -1230,7 +1230,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409d14"
+      "$oid": "6ac317cbac12f089f57a0408"
     },
     "model_name": [
       "mst110cr",
@@ -1276,7 +1276,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409d15"
+      "$oid": "6ac317cbac12f089f57a0409"
     },
     "model_name": [
       "mst110cr",
@@ -1322,7 +1322,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409d16"
+      "$oid": "6ac317cbac12f089f57a040a"
     },
     "model_name": [
       "mst110cr",
@@ -1382,7 +1382,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409d17"
+      "$oid": "6ac317cbac12f089f57a040b"
     },
     "model_name": [
       "mst110cr",
@@ -1442,7 +1442,7 @@
   },
   {
     "_id": {
-      "$oid": "6ac31134834c190426409d18"
+      "$oid": "6ac317cbac12f089f57a040c"
     },
     "type": "static",
     "record_name": "initialize_flgs",

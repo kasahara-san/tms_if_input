@@ -1,0 +1,55 @@
+{
+  "status": "passed",
+  "verified_at_utc": "2026-10-05T03:17:25.846565+00:00",
+  "database": "rostmsdb",
+  "counts": {
+    "parameter": 54,
+    "task": 4
+  },
+  "updated_documents": 1,
+  "changed_fields": [
+    {
+      "_id": "6ac31134834c190426409ce6",
+      "model_name": "zx200",
+      "record_name": "initial_move_pose",
+      "field": "waypoints[0].type",
+      "before": "joint_values_relative",
+      "after": "joint_values_absolute"
+    }
+  ],
+  "joint_values_changed": 0,
+  "other_parameter_changes": 0,
+  "task_changes": 0,
+  "deleted_documents": 0,
+  "repeat_insertions": 0,
+  "repeat_document_changes": 0,
+  "parameter_payloads_matched": 54,
+  "unit_tests_passed": 180,
+  "launch_exit_code": 0,
+  "automatic_exit": true,
+  "actual_initial_move_pose": [
+    {
+      "_id": {
+        "$oid": "6ac31134834c190426409ce6"
+      },
+      "planning_group": "manipulator",
+      "model_name": "zx200",
+      "record_name": "initial_move_pose",
+      "waypoints": [
+        {
+          "type": "joint_values_absolute",
+          "data": {
+            "boom_joint": -0.174533,
+            "arm_joint": 2.61799,
+            "bucket_joint": 2.26893,
+            "swing_joint": 0.0
+          }
+        }
+      ],
+      "time_scale": 1,
+      "acceleration_scale": 1,
+      "velocity_scale": 1
+    }
+  ],
+  "backup_directory": "/tmp/tms_if_input-absolute-pose-fix"
+}

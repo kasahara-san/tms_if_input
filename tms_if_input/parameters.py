@@ -62,7 +62,7 @@ def _position(model: Any, name: str, point: dict, rotation: dict) -> dict:
 def _joint_pose(model: str, name: str, values: dict) -> dict:
     return {"planning_group": "manipulator", "model_name": model,
             "record_name": name,
-            "waypoints": [{"type": "joint_values_relative", "data": values}],
+            "waypoints": [{"type": "joint_values_absolute", "data": values}],
             "time_scale": 1, "acceleration_scale": 1, "velocity_scale": 1}
 
 

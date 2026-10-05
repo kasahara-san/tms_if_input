@@ -89,14 +89,14 @@ def assert_parameter_schema(compilation, plan, graph, entry_nodes):
             if kind == "excavator":
                 pose = record(compilation, record_name(plan, task, "initial_pose"), model)
                 assert pose["planning_group"] == "manipulator"
-                assert pose["waypoints"] == [{"type": "joint_values_relative", "data": {
+                assert pose["waypoints"] == [{"type": "joint_values_absolute", "data": {
                     joint + "_joint": math.radians(params[joint])
                     for joint in ("boom", "swing", "arm", "bucket") if joint in params
                 }}]
                 for key in ("time_scale", "acceleration_scale", "velocity_scale"):
                     assert pose[key] == 1
                 move = record(compilation, record_name(plan, task, "initial_move_pose"), model)
-                assert move["waypoints"] == [{"type": "joint_values_relative", "data": {
+                assert move["waypoints"] == [{"type": "joint_values_absolute", "data": {
                     "boom_joint": -0.174533, "arm_joint": 2.61799,
                     "bucket_joint": 2.26893, "swing_joint": 0,
                 }}]
