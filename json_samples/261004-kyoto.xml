@@ -14,7 +14,7 @@
         <parameter name="target_node" value="3626199267" />
         <parameter name="rotation" value="{x:0.0, y:0.0, z:0.8180996, w:0.5750766}" />
         <parameter name="swing" value="-2.716904" />
-        <parameter name="boom" value="-66.15395" />
+        <parameter name="boom" value="-60.0" />
         <parameter name="arm" value="136.669" />
         <parameter name="bucket" value="-0.8402319" />
       </task>

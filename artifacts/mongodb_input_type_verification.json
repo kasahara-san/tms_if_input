@@ -1,0 +1,120 @@
+{
+  "status": "passed",
+  "verified_at_utc": "2026-10-08T01:00:10.865185+00:00",
+  "database": "rostmsdb",
+  "collection": "task",
+  "before_counts": {
+    "parameter": 54,
+    "task": 4
+  },
+  "after_counts": {
+    "parameter": 54,
+    "task": 4
+  },
+  "updated_existing_task_xmls": 4,
+  "removed_input_type_attributes": 4,
+  "removed_input_type_ports": 4,
+  "remaining_input_type_task_xmls": 0,
+  "user_xml_exact_matches": 4,
+  "deleted_documents": 0,
+  "unexpected_existing_record_changes": 0,
+  "unchanged_parameter_documents": 54,
+  "preserved_task_ids_and_metadata": true,
+  "inserted_parameters": 0,
+  "inserted_tasks": 0,
+  "skipped_parameters": 54,
+  "skipped_tasks": 4,
+  "launch_exit_code": 0,
+  "automatic_exit": true,
+  "verified_tasks": [
+    {
+      "model_name": "zx200",
+      "task_id": 1,
+      "_id": "6ac31763c51846bd73eb3e0c",
+      "user_xml_exact_match": true,
+      "task_sequence": "<root main_tree_to_execute=\"BehaviorTree\"><BehaviorTree ID=\"BehaviorTree\"><Sequence><Action ID=\"LeafNodeExcavator\" model_name=\"zx200\" primitive_name=\"subtask_excavator_change_pose\" previous_target_record_name=\"initial_move_pose\" target_record_name=\"\" /><Action ID=\"LeafNodeExcavator\" model_name=\"zx200\" primitive_name=\"subtask_excavator_follow_waypoints\" previous_target_record_name=\"\" target_record_name=\"initial_position\" /><Action ID=\"LeafNodeExcavator\" model_name=\"zx200\" primitive_name=\"subtask_excavator_change_pose\" previous_target_record_name=\"\" target_record_name=\"initial_pose\" /><Action ID=\"MongoValueWriter\" input_value=\"true\" mongo_record_name=\"initialize_flgs\" mongo_param_name=\"initialize_flg_zx200\" /><Action ID=\"SetLocalBlackboard\" output_key=\"dependencies_ready_1_1\" value=\"false\" /><Decorator ID=\"KeepRunningUntilFlgup\" key=\"dependencies_ready_1_1\"><Sequence><Action ID=\"MongoValueReader\" mongo_record_name=\"initialize_flgs\" mongo_param_name=\"initialize_flg_zx200\" output_port=\"dependency_1_1_0\" /><Action ID=\"MongoValueReader\" mongo_record_name=\"initialize_flgs\" mongo_param_name=\"initialize_flg_mst110cr\" output_port=\"dependency_1_1_1\" /><Action ID=\"MongoValueReader\" mongo_record_name=\"initialize_flgs\" mongo_param_name=\"initialize_flg_mst2200vdr\" output_port=\"dependency_1_1_2\" /><Action ID=\"MongoValueReader\" mongo_record_name=\"initialize_flgs\" mongo_param_name=\"initialize_flg_d37pxi\" output_port=\"dependency_1_1_3\" /><IfThenElse><Action ID=\"ConditionalExpression\" conditional_expression=\"dependency_1_1_0 == true and dependency_1_1_1 == true and dependency_1_1_2 == true and dependency_1_1_3 == true\" /><Action ID=\"SetLocalBlackboard\" output_key=\"dependencies_ready_1_1\" value=\"true\" /><AlwaysSuccess /></IfThenElse></Sequence></Decorator><Action ID=\"LeafNodeExcavator\" model_name=\"zx200\" primitive_name=\"excavation_loading\" previous_target_record_name=\"\" target_record_name=\"excavation_loading_params\" /></Sequence></BehaviorTree><TreeNodesModel><Action ID=\"ConditionalExpression\"><input_port name=\"conditional_expression\" /></Action><Action ID=\"LeafNodeExcavator\"><input_port name=\"model_name\" /><input_port name=\"primitive_name\" /><input_port name=\"previous_target_record_name\" /><input_port name=\"target_record_name\" /></Action><Action ID=\"MongoValueReader\"><input_port name=\"mongo_record_name\" /><input_port name=\"mongo_param_name\" /><input_port name=\"output_port\" /></Action><Action ID=\"MongoValueWriter\"><input_port name=\"input_value\" /><input_port name=\"mongo_record_name\" /><input_port name=\"mongo_param_name\" /></Action><Action ID=\"SetLocalBlackboard\"><input_port name=\"output_key\" /><input_port name=\"value\" /></Action><Decorator ID=\"KeepRunningUntilFlgup\"><input_port name=\"key\" /></Decorator></TreeNodesModel></root>"
+    },
+    {
+      "model_name": "mst110cr",
+      "task_id": 2,
+      "_id": "6ac31764c51846bd73eb3e0d",
+      "user_xml_exact_match": true,
+      "task_sequence": "<root main_tree_to_execute=\"BehaviorTree\"><BehaviorTree ID=\"BehaviorTree\"><Sequence><Action ID=\"LeafNodeCrawlerDump\" model_name=\"mst110cr\" primitive_name=\"subtask_crawlerdump_swing\" read_direction=\"\" record_name=\"initial_move_pose\" /><Action ID=\"LeafNodeCrawlerDump\" model_name=\"mst110cr\" primitive_name=\"subtask_crawlerdump_release_soil\" read_direction=\"\" record_name=\"initial_pose_vessel\" /><Action ID=\"LeafNodeCrawlerDump\" model_name=\"mst110cr\" primitive_name=\"subtask_crawlerdump_follow_waypoints\" read_direction=\"\" record_name=\"initial_position\" /><Action ID=\"LeafNodeCrawlerDump\" model_name=\"mst110cr\" primitive_name=\"subtask_crawlerdump_swing\" read_direction=\"\" record_name=\"initial_pose\" /><Action ID=\"MongoValueWriter\" input_value=\"true\" mongo_record_name=\"initialize_flgs\" mongo_param_name=\"initialize_flg_mst110cr\" /><Action ID=\"SetLocalBlackboard\" output_key=\"dependencies_ready_2_1\" value=\"false\" /><Decorator ID=\"KeepRunningUntilFlgup\" key=\"dependencies_ready_2_1\"><Sequence><Action ID=\"MongoValueReader\" mongo_record_name=\"initialize_flgs\" mongo_param_name=\"initialize_flg_zx200\" output_port=\"dependency_2_1_0\" /><Action ID=\"MongoValueReader\" mongo_record_name=\"initialize_flgs\" mongo_param_name=\"initialize_flg_mst110cr\" output_port=\"dependency_2_1_1\" /><Action ID=\"MongoValueReader\" mongo_record_name=\"initialize_flgs\" mongo_param_name=\"initialize_flg_mst2200vdr\" output_port=\"dependency_2_1_2\" /><Action ID=\"MongoValueReader\" mongo_record_name=\"initialize_flgs\" mongo_param_name=\"initialize_flg_d37pxi\" output_port=\"dependency_2_1_3\" /><IfThenElse><Action ID=\"ConditionalExpression\" conditional_expression=\"dependency_2_1_0 == true and dependency_2_1_1 == true and dependency_2_1_2 == true and dependency_2_1_3 == true\" /><Action ID=\"SetLocalBlackboard\" output_key=\"dependencies_ready_2_1\" value=\"true\" /><AlwaysSuccess /></IfThenElse></Sequence></Decorator><Action ID=\"LeafNodeCrawlerDump\" model_name=\"mst110cr\" primitive_name=\"transport\" read_direction=\"\" record_name=\"\" /></Sequence></BehaviorTree><TreeNodesModel><Action ID=\"ConditionalExpression\"><input_port name=\"conditional_expression\" /></Action><Action ID=\"LeafNodeCrawlerDump\"><input_port name=\"model_name\" /><input_port name=\"primitive_name\" /><input_port name=\"read_direction\" /><input_port name=\"record_name\" /></Action><Action ID=\"MongoValueReader\"><input_port name=\"mongo_record_name\" /><input_port name=\"mongo_param_name\" /><input_port name=\"output_port\" /></Action><Action ID=\"MongoValueWriter\"><input_port name=\"input_value\" /><input_port name=\"mongo_record_name\" /><input_port name=\"mongo_param_name\" /></Action><Action ID=\"SetLocalBlackboard\"><input_port name=\"output_key\" /><input_port name=\"value\" /></Action><Decorator ID=\"KeepRunningUntilFlgup\"><input_port name=\"key\" /></Decorator></TreeNodesModel></root>"
+    },
+    {
+      "model_name": "mst2200vdr",
+      "task_id": 3,
+      "_id": "6ac31764c51846bd73eb3e0e",
+      "user_xml_exact_match": true,
+      "task_sequence": "<root main_tree_to_execute=\"BehaviorTree\"><BehaviorTree ID=\"BehaviorTree\"><Sequence><Action ID=\"LeafNodeCrawlerDump\" model_name=\"mst2200vdr\" primitive_name=\"subtask_crawlerdump_swing\" read_direction=\"\" record_name=\"initial_move_pose\" /><Action ID=\"LeafNodeCrawlerDump\" model_name=\"mst2200vdr\" primitive_name=\"subtask_crawlerdump_release_soil\" read_direction=\"\" record_name=\"initial_pose_vessel\" /><Action ID=\"LeafNodeCrawlerDump\" model_name=\"mst2200vdr\" primitive_name=\"subtask_crawlerdump_follow_waypoints\" read_direction=\"\" record_name=\"initial_position\" /><Action ID=\"LeafNodeCrawlerDump\" model_name=\"mst2200vdr\" primitive_name=\"subtask_crawlerdump_swing\" read_direction=\"\" record_name=\"initial_pose\" /><Action ID=\"MongoValueWriter\" input_value=\"true\" mongo_record_name=\"initialize_flgs\" mongo_param_name=\"initialize_flg_mst2200vdr\" /><Action ID=\"SetLocalBlackboard\" output_key=\"dependencies_ready_3_1\" value=\"false\" /><Decorator ID=\"KeepRunningUntilFlgup\" key=\"dependencies_ready_3_1\"><Sequence><Action ID=\"MongoValueReader\" mongo_record_name=\"initialize_flgs\" mongo_param_name=\"initialize_flg_zx200\" output_port=\"dependency_3_1_0\" /><Action ID=\"MongoValueReader\" mongo_record_name=\"initialize_flgs\" mongo_param_name=\"initialize_flg_mst110cr\" output_port=\"dependency_3_1_1\" /><Action ID=\"MongoValueReader\" mongo_record_name=\"initialize_flgs\" mongo_param_name=\"initialize_flg_mst2200vdr\" output_port=\"dependency_3_1_2\" /><Action ID=\"MongoValueReader\" mongo_record_name=\"initialize_flgs\" mongo_param_name=\"initialize_flg_d37pxi\" output_port=\"dependency_3_1_3\" /><IfThenElse><Action ID=\"ConditionalExpression\" conditional_expression=\"dependency_3_1_0 == true and dependency_3_1_1 == true and dependency_3_1_2 == true and dependency_3_1_3 == true\" /><Action ID=\"SetLocalBlackboard\" output_key=\"dependencies_ready_3_1\" value=\"true\" /><AlwaysSuccess /></IfThenElse></Sequence></Decorator><Action ID=\"LeafNodeCrawlerDump\" model_name=\"mst2200vdr\" primitive_name=\"transport\" read_direction=\"\" record_name=\"\" /></Sequence></BehaviorTree><TreeNodesModel><Action ID=\"ConditionalExpression\"><input_port name=\"conditional_expression\" /></Action><Action ID=\"LeafNodeCrawlerDump\"><input_port name=\"model_name\" /><input_port name=\"primitive_name\" /><input_port name=\"read_direction\" /><input_port name=\"record_name\" /></Action><Action ID=\"MongoValueReader\"><input_port name=\"mongo_record_name\" /><input_port name=\"mongo_param_name\" /><input_port name=\"output_port\" /></Action><Action ID=\"MongoValueWriter\"><input_port name=\"input_value\" /><input_port name=\"mongo_record_name\" /><input_port name=\"mongo_param_name\" /></Action><Action ID=\"SetLocalBlackboard\"><input_port name=\"output_key\" /><input_port name=\"value\" /></Action><Decorator ID=\"KeepRunningUntilFlgup\"><input_port name=\"key\" /></Decorator></TreeNodesModel></root>"
+    },
+    {
+      "model_name": "d37pxi",
+      "task_id": 4,
+      "_id": "6ac31764c51846bd73eb3e0f",
+      "user_xml_exact_match": true,
+      "task_sequence": "<root main_tree_to_execute=\"BehaviorTree\"><BehaviorTree ID=\"BehaviorTree\"><Sequence><Action ID=\"LeafNodeBulldozer\" model_name=\"d37pxi\" primitive_name=\"subtask_bulldozer_follow_waypoints\" record_name=\"initial_position\" /><Action ID=\"MongoValueWriter\" input_value=\"true\" mongo_record_name=\"initialize_flgs\" mongo_param_name=\"initialize_flg_d37pxi\" /><Action ID=\"SetLocalBlackboard\" output_key=\"dependencies_ready_4_1\" value=\"false\" /><Decorator ID=\"KeepRunningUntilFlgup\" key=\"dependencies_ready_4_1\"><Sequence><Action ID=\"MongoValueReader\" mongo_record_name=\"initialize_flgs\" mongo_param_name=\"initialize_flg_zx200\" output_port=\"dependency_4_1_0\" /><Action ID=\"MongoValueReader\" mongo_record_name=\"initialize_flgs\" mongo_param_name=\"initialize_flg_mst110cr\" output_port=\"dependency_4_1_1\" /><Action ID=\"MongoValueReader\" mongo_record_name=\"initialize_flgs\" mongo_param_name=\"initialize_flg_mst2200vdr\" output_port=\"dependency_4_1_2\" /><Action ID=\"MongoValueReader\" mongo_record_name=\"initialize_flgs\" mongo_param_name=\"initialize_flg_d37pxi\" output_port=\"dependency_4_1_3\" /><IfThenElse><Action ID=\"ConditionalExpression\" conditional_expression=\"dependency_4_1_0 == true and dependency_4_1_1 == true and dependency_4_1_2 == true and dependency_4_1_3 == true\" /><Action ID=\"SetLocalBlackboard\" output_key=\"dependencies_ready_4_1\" value=\"true\" /><AlwaysSuccess /></IfThenElse></Sequence></Decorator><Action ID=\"LeafNodeBulldozer\" model_name=\"d37pxi\" primitive_name=\"leveling\" record_name=\"\" /></Sequence></BehaviorTree><TreeNodesModel><Action ID=\"ConditionalExpression\"><input_port name=\"conditional_expression\" /></Action><Action ID=\"LeafNodeBulldozer\"><input_port name=\"model_name\" /><input_port name=\"primitive_name\" /><input_port name=\"record_name\" /></Action><Action ID=\"MongoValueReader\"><input_port name=\"mongo_record_name\" /><input_port name=\"mongo_param_name\" /><input_port name=\"output_port\" /></Action><Action ID=\"MongoValueWriter\"><input_port name=\"input_value\" /><input_port name=\"mongo_record_name\" /><input_port name=\"mongo_param_name\" /></Action><Action ID=\"SetLocalBlackboard\"><input_port name=\"output_key\" /><input_port name=\"value\" /></Action><Decorator ID=\"KeepRunningUntilFlgup\"><input_port name=\"key\" /></Decorator></TreeNodesModel></root>"
+    }
+  ],
+  "evidence_directory": "/tmp/tms_if_input-input-type",
+  "unit_tests_passed": 186,
+  "independent_xml_verification": {
+    "oracle": "independently transcribed user XML examples",
+    "compiled_tasks": [
+      {
+        "model_name": "zx200",
+        "exact_xml_match": true,
+        "ordered_xml_structure_match": true,
+        "input_type_occurrences": 0
+      },
+      {
+        "model_name": "mst110cr",
+        "exact_xml_match": true,
+        "ordered_xml_structure_match": true,
+        "input_type_occurrences": 0
+      },
+      {
+        "model_name": "mst2200vdr",
+        "exact_xml_match": true,
+        "ordered_xml_structure_match": true,
+        "input_type_occurrences": 0
+      },
+      {
+        "model_name": "d37pxi",
+        "exact_xml_match": true,
+        "ordered_xml_structure_match": true,
+        "input_type_occurrences": 0
+      }
+    ],
+    "database": {
+      "task_count": 4,
+      "deleted_tasks": 0,
+      "preserved_ids": true,
+      "only_input_type_removed": true,
+      "tasks": [
+        {
+          "model_name": "zx200",
+          "removed_attributes": 1,
+          "removed_port_declarations": 1
+        },
+        {
+          "model_name": "mst110cr",
+          "removed_attributes": 1,
+          "removed_port_declarations": 1
+        },
+        {
+          "model_name": "mst2200vdr",
+          "removed_attributes": 1,
+          "removed_port_declarations": 1
+        },
+        {
+          "model_name": "d37pxi",
+          "removed_attributes": 1,
+          "removed_port_declarations": 1
+        }
+      ],
+      "parameters_unchanged": true
+    }
+  },
+  "launch_command": "ros2 launch tms_if_input tms_if_input.launch.py geojson_path:=261004-kyoto.geojson xml_path:=261004-kyoto.xml"
+}

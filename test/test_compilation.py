@@ -79,13 +79,18 @@ def assert_parameter_schema(compilation, plan, graph, entry_nodes):
         params = task.parameters
         if task.name == "initialize":
             model = plan.model(task)
+            kind = plan.machine_kind(task.machine)
             position = record(compilation, record_name(plan, task, "initial_position"), model)
             point = graph.point(params["target_node"])
-            assert (position["x"], position["y"], position["z"]) == (point.x, point.y, 0)
+            assert position["type"] == "static"
+            assert position["model_name"] == ([model] if kind == "excavator" else model)
+            coordinates = (point.x, point.y, 0)
+            assert tuple(position[axis] for axis in "xyz") == (
+                tuple([value] for value in coordinates) if kind == "excavator" else coordinates)
             for axis in "xyzw":
-                assert position["q" + axis] == params["rotation"][axis]
+                expected = params["rotation"][axis]
+                assert position["q" + axis] == ([expected] if kind == "excavator" else expected)
             assert flags[record_name(plan, task, "initialize_flg_" + model)] is False
-            kind = plan.machine_kind(task.machine)
             if kind == "excavator":
                 pose = record(compilation, record_name(plan, task, "initial_pose"), model)
                 assert pose["planning_group"] == "manipulator"

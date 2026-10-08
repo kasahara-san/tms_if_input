@@ -1,0 +1,205 @@
+{
+  "status": "passed",
+  "verified_at_utc": "2026-10-08T02:15:14.684965+00:00",
+  "database": "rostmsdb",
+  "collection": "parameter",
+  "scope": "Excavator initial_position only",
+  "array_fields": [
+    "model_name",
+    "x",
+    "y",
+    "z",
+    "qx",
+    "qy",
+    "qz",
+    "qw"
+  ],
+  "updated_documents": 1,
+  "verified_initial_positions": [
+    {
+      "_id": "6ac317cbac12f089f57a03d8",
+      "type": "static",
+      "model_name": [
+        "zx200"
+      ],
+      "record_name": "initial_position",
+      "x": [
+        85.1914
+      ],
+      "y": [
+        -102.672
+      ],
+      "z": [
+        0.0
+      ],
+      "qx": [
+        0.0
+      ],
+      "qy": [
+        0.0
+      ],
+      "qz": [
+        0.8180996
+      ],
+      "qw": [
+        0.5750766
+      ]
+    }
+  ],
+  "before_counts": {
+    "parameter": 54,
+    "task": 4
+  },
+  "after_counts": {
+    "parameter": 54,
+    "task": 4
+  },
+  "record_names_types_object_ids_and_values_preserved": true,
+  "unchanged_task_documents": 4,
+  "inserted_documents": 0,
+  "deleted_documents": 0,
+  "other_existing_record_changes": 0,
+  "evidence_directory": "/tmp/tms_if_input-initial-position-array",
+  "unit_tests_passed": 186,
+  "independent_verification": {
+    "status": "passed",
+    "source": {
+      "parameter_count": 54,
+      "task_count": 4,
+      "changed_parameter_count": 1,
+      "changed_fields_per_parameter": [
+        "model_name",
+        "x",
+        "y",
+        "z",
+        "qx",
+        "qy",
+        "qz",
+        "qw"
+      ],
+      "all_task_documents_unchanged": true,
+      "all_other_parameters_unchanged": true,
+      "raw_xml_geojson_verified": true,
+      "positions": [
+        {
+          "model_name": "zx200",
+          "record_name": "initial_position",
+          "changed_fields": [
+            "model_name",
+            "x",
+            "y",
+            "z",
+            "qx",
+            "qy",
+            "qz",
+            "qw"
+          ],
+          "after": {
+            "type": "static",
+            "model_name": [
+              "zx200"
+            ],
+            "record_name": "initial_position",
+            "x": [
+              85.1914
+            ],
+            "y": [
+              -102.672
+            ],
+            "z": [
+              0.0
+            ],
+            "qx": [
+              0.0
+            ],
+            "qy": [
+              0.0
+            ],
+            "qz": [
+              0.8180996
+            ],
+            "qw": [
+              0.5750766
+            ]
+          }
+        }
+      ]
+    },
+    "mongodb": {
+      "database": "rostmsdb",
+      "parameter_count": 54,
+      "task_count": 4,
+      "changed_parameter_count": 1,
+      "changed_fields_per_parameter": [
+        "model_name",
+        "x",
+        "y",
+        "z",
+        "qx",
+        "qy",
+        "qz",
+        "qw"
+      ],
+      "all_existing_ids_preserved": true,
+      "deleted_documents": 0,
+      "all_other_parameters_unchanged": true,
+      "all_task_documents_and_xml_strings_unchanged": true,
+      "execute_subtask_counts_preserved": {
+        "zx200": 3,
+        "mst110cr": 2,
+        "mst2200vdr": 2,
+        "d37pxi": 2
+      },
+      "positions": [
+        {
+          "_id": {
+            "$oid": "6ac317cbac12f089f57a03d8"
+          },
+          "model_name": "zx200",
+          "record_name": "initial_position",
+          "changed_fields": [
+            "model_name",
+            "x",
+            "y",
+            "z",
+            "qx",
+            "qy",
+            "qz",
+            "qw"
+          ],
+          "after": {
+            "_id": {
+              "$oid": "6ac317cbac12f089f57a03d8"
+            },
+            "type": "static",
+            "model_name": [
+              "zx200"
+            ],
+            "record_name": "initial_position",
+            "x": [
+              85.1914
+            ],
+            "y": [
+              -102.672
+            ],
+            "z": [
+              0.0
+            ],
+            "qx": [
+              0.0
+            ],
+            "qy": [
+              0.0
+            ],
+            "qz": [
+              0.8180996
+            ],
+            "qw": [
+              0.5750766
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

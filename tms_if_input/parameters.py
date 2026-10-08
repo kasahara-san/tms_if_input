@@ -75,10 +75,13 @@ def _initial_documents(plan: Plan, graph: GeoGraph, task: Task) -> list[dict]:
     model = plan.model(task)
     rotation = _vector(_required(task, "rotation"), "xyzw", f"Task {task.id} rotation")
     point = graph.point(_required(task, "target_node")).xy()
-    documents = [_position(model, record_name(plan, task, "initial_position"), point,
-                           {"q" + key: rotation[key] for key in "xyzw"})]
+    position = _position(model, record_name(plan, task, "initial_position"), point,
+                         {"q" + key: rotation[key] for key in "xyzw"})
+    documents = [position]
     kind = plan.machine_kind(task.machine)
     if kind == "excavator":
+        for key in ("model_name", "x", "y", "z", "qx", "qy", "qz", "qw"):
+            position[key] = [position[key]]
         joints = {key + "_joint": _angle_radians(task.parameters[key], f"Task {task.id} {key}")
                   for key in ("boom", "swing", "arm", "bucket") if key in task.parameters}
         documents.append(_joint_pose(model, record_name(plan, task, "initial_pose"), joints))

@@ -28,6 +28,10 @@ _LEAF_IDS = {
 # These are the ports used by the new construction interface in the supplied
 # specification.  The model declares every emitted custom node and port.
 _PORTS: dict[str, tuple[str, ...]] = {
+    "ExecuteSubtask": (
+        "model_name", "subtask_name", "machine_record_name",
+        "terminate_condition", "subtask_parameters",
+    ),
     "LeafNodeExcavator": (
         "model_name", "primitive_name", "previous_target_record_name",
         "target_record_name",
@@ -40,7 +44,7 @@ _PORTS: dict[str, tuple[str, ...]] = {
         "mongo_record_name", "mongo_param_name", "output_port",
     ),
     "MongoValueWriter": (
-        "input_type", "input_value", "mongo_record_name", "mongo_param_name",
+        "input_value", "mongo_record_name", "mongo_param_name",
     ),
     "ConditionalExpression": ("conditional_expression",),
     "SetLocalBlackboard": ("output_key", "value"),
@@ -195,46 +199,57 @@ def _append_initialize(sequence: ET.Element, plan: Plan, task: Task) -> None:
         return record_name(plan, task, base)
 
     if kind == "excavator":
-        _append_primitive(
-            sequence, kind, model, "subtask_excavator_change_pose",
-            previous_record=name("initial_move_pose"),
+        _append_subtask(
+            sequence, model, "subtask_excavator_change_pose", name("initial_move_pose"),
         )
         _append_primitive(
-            sequence, kind, model, "subtask_excavator_follow_waypoints",
+            sequence, kind, model, "primitive_excavator_follow_waypoints",
             name("initial_position"),
         )
         if any(joint in task.parameters for joint in ("swing", "boom", "arm", "bucket")):
             _append_primitive(
-                sequence, kind, model, "subtask_excavator_change_pose", name("initial_pose"),
+                sequence, kind, model, "primitive_excavator_change_pose", name("initial_pose"),
             )
     elif kind == "crawler_dump":
         _append_primitive(
-            sequence, kind, model, "subtask_crawlerdump_swing", name("initial_move_pose"),
+            sequence, kind, model, "primitive_crawlerdump_swing", name("initial_move_pose"),
         )
         if "vessel" in task.parameters:
             _append_primitive(
-                sequence, kind, model, "subtask_crawlerdump_release_soil",
+                sequence, kind, model, "primitive_crawlerdump_release_soil",
                 name("initial_pose_vessel"),
             )
         _append_primitive(
-            sequence, kind, model, "subtask_crawlerdump_follow_waypoints",
+            sequence, kind, model, "primitive_crawlerdump_follow_waypoints",
             name("initial_position"),
         )
         if "swing" in task.parameters:
             _append_primitive(
-                sequence, kind, model, "subtask_crawlerdump_swing", name("initial_pose"),
+                sequence, kind, model, "primitive_crawlerdump_swing", name("initial_pose"),
             )
     else:
         _append_primitive(
-            sequence, kind, model, "subtask_bulldozer_follow_waypoints",
+            sequence, kind, model, "primitive_bulldozer_follow_waypoints",
             name("initial_position"),
         )
 
 
 def _append_work(sequence: ET.Element, plan: Plan, task: Task) -> None:
-    _append_primitive(
-        sequence, plan.machine_kind(task.machine), plan.model(task), task.name,
+    _append_subtask(
+        sequence, plan.model(task), task.name,
         context_record_name(plan, task),
+    )
+
+
+def _append_subtask(
+    sequence: ET.Element,
+    model: str,
+    subtask: str,
+    record: str,
+) -> None:
+    _action(
+        sequence, "ExecuteSubtask", model_name=model, subtask_name=subtask,
+        subtask_parameters=record, machine_record_name="", terminate_condition="",
     )
 
 
@@ -263,24 +278,42 @@ def _append_completion(sequence: ET.Element, plan: Plan, task: Task) -> None:
     _action(
         sequence,
         "MongoValueWriter",
-        input_type="bool",
         input_value="true",
         mongo_record_name=record,
         mongo_param_name=field,
     )
 
 
-def _append_tree_nodes_model(root: ET.Element) -> None:
-    nodes = {
+def _append_tree_nodes_model(root: ET.Element, kind: str) -> None:
+    nodes = sorted({
         (element.tag, element.attrib["ID"])
         for element in root.iter()
         if element.tag in {"Action", "Decorator"}
-    }
+    })
+    # Preserve the declaration order in each requested machine XML.
+    execute = ("Action", "ExecuteSubtask")
+    if execute in nodes and kind != "excavator":
+        nodes.remove(execute)
+        position = next((index for index, (tag, _) in enumerate(nodes)
+                         if tag == "Decorator"), len(nodes))
+        if kind == "bulldozer" and ("Action", "SetLocalBlackboard") in nodes:
+            position = nodes.index(("Action", "SetLocalBlackboard"))
+        nodes.insert(position, execute)
     model = ET.SubElement(root, "TreeNodesModel")
-    for tag, node_id in sorted(nodes):
+    for tag, node_id in nodes:
         declaration = ET.SubElement(model, tag, {"ID": node_id})
         for port in _PORTS[node_id]:
             ET.SubElement(declaration, "input_port", {"name": port})
+
+
+def _serialize_tree(root: ET.Element) -> str:
+    """Keep the exact empty-tag formatting of the requested subtask XML."""
+    text = ET.tostring(root, encoding="unicode", short_empty_elements=True)
+    for element in root.iter("Action"):
+        if element.attrib["ID"] == "ExecuteSubtask":
+            original = ET.tostring(element, encoding="unicode", short_empty_elements=True)
+            text = text.replace(original, original.replace(" />", "/>"))
+    return text
 
 
 def build_task_documents(plan: Plan) -> list[dict[str, Any]]:
@@ -307,12 +340,12 @@ def build_task_documents(plan: Plan) -> list[dict[str, Any]]:
                 _append_work(sequence, plan, task)
             if task.name == "initialize" or task.id in required:
                 _append_completion(sequence, plan, task)
-        _append_tree_nodes_model(root)
+        _append_tree_nodes_model(root, plan.machine_kind(alias))
         documents.append({
             "task_id": machine_index,
             "type": "task",
             "model_name": model,
             "description": model + "_task.xml",
-            "task_sequence": ET.tostring(root, encoding="unicode", short_empty_elements=True),
+            "task_sequence": _serialize_tree(root),
         })
     return documents
