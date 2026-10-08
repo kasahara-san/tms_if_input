@@ -160,6 +160,10 @@ def assert_parameter_schema(compilation, plan, graph, entry_nodes):
                 assert block["block_size"] == params["block_size"]
                 assert block["block_center"] == center
                 assert block["soil_volume"] == volume
+                length = math.hypot(vector["x"], vector["y"], vector["z"])
+                assert block["block_vector"] == pytest.approx({
+                    axis: vector[axis] / length for axis in "xyz"})
+                assert math.hypot(*block["block_vector"].values()) == pytest.approx(1)
 
 
 def synthetic_inputs(connection_count=1, excavation_count=1):
@@ -325,6 +329,61 @@ def test_sample_compiles_from_input_values_and_contains_every_route():
         expected_geometries.add((label, tuple(point[0] for point in vertices),
                                 tuple(point[1] for point in vertices)))
     assert {route_geometry(document) for document in routes} == expected_geometries
+
+
+@pytest.mark.parametrize("vector, expected", [
+    ({"x": 3, "y": 4, "z": 0}, {"x": 0.6, "y": 0.8, "z": 0}),
+    ({"x": 0, "y": -3, "z": 4}, {"x": 0, "y": -0.6, "z": 0.8}),
+    ({"x": 3e300, "y": 4e300, "z": 0}, {"x": 0.6, "y": 0.8, "z": 0}),
+    ({"x": 3e-300, "y": 4e-300, "z": 0}, {"x": 0.6, "y": 0.8, "z": 0}),
+    ({"x": 0, "y": 1.5e308, "z": 1.5e308},
+     {"x": 0, "y": math.sqrt(0.5), "z": math.sqrt(0.5)}),
+])
+def test_leveling_blocks_store_unit_direction_without_changing_pose_or_inputs(
+        tmp_path, vector, expected):
+    from tms_if_input.parameters import build_parameter_documents
+
+    geojson, root = synthetic_inputs(connection_count=4, excavation_count=2)
+    parameter = root.find("./procedure/tasks/task[@id='grade-work']/parameter[@name='block_vector']")
+    parameter.set("value", json.dumps(vector))
+    paths = write_pair(tmp_path, geojson, root)
+    original_files = [path.read_bytes() for path in paths]
+    original_xml = ET.tostring(root)
+    original_geojson = copy.deepcopy(geojson)
+    result = compile_scenario(*paths)
+    plan, graph = load_inputs(*paths)
+    original_plan = copy.deepcopy(plan)
+    assert build_parameter_documents(plan, graph) == result.parameters
+    assert plan == original_plan
+    assert plan.tasks["grade-work"].parameters["block_vector"] == vector
+    assert [path.read_bytes() for path in paths] == original_files
+    assert ET.tostring(root) == original_xml
+    assert geojson == original_geojson
+
+    blocks = [document for document in result.parameters
+              if re.fullmatch(r"block_\d+", document["record_name"])]
+    assert [block["record_name"] for block in blocks] == [f"block_{i}" for i in range(1, 5)]
+    for block in blocks:
+        assert block["block_vector"] == pytest.approx(expected)
+        assert all(math.isfinite(value) for value in block["block_vector"].values())
+        assert math.hypot(*block["block_vector"].values()) == pytest.approx(1)
+    for i in range(1, 5):
+        assert_quaternion(record(result, f"bulldozer_node_{i}"), vector)
+
+    # Scaling this input to its expected unit direction must leave every other
+    # generated field, including the original XY quaternions, unchanged.
+    parameter.set("value", json.dumps(expected))
+    unit_result = compile_scenario(*write_pair(tmp_path, geojson, root))
+    assert result.tasks == unit_result.tasks
+    assert len(result.parameters) == len(unit_result.parameters)
+    for actual, unit in zip(result.parameters, unit_result.parameters):
+        actual, unit = copy.deepcopy(actual), copy.deepcopy(unit)
+        if "block_vector" in actual and actual["record_name"].startswith("block_"):
+            assert actual.pop("block_vector") == pytest.approx(unit.pop("block_vector"))
+        for key in ("qx", "qy", "qz", "qw"):
+            if key in actual:
+                assert actual.pop(key) == pytest.approx(unit.pop(key))
+        assert actual == unit
 
 
 @pytest.mark.parametrize("connections,blocks", [(1, 1), (2, 3), (4, 2), (12, 5), (15, 12)])
@@ -689,6 +748,8 @@ def test_two_sequential_work_areas_keep_parameter_and_route_references_separate(
                     center["x"] += 100
                     center["y"] += 50
                 parameter.set("value", json.dumps(centers))
+            elif key == "block_vector" and task.get("name") == "leveling":
+                parameter.set("value", '{"x": 0, "y": -3, "z": 4}')
         tasks.append(copy.deepcopy(task))
     for edge in list(flow):
         if edge.get("to") == "finish":
@@ -709,6 +770,13 @@ def test_two_sequential_work_areas_keep_parameter_and_route_references_separate(
         "grade-work": "connection-0", prefix + "grade-work": prefix + "connection-0"})
     assert len(result.tasks) == 3
     assert len(plan.tasks) == 14
+    first_leveling = plan.tasks["grade-work"]
+    second_leveling = plan.tasks[prefix + "grade-work"]
+    assert record(result, record_name(plan, first_leveling, "block_1"))["block_vector"] == {
+        "x": 0, "y": 1, "z": 0}
+    for index in (1, 2):
+        block = record(result, record_name(plan, second_leveling, f"block_{index}"))
+        assert block["block_vector"] == pytest.approx({"x": 0, "y": -0.6, "z": 0.8})
     for identifier in ("haul-work", prefix + "haul-work"):
         context = record(result, "transport_params_" + identifier)
         task = plan.tasks[identifier]

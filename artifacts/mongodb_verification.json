@@ -306,12 +306,12 @@
     "automatic_exit": true
   },
   "parameter_payloads_matched": 54,
-  "unit_tests_passed": 180,
+  "unit_tests_passed": 185,
   "raw_database_snapshots": {
     "parameter": {
       "path": "/home/kasahara/SIP_PROJECTS/ros2_tms_ws/src/tms_if_input/artifacts/mongodb_verified_parameter.json",
       "documents": 54,
-      "sha256": "c98e0c0c7ec36d30491d7aa30239052ccdca93ba5c7e5c70d0a3bd6abf16626c"
+      "sha256": "cf722ac6f6b6e49709ce2bc689373b0cf5175f104379abc242f918c54e98789a"
     },
     "task": {
       "path": "/home/kasahara/SIP_PROJECTS/ros2_tms_ws/src/tms_if_input/artifacts/mongodb_verified_task.json",
@@ -323,5 +323,120 @@
     "261004-kyoto.xml": "9e69200773f2cbafd1e27d2a7fd6b2cb96c76376cbfeee4e51221ff4a67f4571",
     "261004-kyoto.geojson": "a85b8abef83a9101f00d58d8a99a239a83db8142bcf12561bc6acf37d2bc1aed"
   },
-  "backup_directory": "/tmp/tms_if_input-all-absolute-fix"
+  "backup_directory": "/tmp/tms_if_input-all-absolute-fix",
+  "latest_data_update_utc": "2026-10-08T00:33:29.105453+00:00",
+  "leveling_block_vector_verification": {
+    "status": "passed",
+    "verified_at_utc": "2026-10-08T00:33:29.105453+00:00",
+    "database": "rostmsdb",
+    "counts": {
+      "parameter": 54,
+      "task": 4
+    },
+    "updated_block_documents": 9,
+    "verified_block_vectors": 9,
+    "actual_block_vectors": [
+      {
+        "record_name": "block_1",
+        "_id": "6ac317cbac12f089f57a03fc",
+        "block_vector": {
+          "x": -0.4414998190114838,
+          "y": 0.8972613386370926,
+          "z": 0.0
+        },
+        "norm": 1.0
+      },
+      {
+        "record_name": "block_2",
+        "_id": "6ac317cbac12f089f57a03fd",
+        "block_vector": {
+          "x": -0.4414998190114838,
+          "y": 0.8972613386370926,
+          "z": 0.0
+        },
+        "norm": 1.0
+      },
+      {
+        "record_name": "block_3",
+        "_id": "6ac317cbac12f089f57a03fe",
+        "block_vector": {
+          "x": -0.4414998190114838,
+          "y": 0.8972613386370926,
+          "z": 0.0
+        },
+        "norm": 1.0
+      },
+      {
+        "record_name": "block_4",
+        "_id": "6ac317cbac12f089f57a03ff",
+        "block_vector": {
+          "x": -0.4414998190114838,
+          "y": 0.8972613386370926,
+          "z": 0.0
+        },
+        "norm": 1.0
+      },
+      {
+        "record_name": "block_5",
+        "_id": "6ac317cbac12f089f57a0400",
+        "block_vector": {
+          "x": -0.4414998190114838,
+          "y": 0.8972613386370926,
+          "z": 0.0
+        },
+        "norm": 1.0
+      },
+      {
+        "record_name": "block_6",
+        "_id": "6ac317cbac12f089f57a0401",
+        "block_vector": {
+          "x": -0.4414998190114838,
+          "y": 0.8972613386370926,
+          "z": 0.0
+        },
+        "norm": 1.0
+      },
+      {
+        "record_name": "block_7",
+        "_id": "6ac317cbac12f089f57a0402",
+        "block_vector": {
+          "x": -0.4414998190114838,
+          "y": 0.8972613386370926,
+          "z": 0.0
+        },
+        "norm": 1.0
+      },
+      {
+        "record_name": "block_8",
+        "_id": "6ac317cbac12f089f57a0403",
+        "block_vector": {
+          "x": -0.4414998190114838,
+          "y": 0.8972613386370926,
+          "z": 0.0
+        },
+        "norm": 1.0
+      },
+      {
+        "record_name": "block_9",
+        "_id": "6ac317cbac12f089f57a0404",
+        "block_vector": {
+          "x": -0.4414998190114838,
+          "y": 0.8972613386370926,
+          "z": 0.0
+        },
+        "norm": 1.0
+      }
+    ],
+    "bulldozer_documents_unchanged": 9,
+    "bulldozer_quaternion_changes": 0,
+    "other_parameter_changes": 0,
+    "task_changes": 0,
+    "deleted_documents": 0,
+    "repeat_document_changes": 0,
+    "repeat_insertions": 0,
+    "unit_tests_passed": 185,
+    "launch_exit_code": 0,
+    "automatic_exit": true,
+    "backup_directory": "/tmp/tms_if_input-leveling-vector"
+  }
 }

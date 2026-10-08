@@ -1,0 +1,114 @@
+{
+  "status": "passed",
+  "verified_at_utc": "2026-10-08T00:33:29.105453+00:00",
+  "database": "rostmsdb",
+  "counts": {
+    "parameter": 54,
+    "task": 4
+  },
+  "updated_block_documents": 9,
+  "verified_block_vectors": 9,
+  "actual_block_vectors": [
+    {
+      "record_name": "block_1",
+      "_id": "6ac317cbac12f089f57a03fc",
+      "block_vector": {
+        "x": -0.4414998190114838,
+        "y": 0.8972613386370926,
+        "z": 0.0
+      },
+      "norm": 1.0
+    },
+    {
+      "record_name": "block_2",
+      "_id": "6ac317cbac12f089f57a03fd",
+      "block_vector": {
+        "x": -0.4414998190114838,
+        "y": 0.8972613386370926,
+        "z": 0.0
+      },
+      "norm": 1.0
+    },
+    {
+      "record_name": "block_3",
+      "_id": "6ac317cbac12f089f57a03fe",
+      "block_vector": {
+        "x": -0.4414998190114838,
+        "y": 0.8972613386370926,
+        "z": 0.0
+      },
+      "norm": 1.0
+    },
+    {
+      "record_name": "block_4",
+      "_id": "6ac317cbac12f089f57a03ff",
+      "block_vector": {
+        "x": -0.4414998190114838,
+        "y": 0.8972613386370926,
+        "z": 0.0
+      },
+      "norm": 1.0
+    },
+    {
+      "record_name": "block_5",
+      "_id": "6ac317cbac12f089f57a0400",
+      "block_vector": {
+        "x": -0.4414998190114838,
+        "y": 0.8972613386370926,
+        "z": 0.0
+      },
+      "norm": 1.0
+    },
+    {
+      "record_name": "block_6",
+      "_id": "6ac317cbac12f089f57a0401",
+      "block_vector": {
+        "x": -0.4414998190114838,
+        "y": 0.8972613386370926,
+        "z": 0.0
+      },
+      "norm": 1.0
+    },
+    {
+      "record_name": "block_7",
+      "_id": "6ac317cbac12f089f57a0402",
+      "block_vector": {
+        "x": -0.4414998190114838,
+        "y": 0.8972613386370926,
+        "z": 0.0
+      },
+      "norm": 1.0
+    },
+    {
+      "record_name": "block_8",
+      "_id": "6ac317cbac12f089f57a0403",
+      "block_vector": {
+        "x": -0.4414998190114838,
+        "y": 0.8972613386370926,
+        "z": 0.0
+      },
+      "norm": 1.0
+    },
+    {
+      "record_name": "block_9",
+      "_id": "6ac317cbac12f089f57a0404",
+      "block_vector": {
+        "x": -0.4414998190114838,
+        "y": 0.8972613386370926,
+        "z": 0.0
+      },
+      "norm": 1.0
+    }
+  ],
+  "bulldozer_documents_unchanged": 9,
+  "bulldozer_quaternion_changes": 0,
+  "other_parameter_changes": 0,
+  "task_changes": 0,
+  "deleted_documents": 0,
+  "repeat_document_changes": 0,
+  "repeat_insertions": 0,
+  "unit_tests_passed": 185,
+  "launch_exit_code": 0,
+  "automatic_exit": true,
+  "backup_directory": "/tmp/tms_if_input-leveling-vector"
+}

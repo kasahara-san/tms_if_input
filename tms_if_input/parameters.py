@@ -142,6 +142,11 @@ def _leveling_documents(plan: Plan, graph: GeoGraph, task: Task,
     vector = _vector(_required(task, "block_vector"), "xyz", f"Task {task.id} block_vector")
     dump_rotation = _rotation(vector, -1)
     bulldozer_rotation = _rotation(vector)
+    # Scale first so finite input components cannot overflow during normalization.
+    scale = max(abs(vector[axis]) for axis in "xyz")
+    scaled_vector = {axis: vector[axis] / scale for axis in "xyz"}
+    length = math.hypot(*scaled_vector.values())
+    unit_vector = {axis: scaled_vector[axis] / length for axis in "xyz"}
     connections = [graph.point(node).xy() for node in _values(task, "connection_node")]
     centers = [_vector(v, "xyz", f"Task {task.id} block_center") for v in _values(task, "block_center")]
     dump = [graph.point(node).xy() for node in _values(task, "dump_node")]
@@ -168,7 +173,7 @@ def _leveling_documents(plan: Plan, graph: GeoGraph, task: Task,
     for index, (center, volume) in enumerate(zip(centers, volumes), 1):
         documents.append({"type": "static", "record_name": record_name(plan, task, f"block_{index}"),
                           "block_size": deepcopy(block_size), "block_center": center,
-                          "soil_volume": volume})
+                          "soil_volume": volume, "block_vector": unit_vector.copy()})
     return documents
 
 
