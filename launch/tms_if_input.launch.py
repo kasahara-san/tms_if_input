@@ -14,8 +14,9 @@ from launch_ros.parameter_descriptions import ParameterValue
 def generate_launch_description():
     samples = os.path.join(get_package_share_directory('tms_if_input'), 'json_samples')
     defaults = {
-        'geojson_path': '261004-kyoto.geojson',
-        'xml_path': '261004-kyoto.xml',
+        'parameter_name': '261004-kyoto',
+        'geojson_path': [LaunchConfiguration('parameter_name'), '.geojson'],
+        'xml_path': [LaunchConfiguration('parameter_name'), '.xml'],
         'output_dir': '/tmp/tms_if_input',
         'mongo_uri': 'mongodb://localhost:27017',
         'mongo_db': 'rostmsdb',
@@ -28,6 +29,7 @@ def generate_launch_description():
         'use_sim_time': 'false',
     }
     descriptions = {
+        'parameter_name': 'Common GeoJSON/XML basename without extension (or an absolute path)',
         'geojson_path': 'GeoJSON filename in json_samples (or an absolute path)',
         'xml_path': 'XML filename in json_samples (or an absolute path)',
         'keep_alive': 'Keep the import service running after the initial import',
@@ -38,7 +40,7 @@ def generate_launch_description():
                  for name, value in defaults.items()]
     parameters = {}
     for name in defaults:
-        if name in {'prefix', 'use_namespace'}:
+        if name in {'parameter_name', 'prefix', 'use_namespace'}:
             continue
         value_type = bool if name in {'dry_run', 'import_on_start', 'keep_alive', 'use_sim_time'} else (
             int if name == 'mongo_timeout_ms' else str)
