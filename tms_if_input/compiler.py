@@ -42,6 +42,17 @@ def validate_documents(compilation: Compilation) -> None:
 def compile_scenario(geojson_path, xml_path) -> Compilation:
     plan, graph = load_inputs(geojson_path, xml_path)
     result = Compilation(build_parameter_documents(plan, graph), build_task_documents(plan))
+    # Rename only model_name values, preserving other model-derived names.
+    for document in result.parameters + result.tasks:
+        model = document.get('model_name')
+        if isinstance(model, list):
+            document['model_name'] = ['mst110cr_2' if name == 'mst110cr' else name
+                                      for name in model]
+        elif model == 'mst110cr':
+            document['model_name'] = 'mst110cr_2'
+    for task in result.tasks:
+        task['task_sequence'] = task['task_sequence'].replace(
+            'model_name="mst110cr"', 'model_name="mst110cr_2"')
     validate_documents(result)
     return result
 

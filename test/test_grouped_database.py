@@ -93,7 +93,7 @@ def test_grouped_sample_adds_seven_routes_without_modifying_legacy_data():
 
     first = write_database(compilation, client_factory=factory)
     first_summary = expected_summary(
-        first, machinery=['mst110cr', 'mst2200vdr'],
+        first, machinery=['mst110cr_2', 'mst2200vdr'],
         positions=[document['record_name'] for document in compilation.parameters])
     assert (first["inserted_parameters"], first["skipped_parameters"]) == (7, 0)
     assert first["inserted_tasks"] == 0
@@ -122,7 +122,7 @@ def test_same_source_ids_with_changed_geometry_append_a_distinct_route_generatio
     first_original = deepcopy(first_compilation)
     first = write_database(first_compilation, client_factory=factory)
     first_summary = expected_summary(
-        first, machinery=['mst110cr', 'mst2200vdr'],
+        first, machinery=['mst110cr_2', 'mst2200vdr'],
         positions=[document['record_name'] for document in first_compilation.parameters])
     first_stored = deepcopy(database["parameter"].documents)
     assert first_stored == legacy + first_original.parameters + [first_summary]
@@ -152,7 +152,7 @@ def test_same_source_ids_with_changed_geometry_append_a_distinct_route_generatio
 
     appended = write_database(second_compilation, client_factory=factory)
     appended_summary = expected_summary(
-        appended, machinery=['mst110cr', 'mst2200vdr'],
+        appended, machinery=['mst110cr_2', 'mst2200vdr'],
         positions=[document['record_name'] for document in second_compilation.parameters])
     assert (appended["inserted_parameters"], appended["skipped_parameters"]) == (7, 0)
     assert database["parameter"].documents == first_stored + second_original.parameters + [appended_summary]

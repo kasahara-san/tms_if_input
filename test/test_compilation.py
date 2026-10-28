@@ -24,7 +24,14 @@ def write_pair(tmp_path, geojson, root):
     return geojson_path, xml_path
 
 
+def stored_model(model):
+    if isinstance(model, list):
+        return [stored_model(name) for name in model]
+    return "mst110cr_2" if model == "mst110cr" else model
+
+
 def record(compilation, name, model=None):
+    model = stored_model(model)
     matches = [document for document in compilation.parameters
                if document["record_name"] == name and (
                    model is None or document.get("model_name") == model
@@ -73,14 +80,14 @@ def assert_parameter_schema(compilation, plan, graph, entry_nodes):
     expected_fence = [[{"x": x, "y": y} for x, y in ring]
                       for polygon in graph.geofences for ring in polygon]
     assert record(compilation, "geo_fence")["coordinates"] == expected_fence
-    dump_models = [model for alias, model in plan.machines.items()
+    dump_models = [stored_model(model) for alias, model in plan.machines.items()
                    if plan.machine_kind(alias) == "crawler_dump"]
     flags = record(compilation, "initialize_flgs")
     assert flags['type'] == 'dynamic'
     for task in plan.tasks.values():
         params = task.parameters
         if task.name == "initialize":
-            model = plan.model(task)
+            model = stored_model(plan.model(task))
             kind = plan.machine_kind(task.machine)
             position = record(compilation, record_name(plan, task, "initial_position"), model)
             point = graph.point(params["target_node"])
@@ -92,7 +99,7 @@ def assert_parameter_schema(compilation, plan, graph, entry_nodes):
             for axis in "xyzw":
                 expected = params["rotation"][axis]
                 assert position["q" + axis] == ([expected] if kind == "excavator" else expected)
-            assert flags[record_name(plan, task, "initialize_flg_" + model)] is False
+            assert flags[record_name(plan, task, "initialize_flg_" + plan.model(task))] is False
             if kind == "excavator":
                 pose = record(compilation, record_name(plan, task, "initial_pose"), model)
                 assert pose["planning_group"] == "manipulator"
@@ -372,7 +379,11 @@ def test_leveling_blocks_store_unit_direction_without_changing_pose_or_inputs(
     result = compile_scenario(*paths)
     plan, graph = load_inputs(*paths)
     original_plan = copy.deepcopy(plan)
-    assert build_parameter_documents(plan, graph) == result.parameters
+    expected_parameters = build_parameter_documents(plan, graph)
+    for document in expected_parameters:
+        if "model_name" in document:
+            document["model_name"] = stored_model(document["model_name"])
+    assert expected_parameters == result.parameters
     assert plan == original_plan
     assert plan.tasks["grade-work"].parameters["block_vector"] == vector
     assert [path.read_bytes() for path in paths] == original_files
@@ -678,6 +689,7 @@ def transformed_sample():
 
 def test_replacing_all_ids_models_coordinates_and_vectors_changes_output(tmp_path):
     geojson, root, id_map, model_map = transformed_sample()
+    model_map = {stored_model(model): replacement for model, replacement in model_map.items()}
     paths = write_pair(tmp_path, geojson, root)
     result = compile_scenario(*paths)
     plan, graph = load_inputs(*paths)
