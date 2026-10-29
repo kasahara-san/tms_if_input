@@ -9,6 +9,7 @@ import xml.etree.ElementTree as ET
 from tms_if_input.behavior_tree import (
     build_task_documents, completion_flag, context_record_name, synchronization_documents,
 )
+from tms_if_input.compiler import compile_scenario
 from tms_if_input.model import Plan, Task, load_inputs, record_name
 
 
@@ -114,11 +115,22 @@ class BehaviorTreeTests(unittest.TestCase):
                         self.assertNotEqual(element.attrib["name"], "input_type")
                 writers = root.findall("BehaviorTree//Action[@ID='MongoValueWriter']")
                 writer_count += len(writers)
+                pending_resets = set()
                 for writer in writers:
                     self.assertEqual(set(writer.attrib), {"ID", *expected_ports})
-                    self.assertEqual(writer.attrib["input_value"], "true")
+                    self.assertIn(writer.attrib["input_value"], {"true", "false"})
                     self.assertTrue(writer.attrib["mongo_record_name"])
                     self.assertTrue(writer.attrib["mongo_param_name"])
+                    destination = (writer.attrib["mongo_record_name"],
+                                   writer.attrib["mongo_param_name"])
+                    if writer.attrib["input_value"] == "false":
+                        self.assertEqual(destination[0], "initialize_flgs")
+                        self.assertNotIn(destination, pending_resets)
+                        pending_resets.add(destination)
+                    elif destination[0] == "initialize_flgs":
+                        self.assertIn(destination, pending_resets)
+                        pending_resets.remove(destination)
+                self.assertFalse(pending_resets, "Every reset must have a later completion writer")
                 declarations = root.findall("TreeNodesModel/Action[@ID='MongoValueWriter']")
                 self.assertEqual(len(declarations), int(bool(writers)))
                 for declaration in declarations:
@@ -140,6 +152,19 @@ class BehaviorTreeTests(unittest.TestCase):
         documents = build_task_documents(plan)
         self.assertEqual({document["model_name"]: document["task_sequence"]
                           for document in documents}, requested)
+        compiled = compile_scenario(samples / "261004-kyoto.geojson", samples / "261004-kyoto.xml")
+        self.assertEqual({document["model_name"]: document["task_sequence"]
+                          for document in compiled.tasks}, {
+            "mst110cr_2" if model == "mst110cr" else model:
+                sequence.replace('model_name="mst110cr"', 'model_name="mst110cr_2"')
+            for model, sequence in requested.items()
+        })
+        crawler = next(document for document in compiled.tasks
+                       if document["model_name"] == "mst110cr_2")
+        root = ET.fromstring(crawler["task_sequence"])
+        self.assertEqual([writer.attrib["mongo_param_name"] for writer in
+                          root.findall("BehaviorTree//Action[@ID='MongoValueWriter']")],
+                         ["initialize_flg_mst110cr", "initialize_flg_mst110cr"])
 
     def test_replacement_models_generate_correct_machine_interfaces(self):
         plan = sample_plan()
@@ -193,6 +218,52 @@ class BehaviorTreeTests(unittest.TestCase):
         })
         self.assertTrue(all(value is True for key, value in database["initialize_flgs"].items()
                             if key.startswith("initialize_flg_")))
+
+    def test_stale_true_flags_wait_for_reset_machine_to_finish_initializing(self):
+        class DelayedInitialization(TreeRuntime):
+            released = False
+
+            def _tick(self, node):
+                if (not self.released
+                        and node.attrib.get("primitive_name") == "primitive_crawlerdump_swing"
+                        and node.attrib.get("record_name") == "initial_move_pose"):
+                    return False
+                return super()._tick(node)
+
+        plan = sample_plan()
+        database = {document["record_name"]: document.copy()
+                    for document in synchronization_documents(plan)}
+        flags = database["initialize_flgs"]
+        for name in flags:
+            if name.startswith("initialize_flg_"):
+                flags[name] = True
+        documents = build_task_documents(plan)
+        work_log = []
+        delayed = DelayedInitialization(documents[1], database, work_log)
+        others = [TreeRuntime(document, database, work_log)
+                  for document in (documents[0], documents[2])]
+
+        # Start the delayed machine first so its stale completion flag is reset.
+        self.assertFalse(delayed.tick())
+        self.assertIs(flags["initialize_flg_mst110cr_4"], False)
+        self.assertEqual(delayed.actions, [])
+        for _ in range(3):
+            for runtime in others:
+                self.assertFalse(runtime.tick())
+            self.assertFalse(delayed.tick())
+        self.assertEqual(work_log, [])
+        self.assertIs(flags["initialize_flg_mst110cr_4"], False)
+
+        delayed.released = True
+        runtimes = [delayed, *others]
+        for _ in range(6):
+            for runtime in runtimes:
+                runtime.tick()
+        self.assertTrue(all(runtime.done for runtime in runtimes))
+        self.assertIs(flags["initialize_flg_mst110cr_4"], True)
+        self.assertEqual(Counter(primitive for _, primitive in work_log), {
+            "excavation_loading": 1, "transport": 1, "leveling": 1,
+        })
 
     def test_inter_machine_work_dependency_is_preserved(self):
         original = sample_plan()

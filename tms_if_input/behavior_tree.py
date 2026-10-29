@@ -1,8 +1,7 @@
 """Compile the scenario flow into one construction behavior tree per machine.
 
-Completion flags are monotonic within one imported scenario.  Clearing a flag
-inside an individual machine tree would let another machine miss the completion
-and wait forever, so only the database import initializes these flags to false.
+Each initialization resets its MongoDB flag before moving the machine and marks
+it complete afterward.  Dependent work waits for all required completion flags.
 """
 
 from __future__ import annotations
@@ -195,6 +194,14 @@ def _append_primitive(
 def _append_initialize(sequence: ET.Element, plan: Plan, task: Task) -> None:
     model = plan.model(task)
     kind = plan.machine_kind(task.machine)
+    record, field = completion_flag(plan, task)
+    _action(
+        sequence,
+        "MongoValueWriter",
+        input_value="false",
+        mongo_record_name=record,
+        mongo_param_name=field,
+    )
 
     def name(base: str) -> str:
         return record_name(plan, task, base)

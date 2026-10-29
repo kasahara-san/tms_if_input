@@ -1,0 +1,345 @@
+{
+  "status": "passed",
+  "verified_at_utc": "2026-10-29T09:27:43.020346+00:00",
+  "mongo_uri": "mongodb://localhost:27017",
+  "database": "rostmsdb",
+  "input_basename": "261004-kyoto",
+  "operation": "insert_missing_scenario_into_empty_task_and_parameter_collections",
+  "before_counts": {
+    "parameter": 0,
+    "task": 0
+  },
+  "after_counts": {
+    "parameter": 102,
+    "task": 4
+  },
+  "import_result": {
+    "parameter_count": 101,
+    "task_count": 4,
+    "task_ids": {
+      "zx200": 1,
+      "mst110cr_2": 2,
+      "mst2200vdr": 3,
+      "d37pxi": 4
+    },
+    "inserted_parameters": 101,
+    "skipped_parameters": 0,
+    "inserted_tasks": 4,
+    "skipped_tasks": 0,
+    "summary_record_name": "parameter_import_summary_20261029T092742994125",
+    "machinery_names": [
+      "zx200",
+      "mst110cr_2",
+      "mst2200vdr",
+      "d37pxi"
+    ],
+    "joint_angle_param_names": [
+      "initial_pose",
+      "initial_move_pose",
+      "initial_pose_vessel"
+    ],
+    "machinery_position_param_names": [
+      "initial_position",
+      "loading_position_1",
+      "excavate_position_1",
+      "loading_position_2",
+      "excavate_position_2",
+      "loading_position_3",
+      "excavate_position_3",
+      "loading_position_4",
+      "excavate_position_4",
+      "dumps_entry_point_leveling_area",
+      "dump_node_1",
+      "dump_node_2",
+      "dump_node_3",
+      "dump_node_4",
+      "dump_node_5",
+      "dump_node_6",
+      "dump_node_7",
+      "dump_node_8",
+      "dump_node_9",
+      "bulldozer_node_1",
+      "bulldozer_node_2",
+      "bulldozer_node_3",
+      "bulldozer_node_4",
+      "bulldozer_node_5",
+      "bulldozer_node_6",
+      "bulldozer_node_7",
+      "bulldozer_node_8",
+      "bulldozer_node_9",
+      "route_e86b16da63ce1bb1_3260195895",
+      "route_e86b16da63ce1bb1_3453947199",
+      "route_e86b16da63ce1bb1_3775605330",
+      "route_e86b16da63ce1bb1_3483617579",
+      "route_e86b16da63ce1bb1_1901058875",
+      "route_e86b16da63ce1bb1_768363352",
+      "route_e86b16da63ce1bb1_2192002421"
+    ],
+    "block_position_param_names": [
+      "excavation_loading_params",
+      "block_1",
+      "block_2",
+      "block_3",
+      "block_4",
+      "block_5",
+      "block_6",
+      "block_7",
+      "block_8",
+      "block_9"
+    ]
+  },
+  "task_xmls": [
+    {
+      "model_name": "zx200",
+      "task_id": 1,
+      "_id": "6ae3118e9d20f7e9eec6a1a9",
+      "xml_bytes": 3125,
+      "xml_sha256": "eaeab988ef936878b9cb5d6edb028e64424a9e881705912b91ba6e5427eb3d67",
+      "stored_as_string": true,
+      "exact_string_match": true,
+      "xml_parseable": true,
+      "first_node": {
+        "ID": "MongoValueWriter",
+        "input_value": "false",
+        "mongo_record_name": "initialize_flgs",
+        "mongo_param_name": "initialize_flg_zx200"
+      },
+      "writer_values": [
+        "false",
+        "true"
+      ],
+      "barrier_flags": [
+        "initialize_flg_zx200",
+        "initialize_flg_mst110cr",
+        "initialize_flg_mst2200vdr",
+        "initialize_flg_d37pxi"
+      ],
+      "parameter_references": [
+        {
+          "record_name": "initial_move_pose",
+          "matches": 1
+        },
+        {
+          "record_name": "initial_position",
+          "matches": 1
+        },
+        {
+          "record_name": "initial_pose",
+          "matches": 1
+        },
+        {
+          "record_name": "excavation_loading_params",
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "model_name": "mst110cr_2",
+      "task_id": 2,
+      "_id": "6ae3118e9d20f7e9eec6a1aa",
+      "xml_bytes": 3195,
+      "xml_sha256": "c2f809f23ae7e6eeab4d667fdc2f10982d43d574bbe668fa4974e187972b6dbc",
+      "stored_as_string": true,
+      "exact_string_match": true,
+      "xml_parseable": true,
+      "first_node": {
+        "ID": "MongoValueWriter",
+        "input_value": "false",
+        "mongo_record_name": "initialize_flgs",
+        "mongo_param_name": "initialize_flg_mst110cr"
+      },
+      "writer_values": [
+        "false",
+        "true"
+      ],
+      "barrier_flags": [
+        "initialize_flg_zx200",
+        "initialize_flg_mst110cr",
+        "initialize_flg_mst2200vdr",
+        "initialize_flg_d37pxi"
+      ],
+      "parameter_references": [
+        {
+          "record_name": "initial_move_pose",
+          "matches": 1
+        },
+        {
+          "record_name": "initial_pose_vessel",
+          "matches": 1
+        },
+        {
+          "record_name": "initial_position",
+          "matches": 1
+        },
+        {
+          "record_name": "initial_pose",
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "model_name": "mst2200vdr",
+      "task_id": 3,
+      "_id": "6ae3118e9d20f7e9eec6a1ab",
+      "xml_bytes": 3199,
+      "xml_sha256": "5d0b9f81fa52cbb0a8add9c195c40d6ef64f838bddc3190b0bcc7e017314404b",
+      "stored_as_string": true,
+      "exact_string_match": true,
+      "xml_parseable": true,
+      "first_node": {
+        "ID": "MongoValueWriter",
+        "input_value": "false",
+        "mongo_record_name": "initialize_flgs",
+        "mongo_param_name": "initialize_flg_mst2200vdr"
+      },
+      "writer_values": [
+        "false",
+        "true"
+      ],
+      "barrier_flags": [
+        "initialize_flg_zx200",
+        "initialize_flg_mst110cr",
+        "initialize_flg_mst2200vdr",
+        "initialize_flg_d37pxi"
+      ],
+      "parameter_references": [
+        {
+          "record_name": "initial_move_pose",
+          "matches": 1
+        },
+        {
+          "record_name": "initial_pose_vessel",
+          "matches": 1
+        },
+        {
+          "record_name": "initial_position",
+          "matches": 1
+        },
+        {
+          "record_name": "initial_pose",
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "model_name": "d37pxi",
+      "task_id": 4,
+      "_id": "6ae3118e9d20f7e9eec6a1ac",
+      "xml_bytes": 2656,
+      "xml_sha256": "12ca24495a3f313739adc939429a98f92aa451c627c9ed4a456b57c21c03c648",
+      "stored_as_string": true,
+      "exact_string_match": true,
+      "xml_parseable": true,
+      "first_node": {
+        "ID": "MongoValueWriter",
+        "input_value": "false",
+        "mongo_record_name": "initialize_flgs",
+        "mongo_param_name": "initialize_flg_d37pxi"
+      },
+      "writer_values": [
+        "false",
+        "true"
+      ],
+      "barrier_flags": [
+        "initialize_flg_zx200",
+        "initialize_flg_mst110cr",
+        "initialize_flg_mst2200vdr",
+        "initialize_flg_d37pxi"
+      ],
+      "parameter_references": [
+        {
+          "record_name": "initial_position",
+          "matches": 1
+        }
+      ]
+    }
+  ],
+  "all_generated_parameters_exactly_match_stored_bson": true,
+  "verified_parameter_count": 101,
+  "resolved_xml_parameter_reference_count": 13,
+  "initialize_flags": {
+    "initialize_flg_zx200": false,
+    "initialize_flg_mst110cr": false,
+    "initialize_flg_mst2200vdr": false,
+    "initialize_flg_d37pxi": false
+  },
+  "all_initialize_flags_are_boolean": true,
+  "no_duplicate_tasks_or_parameter_scopes": true,
+  "other_collection_counts_before": {
+    "default": 18,
+    "fs.chunks": 486,
+    "fs.files": 18,
+    "machine": 72,
+    "now": 78,
+    "sensor": 4
+  },
+  "other_collection_counts_after": {
+    "default": 18,
+    "fs.chunks": 486,
+    "fs.files": 18,
+    "machine": 72,
+    "now": 78,
+    "sensor": 4
+  },
+  "all_unrelated_collections_untouched_by_import": true,
+  "robot_or_behavior_tree_execution_performed": false,
+  "evidence_directory": "/tmp/tms_if_input-mongodb-xml-20261029",
+  "fresh_connection_readback": {
+    "status": "passed",
+    "verified_at_utc": "2026-10-29T09:29:00.901702+00:00",
+    "task_and_parameter_values_unchanged_since_import": true,
+    "task_lookup_by_task_id_matches_stored_xml": true,
+    "parameter_lookup_by_scalar_model_name_resolves_all_references": true,
+    "resolved_parameter_references": 13,
+    "input_derived_parameter_schema_and_geometry_checks": "passed",
+    "raw_geojson_node_positions_and_connections": "passed",
+    "geojson_node_count": 42,
+    "unique_connection_count": 45,
+    "source_line_count": 90,
+    "xml_sha256_by_model": {
+      "zx200": "eaeab988ef936878b9cb5d6edb028e64424a9e881705912b91ba6e5427eb3d67",
+      "mst110cr_2": "c2f809f23ae7e6eeab4d667fdc2f10982d43d574bbe668fa4974e187972b6dbc",
+      "mst2200vdr": "5d0b9f81fa52cbb0a8add9c195c40d6ef64f838bddc3190b0bcc7e017314404b",
+      "d37pxi": "12ca24495a3f313739adc939429a98f92aa451c627c9ed4a456b57c21c03c648"
+    }
+  },
+  "verification_scope": "MongoDB storage, XML content, parameter references, input-derived numeric values and geometry; no robot execution",
+  "independent_raw_input_audit": {
+    "status": "passed",
+    "oracle": "Raw source XML and GeoJSON parsed independently without production compiler/model/parameter helpers",
+    "assertions_passed": 592,
+    "stored_value_issues": [],
+    "checks": [
+      "initial positions and quaternion array/scalar shapes for four models",
+      "excavator and crawler joint angles, radian conversions and document types",
+      "boolean false initialization flags and flag names",
+      "excavation parameters and loading/excavation model references",
+      "nine block centers, sizes, soil volumes and unit vectors",
+      "nine bulldozer positions and orientations plus dump target geometry",
+      "42 graph node positions, 45 undirected connections and node ID list"
+    ]
+  },
+  "local_runtime_source_compatibility": {
+    "status": "differences_found",
+    "execution_performed": false,
+    "factory_source": "/home/kasahara/ros2_ws/src/ros2_tms_for_construction/tms_ts/tms_ts_manager/src/task_schedular_manager.cpp",
+    "factory_registration_start_line": 56,
+    "unregistered_xml_node_ids": [
+      "ExecuteSubtask",
+      "MongoValueReader"
+    ],
+    "registered_reader_node_id": "BlackboardValueReaderMongo",
+    "leaf_ports_in_local_source": [
+      "model_name",
+      "record_name",
+      "subtask_name"
+    ],
+    "xml_leaf_ports_not_in_local_source": [
+      "primitive_name",
+      "read_direction",
+      "previous_target_record_name",
+      "target_record_name"
+    ],
+    "note": "Stored XML follows the supplied interface. The checked local runtime source needs compatible node implementations/registrations before this XML can execute there."
+  }
+}
