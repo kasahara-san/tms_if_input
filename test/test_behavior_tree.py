@@ -13,6 +13,22 @@ from tms_if_input.compiler import compile_scenario
 from tms_if_input.model import Plan, Task, load_inputs, record_name
 
 
+def compact_requested_xml(source):
+    """Derive the legacy string representation independently from raw XML."""
+    root = ET.fromstring(source)
+    for element in root.iter():
+        if element.text is not None and not element.text.strip():
+            element.text = None
+        if element.tail is not None and not element.tail.strip():
+            element.tail = None
+    compact = ET.tostring(root, encoding="unicode", short_empty_elements=True)
+    for action in root.iter("Action"):
+        if action.get("ID") == "ExecuteSubtask":
+            subtree = ET.tostring(action, encoding="unicode", short_empty_elements=True)
+            compact = compact.replace(subtree, subtree.replace(" />", "/>"))
+    return compact
+
+
 def sample_plan():
     machines = {"hoe_alias": "zx200_9", "truck_alias": "mst110cr_4", "blade_alias": "d37pxi_2"}
     entries = [
@@ -148,6 +164,8 @@ class BehaviorTreeTests(unittest.TestCase):
         tests = Path(__file__).resolve().parent
         samples = tests.parent / "json_samples"
         requested = json.loads((tests / "fixtures/requested_tasks.json").read_text())
+        replacements = json.loads((tests / "fixtures/replacement_tasks.json").read_text())
+        replacements = {model: compact_requested_xml(xml) for model, xml in replacements.items()}
         plan, _ = load_inputs(samples / "261004-kyoto.geojson", samples / "261004-kyoto.xml")
         documents = build_task_documents(plan)
         self.assertEqual({document["model_name"]: document["task_sequence"]
@@ -155,15 +173,16 @@ class BehaviorTreeTests(unittest.TestCase):
         compiled = compile_scenario(samples / "261004-kyoto.geojson", samples / "261004-kyoto.xml")
         self.assertEqual({document["model_name"]: document["task_sequence"]
                           for document in compiled.tasks}, {
-            "mst110cr_2" if model == "mst110cr" else model:
-                sequence.replace('model_name="mst110cr"', 'model_name="mst110cr_2"')
-            for model, sequence in requested.items()
+            **replacements,
+            "zx200": requested["zx200"].replace(
+                "initialize_flg_mst2200vdr", "initialize_flg_mst2200vd"),
         })
         crawler = next(document for document in compiled.tasks
                        if document["model_name"] == "mst110cr_2")
         root = ET.fromstring(crawler["task_sequence"])
         self.assertEqual([writer.attrib["mongo_param_name"] for writer in
-                          root.findall("BehaviorTree//Action[@ID='MongoValueWriter']")],
+                          root.findall("BehaviorTree//Action[@ID='MongoValueWriter']")
+                          if writer.attrib["mongo_record_name"] == "initialize_flgs"],
                          ["initialize_flg_mst110cr", "initialize_flg_mst110cr"])
 
     def test_replacement_models_generate_correct_machine_interfaces(self):

@@ -27,7 +27,7 @@ def write_pair(tmp_path, geojson, root):
 def stored_model(model):
     if isinstance(model, list):
         return [stored_model(name) for name in model]
-    return "mst110cr_2" if model == "mst110cr" else model
+    return {"mst110cr": "mst110cr_2", "mst2200vdr": "mst2200vd"}.get(model, model)
 
 
 def record(compilation, name, model=None):
@@ -99,7 +99,8 @@ def assert_parameter_schema(compilation, plan, graph, entry_nodes):
             for axis in "xyzw":
                 expected = params["rotation"][axis]
                 assert position["q" + axis] == ([expected] if kind == "excavator" else expected)
-            assert flags[record_name(plan, task, "initialize_flg_" + plan.model(task))] is False
+            flag_model = "mst2200vd" if plan.model(task) == "mst2200vdr" else plan.model(task)
+            assert flags[record_name(plan, task, "initialize_flg_" + flag_model)] is False
             if kind == "excavator":
                 pose = record(compilation, record_name(plan, task, "initial_pose"), model)
                 assert pose["planning_group"] == "manipulator"

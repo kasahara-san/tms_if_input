@@ -1,0 +1,243 @@
+{
+  "status": "passed",
+  "verified_at_utc": "2026-10-30T01:04:04.880666+00:00",
+  "database": "rostmsdb",
+  "collection": "task",
+  "field": "task_sequence",
+  "operation": "insert_three_user_xml_strings_into_empty_task_collection_and_align_mst2200vd_model_references",
+  "before_counts": {
+    "task": 0,
+    "parameter": 102
+  },
+  "after_counts": {
+    "task": 3,
+    "parameter": 102
+  },
+  "inserted_tasks": 3,
+  "updated_parameter_name_references": 27,
+  "parameter_data_values_preserved": true,
+  "unrelated_collection_counts_unchanged": true,
+  "model_name": "mst2200vd",
+  "task_checks": [
+    {
+      "model_name": "mst110cr_2",
+      "task_id": 2,
+      "_id": "6ae3ecc17bc88c2710622d21",
+      "stored_as_string": true,
+      "exact_source_xml_match": true,
+      "xml_parseable": true,
+      "xml_sha256": "6554e080ab27d332ed9276f35139cc96fde0a8331a719c153fa08fc3ec23043b"
+    },
+    {
+      "model_name": "mst2200vd",
+      "task_id": 3,
+      "_id": "6ae3ecc17bc88c2710622d22",
+      "stored_as_string": true,
+      "exact_source_xml_match": true,
+      "xml_parseable": true,
+      "xml_sha256": "feb48b38367f4a2bbd9b347c4eabcae5609ebcd81a69d4ebe0b0cf9928d56f06"
+    },
+    {
+      "model_name": "d37pxi",
+      "task_id": 4,
+      "_id": "6ae3ecc17bc88c2710622d23",
+      "stored_as_string": true,
+      "exact_source_xml_match": true,
+      "xml_parseable": true,
+      "xml_sha256": "2e3ce6ad250f5649a9a38fdca9dc7dc1405fde017cc7e3a627c7d46320c1aa00"
+    }
+  ],
+  "backup": "/tmp/tms_if_input-task-replacement-20261030/before_registration.bson.json",
+  "changes": [
+    {
+      "_id": "6ae3118e9d20f7e9eec6a14c",
+      "record_name": "initial_position",
+      "changed_fields": [
+        "model_name"
+      ]
+    },
+    {
+      "_id": "6ae3118e9d20f7e9eec6a14d",
+      "record_name": "initial_pose",
+      "changed_fields": [
+        "model_name"
+      ]
+    },
+    {
+      "_id": "6ae3118e9d20f7e9eec6a14e",
+      "record_name": "initial_pose_vessel",
+      "changed_fields": [
+        "model_name"
+      ]
+    },
+    {
+      "_id": "6ae3118e9d20f7e9eec6a14f",
+      "record_name": "initial_move_pose",
+      "changed_fields": [
+        "model_name"
+      ]
+    },
+    {
+      "_id": "6ae3118e9d20f7e9eec6a152",
+      "record_name": "loading_position_1",
+      "changed_fields": [
+        "model_name"
+      ]
+    },
+    {
+      "_id": "6ae3118e9d20f7e9eec6a154",
+      "record_name": "loading_position_2",
+      "changed_fields": [
+        "model_name"
+      ]
+    },
+    {
+      "_id": "6ae3118e9d20f7e9eec6a156",
+      "record_name": "loading_position_3",
+      "changed_fields": [
+        "model_name"
+      ]
+    },
+    {
+      "_id": "6ae3118e9d20f7e9eec6a158",
+      "record_name": "loading_position_4",
+      "changed_fields": [
+        "model_name"
+      ]
+    },
+    {
+      "_id": "6ae3118e9d20f7e9eec6a15a",
+      "record_name": "dumps_entry_point_leveling_area",
+      "changed_fields": [
+        "model_name"
+      ]
+    },
+    {
+      "_id": "6ae3118e9d20f7e9eec6a15b",
+      "record_name": "dump_node_1",
+      "changed_fields": [
+        "model_name"
+      ]
+    },
+    {
+      "_id": "6ae3118e9d20f7e9eec6a15c",
+      "record_name": "dump_node_2",
+      "changed_fields": [
+        "model_name"
+      ]
+    },
+    {
+      "_id": "6ae3118e9d20f7e9eec6a15d",
+      "record_name": "dump_node_3",
+      "changed_fields": [
+        "model_name"
+      ]
+    },
+    {
+      "_id": "6ae3118e9d20f7e9eec6a15e",
+      "record_name": "dump_node_4",
+      "changed_fields": [
+        "model_name"
+      ]
+    },
+    {
+      "_id": "6ae3118e9d20f7e9eec6a15f",
+      "record_name": "dump_node_5",
+      "changed_fields": [
+        "model_name"
+      ]
+    },
+    {
+      "_id": "6ae3118e9d20f7e9eec6a160",
+      "record_name": "dump_node_6",
+      "changed_fields": [
+        "model_name"
+      ]
+    },
+    {
+      "_id": "6ae3118e9d20f7e9eec6a161",
+      "record_name": "dump_node_7",
+      "changed_fields": [
+        "model_name"
+      ]
+    },
+    {
+      "_id": "6ae3118e9d20f7e9eec6a162",
+      "record_name": "dump_node_8",
+      "changed_fields": [
+        "model_name"
+      ]
+    },
+    {
+      "_id": "6ae3118e9d20f7e9eec6a163",
+      "record_name": "dump_node_9",
+      "changed_fields": [
+        "model_name"
+      ]
+    },
+    {
+      "_id": "6ae3118e9d20f7e9eec6a176",
+      "record_name": "route_e86b16da63ce1bb1_3260195895",
+      "changed_fields": [
+        "model_name"
+      ]
+    },
+    {
+      "_id": "6ae3118e9d20f7e9eec6a177",
+      "record_name": "route_e86b16da63ce1bb1_3453947199",
+      "changed_fields": [
+        "model_name"
+      ]
+    },
+    {
+      "_id": "6ae3118e9d20f7e9eec6a178",
+      "record_name": "route_e86b16da63ce1bb1_3775605330",
+      "changed_fields": [
+        "model_name"
+      ]
+    },
+    {
+      "_id": "6ae3118e9d20f7e9eec6a179",
+      "record_name": "route_e86b16da63ce1bb1_3483617579",
+      "changed_fields": [
+        "model_name"
+      ]
+    },
+    {
+      "_id": "6ae3118e9d20f7e9eec6a17a",
+      "record_name": "route_e86b16da63ce1bb1_1901058875",
+      "changed_fields": [
+        "model_name"
+      ]
+    },
+    {
+      "_id": "6ae3118e9d20f7e9eec6a17b",
+      "record_name": "route_e86b16da63ce1bb1_768363352",
+      "changed_fields": [
+        "model_name"
+      ]
+    },
+    {
+      "_id": "6ae3118e9d20f7e9eec6a17c",
+      "record_name": "route_e86b16da63ce1bb1_2192002421",
+      "changed_fields": [
+        "model_name"
+      ]
+    },
+    {
+      "_id": "6ae3118e9d20f7e9eec6a17d",
+      "record_name": "initialize_flgs",
+      "changed_fields": [
+        "initialize_flg_mst2200vd",
+        "initialize_flg_mst2200vdr"
+      ]
+    },
+    {
+      "_id": "6ae3118e9d20f7e9eec6a1ad",
+      "record_name": "parameter_import_summary_20261029T092742994125",
+      "changed_fields": [
+        "machinery_names"
+      ]
+    }
+  ]
+}

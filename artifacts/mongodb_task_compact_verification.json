@@ -1,0 +1,63 @@
+{
+  "status": "passed",
+  "verified_at_utc": "2026-10-30T01:11:00.964439+00:00",
+  "database": "rostmsdb",
+  "collection": "task",
+  "field": "task_sequence",
+  "operation": "format_three_existing_task_xml_strings_like_legacy_storage",
+  "legacy_reference": "git 15ceb62:tms_if_input/behavior_tree.py:_serialize_tree and test/fixtures/requested_tasks.json",
+  "before_counts": {
+    "task": 4,
+    "parameter": 102
+  },
+  "after_counts": {
+    "task": 4,
+    "parameter": 102
+  },
+  "updated_tasks": 3,
+  "inserted_tasks": 0,
+  "deleted_tasks": 0,
+  "task_ids_and_other_fields_preserved": true,
+  "parameter_documents_unchanged": true,
+  "other_tasks_unchanged": true,
+  "unrelated_collection_counts_unchanged": true,
+  "task_checks": [
+    {
+      "model_name": "d37pxi",
+      "task_id": 4,
+      "_id": "6ae3edcbcbe288fbd0e4f244",
+      "stored_as_string": true,
+      "compact_single_line": true,
+      "xml_declaration_and_comments_absent": true,
+      "xml_attributes_order_and_values_preserved": true,
+      "legacy_serializer_match": true,
+      "xml_sha256": "ac71dd83840a7d38c48b71a5acdc4aebfd5fa3ba6f4e08b2a6ef2d638c810b89",
+      "bytes": 2252
+    },
+    {
+      "model_name": "mst110cr_2",
+      "task_id": 2,
+      "_id": "6ae3edcbcbe288fbd0e4f242",
+      "stored_as_string": true,
+      "compact_single_line": true,
+      "xml_declaration_and_comments_absent": true,
+      "xml_attributes_order_and_values_preserved": true,
+      "legacy_serializer_match": true,
+      "xml_sha256": "954252317235da4390f74d4baf687030715413a1d54af8ad54b9331632a0b462",
+      "bytes": 5210
+    },
+    {
+      "model_name": "mst2200vd",
+      "task_id": 3,
+      "_id": "6ae3edcbcbe288fbd0e4f243",
+      "stored_as_string": true,
+      "compact_single_line": true,
+      "xml_declaration_and_comments_absent": true,
+      "xml_attributes_order_and_values_preserved": true,
+      "legacy_serializer_match": true,
+      "xml_sha256": "f202965307ed56506422e65c3926e09c74d65b86145f7ba0c7f1c514305bd01b",
+      "bytes": 5217
+    }
+  ],
+  "backup": "/tmp/tms_if_input-task-compact-20261030/before.bson.json"
+}

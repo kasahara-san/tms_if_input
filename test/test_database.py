@@ -189,7 +189,8 @@ def owned(document, key="scenario", generation="old"):
     return {**document, LEGACY_METADATA_FIELD: {"import_key": key, "generation": generation}}
 
 
-def expected_summary(result, *, machinery=(), joints=(), positions=(), blocks=(), fences=()):
+def expected_summary(result, *, machinery=(), joints=(), positions=(), blocks=(),
+                     fences=(), connections=()):
     """Check reported lists and build the exact expected per-run summary.
 
     Callers provide independent expectations; summaries are not discarded from
@@ -203,8 +204,9 @@ def expected_summary(result, *, machinery=(), joints=(), positions=(), blocks=()
         'machinery_position_param_names': list(positions),
         'block_position_param_names': list(blocks),
         'geo_fence_param_names': list(fences),
+        'machinery_connection_param_names': list(connections),
     }
-    for key in fields.keys() - {'geo_fence_param_names'}:
+    for key in fields.keys() - {'geo_fence_param_names', 'machinery_connection_param_names'}:
         assert result[key] == fields[key]
     return {'type': 'static', 'model_name': 'all', 'record_name': name, **fields}
 
@@ -243,7 +245,8 @@ class DatabaseTests(unittest.TestCase):
         summary = expected_summary(
             result, machinery=['zx200', 'mst110cr', 'mst2200vdr'],
             joints=['joints', 'vessel'], positions=['initial_position'],
-            blocks=['block_1'], fences=['geo_fence'])
+            blocks=['block_1'], fences=['geo_fence'],
+            connections=['geojson_node_example'])
         self.assertEqual((result['inserted_parameters'], result['skipped_parameters']), (6, 1))
         self.assertEqual(database['parameter'].documents,
                          [old] + original.parameters[1:] + [summary])

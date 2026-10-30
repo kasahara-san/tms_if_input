@@ -223,7 +223,9 @@ def test_partial_graph_import_retries_only_missing_documents(failure):
 
     database['parameter'].fail_insert_at = None
     result = write_database(Compilation(documents, []), client_factory=factory)
-    summary = expected_summary(result)
+    summary = expected_summary(
+        result, connections=[document['record_name']
+                             for document in documents[len(committed) - 1:]])
     assert result['inserted_parameters'] == len(documents) - (len(committed) - 1)
     assert result['skipped_parameters'] == len(committed) - 1
     assert database['parameter'].documents == [legacy] + documents + [summary]

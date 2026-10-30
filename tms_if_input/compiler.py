@@ -2,14 +2,15 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import json
 from pathlib import Path
 import tempfile
 
-from .behavior_tree import build_task_documents
+from .behavior_tree import COMPLETION_FLAGS, build_task_documents
 from .model import load_inputs
 from .parameters import build_parameter_documents
+from .task_templates import TASK_SEQUENCES
 
 
 @dataclass(frozen=True)
@@ -41,6 +42,11 @@ def validate_documents(compilation: Compilation) -> None:
 
 def compile_scenario(geojson_path, xml_path) -> Compilation:
     plan, graph = load_inputs(geojson_path, xml_path)
+    # Normalize the legacy dump model before deriving parameter and flag names.
+    plan = replace(plan, machines={
+        alias: 'mst2200vd' if model == 'mst2200vdr' else model
+        for alias, model in plan.machines.items()
+    })
     result = Compilation(build_parameter_documents(plan, graph), build_task_documents(plan))
     # Rename only model_name values, preserving other model-derived names.
     for document in result.parameters + result.tasks:
@@ -53,6 +59,29 @@ def compile_scenario(geojson_path, xml_path) -> Compilation:
     for task in result.tasks:
         task['task_sequence'] = task['task_sequence'].replace(
             'model_name="mst110cr"', 'model_name="mst110cr_2"')
+    multiple_work_areas = any(
+        sum(task.name == name for task in plan.tasks.values()) > 1
+        for name in ('excavation_loading', 'leveling')
+    )
+    template_models = set()
+    for alias, model in plan.machines.items():
+        stored_model = 'mst110cr_2' if model == 'mst110cr' else model
+        if stored_model not in TASK_SEQUENCES:
+            continue
+        # The supplied mst110cr_2 tree uses the legacy initialization flag.
+        # An input instance already named mst110cr_2 has its own flag instead.
+        if stored_model == 'mst110cr_2' and model != 'mst110cr':
+            continue
+        expected_work = 'leveling' if stored_model == 'd37pxi' else 'transport'
+        assigned = [task.name for task in plan.tasks.values() if task.machine == alias]
+        # Repeated initialization or work needs the generated, scoped records.
+        if not multiple_work_areas and sorted(assigned) == ['initialize', expected_work]:
+            template_models.add(stored_model)
+    for task in result.tasks:
+        # Work dependencies need the generated completion readers and writers.
+        if (task['model_name'] in template_models and
+                f'mongo_record_name="{COMPLETION_FLAGS}"' not in task['task_sequence']):
+            task['task_sequence'] = TASK_SEQUENCES[task['model_name']]
     validate_documents(result)
     return result
 

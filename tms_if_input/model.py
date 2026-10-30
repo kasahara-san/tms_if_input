@@ -13,7 +13,8 @@ import xml.etree.ElementTree as ET
 TASK_NAMES = {'start', 'initialize', 'excavation_loading', 'transport', 'leveling', 'end'}
 MODEL_KINDS = {
     'ic120': 'crawler_dump', 'mst110cr': 'crawler_dump',
-    'mst2200vdr': 'crawler_dump', 'zx120': 'excavator',
+    'mst2200vdr': 'crawler_dump', 'mst2200vd': 'crawler_dump',
+    'zx120': 'excavator',
     'zx200': 'excavator', 'd37pxi': 'bulldozer',
 }
 
